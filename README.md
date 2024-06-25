@@ -107,7 +107,7 @@ Run [DataPrep_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDisease
 ```
 And adjust lines 120-121 as follows (alternatively, if not all occupation classes are present in your biobank remove those not included):
 ```
-Occupation <- factor(Occupation, levels = c("Self-employed","Manual worker",
+Occupation <- factor(Occupation, levels = c("Manual worker","Self-employed",
                                             "Lower-level","Upper-level"))
 ```
 8. Lines 128-131 - If occupation information has already been categorized, out-comment these lines, if occupation information has not been categorized, please replace the identifier names with those used in your biobank. 
