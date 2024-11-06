@@ -4,7 +4,7 @@ rm(list=ls())
 ################################################################################
 #
 # Project: INTERVENE - Differences by socioeconomic status (SES, as assessed by
-# occupation) in incidences of 19 common diseases (as previously selected in the
+# occupation) in risk of 19 common diseases (as previously selected in the
 # INTERVENE flagship manuscript + Alcohol Use Disorder:
 # https://doi.org/10.1101/2023.06.12.23291186)
 #
