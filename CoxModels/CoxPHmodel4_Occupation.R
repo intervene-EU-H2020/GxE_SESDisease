@@ -4,7 +4,7 @@ rm(list=ls())
 ################################################################################
 #
 # Project: INTERVENE - Differences by socioeconomic status (SES, as assessed by
-# occupation) in incidences of 19 common diseases (as previously selected in the
+# occupation) in risk of 19 common diseases (as previously selected in the
 # INTERVENE flagship manuscript + Alcohol Use Disorder:
 # https://doi.org/10.1101/2023.06.12.23291186)
 #
@@ -12,7 +12,7 @@ rm(list=ls())
 #
 # Script model 4: Run Cox Proportional-Hazards models with age of onset as
 # timescale, occupation, trait-specific PGS, occupation * trait-specific PGS
-# interaction, sex (except for protate and breast cancer), first 10 genetics PCs
+# interaction, sex (except for prostate and breast cancer), first 10 genetics PCs
 # + birth decade as covariates
 #
 # Required input data: biobank-specific INTERVENE combined phenotype and PGS
