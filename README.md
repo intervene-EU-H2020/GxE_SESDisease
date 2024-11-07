@@ -2,7 +2,7 @@
 The analyses are broken up into [Part 1](https://github.com/intervene-EU-H2020/GxE_SESDisease/edit/main/README.md#part-1-biobank-specific-general-data-preparation), general data preparation for individual-level analyses in each Biobank, and [Part 2](https://github.com/intervene-EU-H2020/GxE_SESDisease/edit/main/README.md#part-2-biobank-specific-analyses), individual-level analyses with Educational Attainment and Occupation in each Biobank.
 
 ### Dependencies  
-These scripts assume you have plink-1.9 and R v4.3.2 or higher installed on your biobank computing system. Required R libraries: data.table, foreach, doParallel, lubridate, tidyverse/dplyr, plyr, forcats, stringr, and survival. 
+These scripts assume you have plink-1.9 and R v4.3.2 or higher installed on your biobank computing system. Required R libraries: data.table, foreach, doParallel, lubridate, tidyverse/dplyr, plyr, forcats, stringr, survival, metafor, googledrive, googlesheets4, ggplot2, viridis, cowplot, grid, gridExtra, and RColorBrewer.
 
 ### Contact
 Please contact Fiona Hagenbeek (fiona.hagenbeek@helsinki.fi) if you have any questions.  
