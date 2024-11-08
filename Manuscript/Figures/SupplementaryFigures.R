@@ -16,7 +16,7 @@ rm(list=ls())
 #       1) Figure S1: model 1 (EA or PRS): per cohort + meta-analysis
 #       2) Figure S2: model 2 (EA+PRS): per cohort + meta-analysis
 #       3) Figure S3: model 3: per cohort + meta-analysis
-#       5) Figure S4: model 5: per cohort + meta-analysis
+#       4) Figure S4: model 5: per cohort + meta-analysis
 # required input data:
 #       1) FinnGen data release 11 (FGR11) + UK Biobank (UKB) + Generation Scotland (GS) + meta-analysis model 1a+b
 #       2) FGR11 + UKB + GS + meta-analysis model 2
