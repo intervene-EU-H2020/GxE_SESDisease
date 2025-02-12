@@ -116,14 +116,14 @@ mod3sex.formula <- paste0(SEX + PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + PC7 + PC8 + 
 mod3nosex.formula <- paste0(PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + PC7 + PC8 + PC9 + PC10  + birthdecade")
 
 # run Cox-PH model 3 in loop with foreach in parallel for each of the diseases in the biobank for both education groups.
-res.cox.model3.low <- foreach(i=1:length(lowEA)) %do% {
+res.cox.model3.low <- foreach(i=1:length(lowEA)) %dopar% {
   if(names(lowEA[[i]][15])=="C3_PROSTATE" | names(lowEA[[i]][15])=="C3_BREAST") {
     cox.model.PGS(filelist = lowEA[[i]],covformula = mod3nosex.formula) 
   } else {
     cox.model.PGS(filelist = lowEA[[i]],covformula = mod3sex.formula)
   }
 }
-res.cox.model3.high <- foreach(i=1:length(highEA)) %do% {
+res.cox.model3.high <- foreach(i=1:length(highEA)) %dopar% {
   if(names(highEA[[i]][15])=="C3_PROSTATE" | names(highEA[[i]][15])=="C3_BREAST") {
     cox.model.PGS(filelist = highEA[[i]],covformula = mod3nosex.formula) 
   } else {
