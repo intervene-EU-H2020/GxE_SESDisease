@@ -186,6 +186,29 @@ dat <- as.data.frame(cbind(trait,Ncontrols,Ncases,Ncontrols_females,
 11. Lines 191 and 298 - specify the location you want to save the descriptive files.  
 - Output files are  "&#42;_INTERVENE_Occupation_SampleDescriptives.txt" and "&#42;_INTERVENE_Occupation_SampleDescriptives_byPGS3group.txt"
 
+## Step 7: Create plots of the distribution of the scaled polygenic scores by level of the socioeconomic index
+### Step 7a: Educational Attainment
+Run [ComparePGSDistribution_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/ComparePGSDistribution_EducationalAttainment.R) to create the plots of the distribution of the scaled polygenic scores by Educational Attainment level. Please make the following adjustments: 
+1. Line 52 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
+2. Line 55 - replace with the name of your biobank (don't include spaces in the biobank name)
+3. Line 65 - specify phenotype file location + filename
+4. Lines 68 + 77 - specify the location of the folder containing PRS weights
+5. Line 82 - please replace the identifier name with that used in your biobank.
+6. Lines 95-96 - if Educational Attainment has not been converted to ISCED 1997 from ISCED 2011, replace _"EDUCATION_11"_ in the code that creates the factor with the naming convention for ISCED 2011 education in your biobank; if Educational Attainment has already been converted to ISCED 1997 instead of ISCED 2011, replace it (if applicable) with code to make the ISCED 1997 variable a factor: 
+```
+pheno$ISCED97 <- factor(pheno$ISCED97, levels = c(1,2,3,4,5,6), # remove the ISCED 1997 levels not available in your biobank
+                    labels = c("ISCED 1","ISCED 2","ISCED 3","ISCED 4","ISCED 5", "ISCED 6)) # remove the ISCED 1997 not available in your biobank
+```
+7. Lines 99-124 - Run if ISCED 2011 has not yet been recoded to ISCED 1997 (otherwise out-comment); remove the ISCED 1997 levels not available in your biobank
+8. Lines 132-135 - remove the ISCED 1997 levels not available in your biobank
+9. Line 151 - please replace the identifier names with those used in your biobank.
+10. Line 155 - if your biobank contains individuals of non-European ancestry/those that have principal components calculated for NON-EUROPEAN ancestry, i.e. within ancestry principal components, not global genetic principal components, please add code to only retain individuals of European ancestry after this line, for example,:
+```
+pheno <- subset(pheno, ANCESTRY=='EUR')
+```
+17. Line 192 - specify the location you want to save the plots.  
+- Output file is "&#42;_INTERVENE_FIG_CompareScaledPGSDistribution_ByEducationalAttainment.pdf".
+
 # Part 2: Biobank-specific analyses
 ## Model 1: Determine the individual effect of the socioeconomic indices or trait-specific polygenic risk score (PRS) on disease risk
 ### Model 1a SES effect, with Educational Attainment as the socioeconomic index
