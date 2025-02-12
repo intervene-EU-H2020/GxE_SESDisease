@@ -11,14 +11,14 @@ rm(list=ls())
 # Author: F.A. Hagenbeek [FAH] (fiona.hagenbeek@helsinki.fi)
 #
 # Script model 3: Run Cox Proportional-Hazards models with age of onset as
-# timescale, with trait-specific PGS by EA level, sex (except for breast and
-# prostate cancer), bith decade, and the first 10 genetic PCS as covariates.
+# timescale, with trait-specific PGS stratified by EA level, sex (except for 
+# breast and prostate cancer), bith decade, and the first 10 genetic PCS as 
+# covariates.
 #
 # Required input data: biobank-specific INTERVENE combined phenotype and PGS
 # file
 #
-# Last edits: 19/04/2024 (FAH, edits: globalize script for use in other
-# INTERVENE biobanks and upload to GitHub)
+# Last edits: 12/02/2025 (FAH, edits: replace with traditional stratification)
 #
 ################################################################################
 
@@ -63,80 +63,77 @@ load("[PathToPhenotypeFile/PhenotypeFile.RData]")
 
 ###############################################################################
 #
-# Create new variables to assess the PGS per EA level (dummy variable per EA
-# level * PGS)
+# Split data dat education group to run stratified analyses
 #
 ###############################################################################
 
-# function to code to create new variables to assess the PGS per EA level 
-# (dummy variable per EA level * PGS) for 2 group EA
-calc.GxE.EA2 <- function(filelist) {
-  # create dummy variables of the EA levels
-  lowEA <- ifelse(filelist$EA=="low", 1, 0)
-  highEA <- ifelse(filelist$EA=="high", 1, 0)
-  
-  # create GxE variables, where the PGS is always the 20th column in FinnGen
-  GxlowEA <- filelist[,20] * lowEA
-  GxhighEA <- filelist[,20] * highEA
-  
-  # combine the new variables into a single data frame
-  out = cbind(GxlowEA,GxhighEA)
-  
-  # function outputs the newly created variables in a data frame
-  return(out)
+# create list of dataframes containing the low educational attainment data
+lowEA <- foreach(i=1:length(INTERVENE.list)) %dopar% {
+  subset(INTERVENE.list[[i]], EA == "low")
 }
 
-# run function to create the GxE variables (from source file) in parallel foreach
-# loop for each of the traits. 
-INTERVENE.GxE <- foreach(i=1:length(INTERVENE.list)) %dopar% {
-  calc.GxE.EA2(filelist = INTERVENE.list[[i]])
+# create list of dataframes containing the high educational attainment data
+highEA <- foreach(i=1:length(INTERVENE.list)) %dopar% {
+  subset(INTERVENE.list[[i]], EA == "high")
 }
 
-# append the new GxE data frame to the data frame of each trait
-INTERVENE.list <- foreach(i=1:length(INTERVENE.list)) %dopar% {
-  cbind(INTERVENE.list[[i]],INTERVENE.GxE[[i]])
+# resulting dataframe may have empty birth decade levels. Remove these. 
+# function to drop empty levels
+clean_birthdecade <- function(df) {
+  df$birthdecade <- droplevels(df$birthdecade)
+  return(df)
 }
+# apply to both lists of dataframes
+lowEA <- lapply(lowEA, clean_birthdecade)
+highEA <- lapply(highEA, clean_birthdecade)
 
-# for some reason it does not automatically name the new variables, so
-# add new names manually. 
-for (i in 1:length(INTERVENE.list)) {
-  names(INTERVENE.list[[i]]) <- c(names(INTERVENE.list[[i]][1:23]),"GxlowEA","GxhighEA")
-}
+# add trait names to list items
+names(lowEA) <- c(unlist(lapply(INTERVENE.list, function(x) { names(x)[15] })))
+names(highEA) <- c(unlist(lapply(INTERVENE.list, function(x) { names(x)[15] })))
 
 
 ###############################################################################
 #
-# Run Cox Proportional-Hazards models with trait-specific PGS by EA level, sex
-# (except for breast and prostate cancer), bith decade, and the first 10 genetic
-# PCS as covariates.
+# Run Cox Proportional-Hazards models with trait-specific PGS stratified by EA 
+# level, with sex (except for breast and prostate cancer), bith decade, and the 
+# first 10 genetic PCS as covariates.
 #
 ################################################################################
 
 # function to run Cox Proportional Hazards Models with multiple covariates
-cox.model <- function(filelist,covformula) {
-  fit <- coxph(as.formula(paste0("Surv(AGE,",names(filelist[15]),") ~ ",covformula)), 
+cox.model.PGS <- function(filelist,covformula) {
+  fit <- coxph(as.formula(paste0("Surv(AGE,",names(filelist[15]),") ~ ",
+                                 names(filelist[20])," + ",covformula)), 
                data =  filelist, na.action = na.exclude)
   return(fit)
 }
 
-# create the formula with the scaled GxE variables, the first 10 genetic PCs,
-# birth decde, and sex as covariates, and one with the scaled
-# GxE variable, birth decade, and the first 10 genetic PCs as
-# covariates (for running the analyses for prostate and breast cancer)
-mod3sex.formula <- paste0("GxlowEA + GxhighEA + SEX + PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + PC7 + PC8 + PC9 + PC10 + birthdecade")
-mod3nosex.formula <- paste0("GxlowEA + GxhighEA + PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + PC7 + PC8 + PC9 + PC10  + birthdecade")
+# create the formula with the first 10 genetic PCs,
+# birth decde, and sex as covariates, and one with birth decade, 
+# and the first 10 genetic PCs as covariates (for running the analyses 
+# for prostate and breast cancer)
+mod3sex.formula <- paste0(SEX + PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + PC7 + PC8 + PC9 + PC10 + birthdecade")
+mod3nosex.formula <- paste0(PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + PC7 + PC8 + PC9 + PC10  + birthdecade")
 
-# run Cox-PH model 3 in loop with foreach  in parallel for each of the 18 diseases.
-res.cox.model3 <- foreach(i=1:length(INTERVENE.list)) %dopar% {
-  if(names(INTERVENE.list[[i]][15])=="C3_PROSTATE" | names(INTERVENE.list[[i]][15])=="C3_BREAST") {
-    cox.model(filelist = INTERVENE.list[[i]],covformula = mod3nosex.formula) 
+# run Cox-PH model 3 in loop with foreach in parallel for each of the diseases in the biobank for both education groups.
+res.cox.model3.low <- foreach(i=1:length(lowEA)) %do% {
+  if(names(lowEA[[i]][15])=="C3_PROSTATE" | names(lowEA[[i]][15])=="C3_BREAST") {
+    cox.model.PGS(filelist = lowEA[[i]],covformula = mod3nosex.formula) 
   } else {
-    cox.model(filelist = INTERVENE.list[[i]],covformula = mod3sex.formula)
+    cox.model.PGS(filelist = lowEA[[i]],covformula = mod3sex.formula)
+  }
+}
+res.cox.model3.high <- foreach(i=1:length(highEA)) %do% {
+  if(names(highEA[[i]][15])=="C3_PROSTATE" | names(highEA[[i]][15])=="C3_BREAST") {
+    cox.model.PGS(filelist = highEA[[i]],covformula = mod3nosex.formula) 
+  } else {
+    cox.model.PGS(filelist = highEA[[i]],covformula = mod3sex.formula)
   }
 }
 
 # add trait names to list items 
-names(res.cox.model3) <- c(unlist(lapply(INTERVENE.list, function(x) { names(x)[15] })))
+names(res.cox.model3.low) <- c(unlist(lapply(lowEA, function(x) { names(x)[15] })))
+names(res.cox.model3.high) <- c(unlist(lapply(highEA, function(x) { names(x)[15] })))
 
 # function to extract coefficients from model output stored in a list and output
 # the coefficients as a data frame
@@ -218,14 +215,23 @@ extract.coeffs <- function(model.output,filelist) {
   return(out)
 }
 
-# extract model coefficients for each trait with sex as covariate
-modcoeffs.cox.model3.sex <- extract.coeffs(model.output = res.cox.model3[!names(res.cox.model3) %in% c("C3_PROSTATE","C3_BREAST")],
-                                           filelist = INTERVENE.list[!names(INTERVENE.list) %in% c("C3_PROSTATE","C3_BREAST")])
-# extract model coefficients for each trait without sex as covariate
-modcoeffs.cox.model3.nosex <- extract.coeffs(model.output = res.cox.model3[c("C3_PROSTATE","C3_BREAST")],
-                                             filelist = INTERVENE.list[c("C3_PROSTATE","C3_BREAST")])
+# extract model coefficients for each trait with sex as covariate for both lists containing the education group specific results
+modcoeffs.cox.model3.sex.low <- extract.coeffs(model.output = res.cox.model3.low[!names(res.cox.model3.low) %in% c("C3_PROSTATE","C3_BREAST")],
+                                           filelist = lowEA[!names(lowEA) %in% c("C3_PROSTATE","C3_BREAST")])
+modcoeffs.cox.model3.sex.high <- extract.coeffs(model.output = res.cox.model3.high[!names(res.cox.model3.high) %in% c("C3_PROSTATE","C3_BREAST")],
+                                               filelist = highEA[!names(highEA) %in% c("C3_PROSTATE","C3_BREAST")])
+# extract model coefficients for each trait without sex as covariate for both lists containing the education group specific results
+modcoeffs.cox.model3.nosex.low <- extract.coeffs(model.output = res.cox.model3.low[c("C3_PROSTATE","C3_BREAST")],
+                                             filelist = lowEA[c("C3_PROSTATE","C3_BREAST")])
+modcoeffs.cox.model3.nosex.high <- extract.coeffs(model.output = res.cox.model3.high[c("C3_PROSTATE","C3_BREAST")],
+                                                 filelist = highEA[c("C3_PROSTATE","C3_BREAST")])
+
 #combine into single result data frame
-modcoeffs.cox.model3 <- rbind.fill(modcoeffs.cox.model3.sex,modcoeffs.cox.model3.nosex)
+names(modcoeffs.cox.model3.sex.low) <- gsub("^.*\\prs","PRS", names(modcoeffs.cox.model3.sex.low)) #rename prs variables columns
+names(modcoeffs.cox.model3.sex.high) <- gsub("^.*\\prs","PRS", names(modcoeffs.cox.model3.sex.high)) #rename prs variables columns
+names(modcoeffs.cox.model3.nosex.low) <- gsub("^.*\\prs","PRS", names(modcoeffs.cox.model3.nosex.low)) #rename prs variables columns
+names(modcoeffs.cox.model3.nosex.high) <- gsub("^.*\\prs","PRS", names(modcoeffs.cox.model3.nosex.high)) #rename prs variables columns
+modcoeffs.cox.model3 <- rbind.fill(modcoeffs.cox.model3.sex.low,modcoeffs.cox.model3.nosex.low,modcoeffs.cox.model3.sex.high,modcoeffs.cox.model3.nosex.high)
 
 # write table with model coefficients to output as tab-delimited text files
 write.table(modcoeffs.cox.model3, file=paste0("[PathToOutputFolder/]",as.character(Sys.Date()),
