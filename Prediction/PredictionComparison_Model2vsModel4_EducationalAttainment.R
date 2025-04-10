@@ -110,7 +110,7 @@ FGR11.4long <- data.frame(trait = c(rep(FGR11.4$trait,3)),
 FGR11.2.list <- split(FGR11.2long,FGR11.2long$trait)
 FGR11.4.list <- split(FGR11.4long,FGR11.4long$trait)
 
-# Compute risk scores from betas of Cox model from FinnGen or meta-analysis UK Biobank + Generation Scotland)
+# Compute risk scores from betas of Cox model from 80% FinnGen
 INTERVENE.list_score_2 <- foreach(i=trait) %dopar% {
   exp(FGR11.2.list[[i]]$beta[1] * (as.numeric(INTERVENE.list[[i]]$EA)-1) + 
         FGR11.2.list[[i]]$beta[2] * INTERVENE.list[[i]][20])
@@ -173,12 +173,12 @@ auc_test <- foreach(i=1:length(INTERVENE.list)) %dopar% {
 extract_auc_comparison <- function(roc_list, trait_vector) {
   results <- data.frame(
     trait = character(),
+    AUC_model1 = numeric(),
+    CI_model1_lower = numeric(),
+    CI_model1_upper = numeric(),
     AUC_model2 = numeric(),
     CI_model2_lower = numeric(),
     CI_model2_upper = numeric(),
-    AUC_model4 = numeric(),
-    CI_model4_lower = numeric(),
-    CI_model4_upper = numeric(),
     AUC_p_value = numeric(),
     stringsAsFactors = FALSE
   )
@@ -187,20 +187,20 @@ extract_auc_comparison <- function(roc_list, trait_vector) {
     roc_test <- roc_list[[i]]
     
     if (!is.null(roc_test)) {
-      auc2 <- roc_test$roc1$auc
-      ci2 <- roc_test$roc1$ci
-      auc4 <- roc_test$roc2$auc
-      ci4 <- roc_test$roc2$ci
+      auc1 <- roc_test$roc1$auc
+      ci1 <- roc_test$roc1$ci
+      auc2 <- roc_test$roc2$auc
+      ci2 <- roc_test$roc2$ci
       p_value <- roc_test$p.value
       
       results <- rbind(results, data.frame(
         trait = trait_vector[i],
+        AUC_model1 = auc1,
+        CI_model1_lower = ci1[1],
+        CI_model1_upper = ci1[3],
         AUC_model2 = auc2,
         CI_model2_lower = ci2[1],
         CI_model2_upper = ci2[3],
-        AUC_model4 = auc4,
-        CI_model4_lower = ci4[1],
-        CI_model4_upper = ci4[3],
         AUC_p_value = p_value
       ))
     }
