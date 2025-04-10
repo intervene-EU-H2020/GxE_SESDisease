@@ -430,12 +430,29 @@ Run [MetaAnalysismodel5_EducationalAttainment.R](https://github.com/intervene-EU
 - Output file is "&#42;_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model5_anyN.csv"
 
 # Part 4: Prediction comparison in each biobank study
+## Compare prediction model 1a vs model 2
+Run [PredictionComparison_Model1avsModel2_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Prediction/PredictionComparison_Model1avsModel2_EducationalAttainment.R) to compare the prediction accuracy of model 1a (main effect of education) with model 2 (main effects of education and disease-specific PGS) by comparing the models Receiver Operating Characteristic (ROC) Area Under the Curve(AUC), continuous Net Reclassification Index (NRI), and Integrated Discrimination Index (IDI). When predicting in 20% of the FinnGen study, the UK Biobank, or Generation Scotland: the output of the Cox Proportional Hazard models 1a and 2 from 80% of the FinnGen study (download output files from [here](https://drive.google.com/drive/folders/1nmUJUz0vupaEiWCNk4gBM5U6G3VyNmbB?usp=sharing). Please make the following adjustments:
+1. Line 61 - if you're running this on a single core or an Rstudio session with automatic multi-threading, you can choose to out-command this line
+2. Line 64 - replace with the name of your biobank (don't include spaces in the biobank name)
+3. Lines 73, 78, and 81 - specify file location + filename
+4. Lines 212 and 272 - specify location output folder
+- Output files are "&#42;_INTERVENE_EducationalAttainment_AUCcomparison_Model1a-2.txt" and "&#42;_INTERVENE_EducationalAttainment_NRI_IDI_Model1a-2.txt"
+
+## Compare prediction model 1b vs model 2
+Run [PredictionComparison_Model1bvsModel2_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Prediction/PredictionComparison_Model1bvsModel2_EducationalAttainment.R) to compare the prediction accuracy of model 1b (main effect of disease-specific PGS) with model 2 (main effects of education and disease-specific PGS) by comparing the models Receiver Operating Characteristic (ROC) Area Under the Curve(AUC), continuous Net Reclassification Index (NRI), and Integrated Discrimination Index (IDI). When predicting in 20% of the FinnGen study, the UK Biobank, or Generation Scotland: the output of the Cox Proportional Hazard models 1b and 2 from 80% of the FinnGen study (download output files from [here](https://drive.google.com/drive/folders/1nmUJUz0vupaEiWCNk4gBM5U6G3VyNmbB?usp=sharing). Please make the following adjustments:
+1. Line 61 - if you're running this on a single core or an Rstudio session with automatic multi-threading, you can choose to out-command this line
+2. Line 64 - replace with the name of your biobank (don't include spaces in the biobank name)
+3. Lines 73, 78, and 81 - specify file location + filename
+4. Lines 212 and 277 - specify location output folder
+- Output files are "&#42;_INTERVENE_EducationalAttainment_AUCcomparison_Model1b-2.txt" and "&#42;_INTERVENE_EducationalAttainment_NRI_IDI_Model1b-2.txt"
+
+## Compare prediction model 2 vs model 4
 Run [PredictionComparison_Model2vsModel4_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Prediction/PredictionComparison_Model2vsModel4_EducationalAttainment.R) to compare the prediction accuracy of model 2 (main effects of education and disease-specific PGS) with model 4 (main effects of education and disease-specific PGS + their interaction) by comparing the models Receiver Operating Characteristic (ROC) Area Under the Curve(AUC), continuous Net Reclassification Index (NRI), and Integrated Discrimination Index (IDI). When predicting in 20% of the FinnGen study, the UK Biobank, or Generation Scotland: the output of the Cox Proportional Hazard models 2 and 4 from 80% of the FinnGen study (download output files from [here](https://drive.google.com/drive/folders/1nmUJUz0vupaEiWCNk4gBM5U6G3VyNmbB?usp=sharing). Please make the following adjustments:
 1. Line 61 - if you're running this on a single core or an Rstudio session with automatic multi-threading, you can choose to out-command this line
 2. Line 64 - replace with the name of your biobank (don't include spaces in the biobank name)
 3. Lines 73, 78, and 81 - specify file location + filename
 4. Lines 217 and 277 - specify location output folder
-- Output files are "&#42;_INTERVENE_EducationalAttainment_AUCcomparison_Model2-4.txt" and "&#42;_INTERVENE_EducationalAttainment_NRI_IDI_Model2-4.txt",
+- Output files are "&#42;_INTERVENE_EducationalAttainment_AUCcomparison_Model2-4.txt" and "&#42;_INTERVENE_EducationalAttainment_NRI_IDI_Model2-4.txt"
 
 # Part 5: Create (supplemental) tables and figures as included in the manuscript for this project. 
 Please note that the manuscript only includes the results for Educational Attainment. 
