@@ -20,18 +20,14 @@ rm(list=ls())
 #   1) biobank-specific INTERVENE combined phenotype file as created in the
 #   educational attainment DataPrep script
 #   (https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/DataPrep_EducationalAttainment.R)
-#   2a) When predicting in UK Biobank or Generation Scotland: the output of the
-#   Cox Proportional Hazard models 2 and 4 from FinnGen (download output files
+#   2) When predicting in 20% of the FinnGen study, the UK Biobank or Generation 
+#   Scotland: the output of the Cox Proportional Hazard models 2 and 4 based 80%
+#   of the FinnGen study (download output files with suffix 
+#   "*_INTERVENE_SESDiffDiseases_Coeffs_CoxPH_model*_FinnGenR11_80percent.txt"
 #   from: https://drive.google.com/drive/folders/1nmUJUz0vupaEiWCNk4gBM5U6G3VyNmbB?usp=sharing)
-#   3b) When predicting in FinnGen: the output of the output of the Cox
-#   Proportional Hazard models 2 and 4 meta-analysed across the UK Biobank and
-#   Generation Scotland when possible, otherwise this contains the Cox estimates
-#   from either the UK Biobank or Generation Scotland (generated with script:
-#   https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Meta-analyses/MetaAnalysismodel2and4_EducationalAttainment_UKB_GenScot_only.R
-#   download output files from: https://drive.google.com/drive/folders/1Wi0KDwGtnZoUclUgZwu7F_Dwj-6uvJYH?usp=sharing)
 #
-# Last edits: 18/03/2025 (edits, FAH: final checks and minor tweaks prior to
-# upload to GitHub)
+# Last edits: 10/04/2025 (edits, FAH: ensure all biobanks now predict using the 
+# Cox models estimated in 80% of the FinnGen study)
 #
 ################################################################################
 
