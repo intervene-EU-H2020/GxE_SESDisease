@@ -86,8 +86,8 @@ cox.model.PGS <- function(filelist,covformula) {
 # create the formula with Employment, the first 10 genetic PCs, and sex as
 # covariates, and one with only Employment, the first 10 genetic PCs, as
 # covariates (for running the analyses for prostate and breast cancer)
-mod2sex.formula <- paste0("EmploymentStatus + SEX + PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + PC7 + PC8 + PC9 + PC10")
-mod2nosex.formula <- paste0("EmploymentStatus + PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + PC7 + PC8 + PC9 + PC10")
+mod2sex.formula <- paste0("Occupation + SEX + PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + PC7 + PC8 + PC9 + PC10")
+mod2nosex.formula <- paste0("Occupation + PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + PC7 + PC8 + PC9 + PC10")
 
 # run Cox-PH model 2 which includes the scaled trait-specific PGS in loop with
 # foreach in parallel for each of the 19 diseases.
