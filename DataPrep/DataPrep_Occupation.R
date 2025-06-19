@@ -16,8 +16,9 @@ rm(list=ls())
 # Required input data: biobank-specific INTERVENE phenotype file and
 # biobank-specific INTERVENE PGS files
 #
-# Last edits: 19/04/2024 (FAH, edits: globalize script for use in other
-# INTERVENE biobanks and upload to GitHub)
+# Last edits: 19/06/2025 (FAH, edits: remove PGS group files, remove self-employed 
+# category, and combine "manual worker" and "lower-level" into a combined reference 
+# group)
 #
 ################################################################################
 
@@ -106,19 +107,16 @@ calc.Occupation <- function(dat) {
     if(!is.na(dat$`20277-0.0`[i]) & (grepl("^1", dat$`20277-0.0`[i]) | grepl("^2", dat$`20277-0.0`[i]) | grepl("^3", dat$`20277-0.0`[i]))) {
       Occupation[i] <- "Upper-level"
     } 
-    # lower level = [4XXX] administrative and secretarial occupations; [6XXX] personal service occupations; [7XXX] sales and customer service occupations; [92XX] Elementary occupations (elementary administration and service occupations)
-    else if(!is.na(dat$`20277-0.0`[i]) & (grepl("^4", dat$`20277-0.0`[i]) | grepl("^6", dat$`20277-0.0`[i]) | grepl("^7", dat$`20277-0.0`[i]) | grepl("^92", dat$`20277-0.0`[i]))) {
+    # lower level = [4XXX] administrative and secretarial occupations; [6XXX] personal service occupations; [7XXX] sales and customer service occupations; [92XX] Elementary occupations (elementary administration and service occupations) + 
+    # manual work = [5XXX] skilled trades occupations; [8XXX] process, plant and machine operatives; [91XX] Elementary occupations (elementary trades, plant and storage related occupations)
+    else if(!is.na(dat$`20277-0.0`[i]) & (grepl("^4", dat$`20277-0.0`[i]) | grepl("^6", dat$`20277-0.0`[i]) | grepl("^7", dat$`20277-0.0`[i]) | grepl("^92", dat$`20277-0.0`[i]) |
+                                         grepl("^5", dat$`20277-0.0`[i]) | grepl("^8", dat$`20277-0.0`[i]) | grepl("^91", dat$`20277-0.0`[i]))) {
       Occupation[i] <- "Lower-level"
     } 
-    # manual work = [5XXX] skilled trades occupations; [8XXX] process, plant and machine operatives; [91XX] Elementary occupations (elementary trades, plant and storage related occupations)
-    else if(!is.na(dat$`20277-0.0`[i]) & (grepl("^5", dat$`20277-0.0`[i]) | grepl("^8", dat$`20277-0.0`[i]) | grepl("^91", dat$`20277-0.0`[i]))) {
-      Occupation[i] <- "Manual worker"
-    }  
   }
   
   # convert Occupation Status to factor
-  Occupation <- factor(Occupation, levels = c("Manual worker","Lower-level",
-                                              "Upper-level"))
+  Occupation <- factor(Occupation, levels = c("Lower-level","Upper-level"))
   
   # output Occupation
   return(Occupation)
@@ -313,12 +311,6 @@ for (i in 1:length(INTERVENE.list)) {
 # remove unneeded files
 rm(glm.PGS.res.tab,glm.PGS.res)
 
-# Calculate PGS tertiles and create groups for each
-INTERVENE.tert <- foreach(i=1:length(INTERVENE.list)) %dopar% {
-  cut(x = INTERVENE.list[[i]][,19], breaks = quantile(INTERVENE.list[[i]][,19], probs = c(c(0,0.25),rev(1-c(0,0.25)))), include.lowest = T,
-      labels = paste("Group",1:(2*length(c(0,0.25))-1)))
-}
-
 # append the new tertile vector to the data frames for each trait
 INTERVENE.list <- foreach(i=1:length(INTERVENE.list)) %dopar% {
   cbind(INTERVENE.list[[i]],PGS_group=INTERVENE.tert[[i]])
@@ -329,29 +321,9 @@ for (i in 1:length(INTERVENE.list)) {
   INTERVENE.list[[i]][,19] <- scale(INTERVENE.list[[i]][,19])
 }
 
-# split data by PGS strata
-Group1 <- foreach(i=1:length(INTERVENE.list)) %dopar% {
-  subset(INTERVENE.list[[i]],PGS_group=="Group 1")
-}
-Group2 <- foreach(i=1:length(INTERVENE.list)) %dopar% {
-  subset(INTERVENE.list[[i]],PGS_group=="Group 2")
-}
-Group3 <- foreach(i=1:length(INTERVENE.list)) %dopar% {
-  subset(INTERVENE.list[[i]],PGS_group=="Group 3")
-}
-
 # add trait names to list items 
 names(INTERVENE.list) <- c(unlist(lapply(INTERVENE.list, function(x) { names(x)[15] })))
-names(Group1) <- c(unlist(lapply(Group1, function(x) { names(x)[15] })))
-names(Group2) <- c(unlist(lapply(Group2, function(x) { names(x)[15] })))
-names(Group3) <- c(unlist(lapply(Group3, function(x) { names(x)[15] })))
 
 # write datasets to file 
 save(INTERVENE.list, file = paste("[PathToOutputFolder/]", as.character(Sys.Date()),
                                   "_",Biobank,"_INTERVENE_Occupation_dat.RData",sep = ""))
-save(Group1, file = paste("[PathToOutputFolder/]", as.character(Sys.Date()),
-                          "_",Biobank,"_INTERVENE_PGSgroup1_Occupation_dat.RData",sep = ""))
-save(Group2, file = paste("[PathToOutputFolder/]", as.character(Sys.Date()),
-                          "_",Biobank,"_INTERVENE_PGSgroup2_Occupation_dat.RData",sep = ""))
-save(Group3, file = paste("[PathToOutputFolder/]", as.character(Sys.Date()),
-                          "_",Biobank,"_INTERVENE_PGSgroup3_Occupation_dat.RData",sep = ""))
