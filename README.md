@@ -1,5 +1,5 @@
 # Scripts for the INTERVENE GxE SES and complex diseases project
-The analyses are broken up into [Part 1](https://github.com/intervene-EU-H2020/GxE_SESDisease/edit/main/README.md#part-1-biobank-specific-general-data-preparation), general data preparation for individual-level analyses in each Biobank, [Part 2](https://github.com/intervene-EU-H2020/GxE_SESDisease/edit/main/README.md#part-2-biobank-specific-analyses), individual-level analyses with Educational Attainment and Occupation in each Biobank, [Part 3](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/README.md#part-3-meta-analyses-across-biobank-studies), meta-analyses done on summary statistics to draw conclusions across biobank studies, [Part 4](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/README.md#part-4-prediction-comparison-in-each-biobank-study), prediction comparison in each biobank study, and [Part 5](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/README.md#part-5-create-supplemental-tables-and-figures-as-included-in-the-manuscript-for-this-project), scripts to creates the (supplemental) tables and figures as included in the manuscript describing this project.
+The analyses are broken up into [Part 1](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/README.md#part-1-biobank-specific-general-data-preparation), general data preparation for individual-level analyses in each Biobank, [Part 2](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/README.md#part-2-biobank-specific-analyses), individual-level analyses with Educational Attainment and Occupation in each Biobank, [Part 3](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/README.md#part-3-meta-analyses-across-biobank-studies), meta-analyses done on summary statistics to draw conclusions across biobank studies, [Part 4](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/README.md#part-4-prediction-comparison-in-each-biobank-study), prediction comparison in each biobank study, and [Part 5](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/README.md#part-5-create-supplemental-tables-and-figures-as-included-in-the-manuscript-for-this-project), scripts to creates the (supplemental) tables and figures as included in the manuscript describing this project.
 
 ### Dependencies  
 These scripts assume you have plink-1.9 and R v4.3.2 or higher installed on your biobank computing system. Required R libraries: data.table, foreach, doParallel, lubridate, tidyverse/tidyr, dplyr, plyr, forcats, stringr, survival, metafor, Hmisc, pROC, nricens, googledrive, googlesheets4, ggplot2, viridis, cowplot, grid, gridExtra, and RColorBrewer.
@@ -47,144 +47,128 @@ Download the pre-adjusted summary statistics created using MegaPRS that correspo
 The script in this step is identical to the [INTERVENE flagship project](https://github.com/intervene-EU-H2020/flagship).  
 Run [hg38_biobankadjustments.R](https://github.com/intervene-EU-H2020/flagship/blob/main/PRS/hg38_biobankadjustments.R) to select the correct CHR_POS_REF_ALT based on the .bim of your biobank. For more information on running this script see the [flagship README](https://github.com/intervene-EU-H2020/flagship/tree/main?tab=readme-ov-file#step-3-merge-variant-ids-to-match-those-within-the-bim-file).
 
-## Step 4: Compute polygenic risk scores (PRSs) with Plink
+## Step 4: Compute polygenic scores (PGSs) with Plink
 The scripts in this step are identical to the [INTERVENE flagship project](https://github.com/intervene-EU-H2020/flagship).  
 ### If your Plink files are not split by chromosome
-Run [GeneratePRS.sh](https://github.com/intervene-EU-H2020/flagship/blob/main/PRS/GeneratePRS.sh) to create the PRSs for your Biobank. For more information on running this script see the [flagship README](https://github.com/intervene-EU-H2020/flagship?tab=readme-ov-file#step-4-compute-prs-using-plink).  
+Run [GeneratePRS.sh](https://github.com/intervene-EU-H2020/flagship/blob/main/PRS/GeneratePRS.sh) to create the PGSs for your Biobank. For more information on running this script see the [flagship README](https://github.com/intervene-EU-H2020/flagship?tab=readme-ov-file#step-4-compute-prs-using-plink).  
 ### If your Plink files are split by chromosome
 #### Step 4a: run [GeneratePRS_IndividualChr.sh](https://github.com/intervene-EU-H2020/flagship/blob/main/PRS/GeneratePRS_IndividualChr.sh)
-Run [GeneratePRS_IndividualChr.sh](https://github.com/intervene-EU-H2020/flagship/blob/main/PRS/GeneratePRS_IndividualChr.sh) to create the PRSs per chromosome for your Biobank. For more information on running this script see the [flagship README](https://github.com/intervene-EU-H2020/flagship?tab=readme-ov-file#step-4a-run-script-generateprs_individualchrsh).  
+Run [GeneratePRS_IndividualChr.sh](https://github.com/intervene-EU-H2020/flagship/blob/main/PRS/GeneratePRS_IndividualChr.sh) to create the PGSs per chromosome for your Biobank. For more information on running this script see the [flagship README](https://github.com/intervene-EU-H2020/flagship?tab=readme-ov-file#step-4a-run-script-generateprs_individualchrsh).  
 #### Step 4b: run [PRSSummationOverChr.R](https://github.com/intervene-EU-H2020/flagship/blob/main/PRS/PRSSummationOverChr.R)
-Run [PRSSummationOverChr.R](https://github.com/intervene-EU-H2020/flagship/blob/main/PRS/PRSSummationOverChr.R) to sum over the per chromosome PRSs to create a total PRS for each trait in your Biobank. For more information on running this script see the [flagship README](https://github.com/intervene-EU-H2020/flagship?tab=readme-ov-file#step-4b-run-script-prssummationoverchrr).
+Run [PRSSummationOverChr.R](https://github.com/intervene-EU-H2020/flagship/blob/main/PRS/PRSSummationOverChr.R) to sum over the per chromosome PGSs to create a total PGS for each trait in your Biobank. For more information on running this script see the [flagship README](https://github.com/intervene-EU-H2020/flagship?tab=readme-ov-file#step-4b-run-script-prssummationoverchrr).
 
-## Step 5: Construct combined phenotype and polygenic risk score (PRS) R objects 
+## Step 5: Construct combined phenotype and polygenic score (PGS) R objects 
 ### Step 5a: Educational Attainment
 Run [DataPrep_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/DataPrep_EducationalAttainment.R) to create the EA-specific sample for each trait in your Biobank. Please make the following adjustments: 
-1. Line 51 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
-2. Line 54 - replace with the name of your biobank (don't include spaces in the biobank name)
-3. Line 64 - specify phenotype file location + filename
-4. Lines 67 + 76 - specify the location of the folder containing PRS weights
-5. Line 81 - please replace the identifier name with that used in your biobank.
-6. Lines 94-95 - if Educational Attainment has not been converted to ISCED 1997 from ISCED 2011, replace _"EDUCATION_11"_ in the code that creates the factor with the naming convention for ISCED 2011 education in your biobank; if Educational Attainment has already been converted to ISCED 1997 instead of ISCED 2011, replace it (if applicable) with code to make the ISCED 1997 variable a factor: 
+1. Line 50 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
+2. Line 53 - replace with the name of your biobank (don't include spaces in the biobank name)
+3. Line 63 - specify phenotype file location + filename
+4. Lines 66 + 75 - specify the location of the folder containing PGS weights
+5. Line 80 - please replace the identifier name with that used in your biobank.
+6. Lines 92-93 - if Educational Attainment has not been converted to ISCED 1997 from ISCED 2011, replace _"EDUCATION_11"_ in the code that creates the factor with the naming convention for ISCED 2011 education in your biobank; if Educational Attainment has already been converted to ISCED 1997 instead of ISCED 2011, replace it (if applicable) with code to make the ISCED 1997 variable a factor: 
 ```
 pheno$ISCED97 <- factor(pheno$ISCED97, levels = c(1,2,3,4,5,6), # remove the ISCED 1997 levels not available in your biobank
                     labels = c("ISCED 1","ISCED 2","ISCED 3","ISCED 4","ISCED 5", "ISCED 6)) # remove the ISCED 1997 not available in your biobank
 ```
-7. Lines 98-123 - Run if ISCED 2011 has not yet been recoded to ISCED 1997 (otherwise out-comment); remove the ISCED 1997 levels not available in your biobank
-8. Lines 132-134 - remove the ISCED 1997 levels not available in your biobank
-9. Line 150 - please replace the identifier names with those used in your biobank.
-10. Line 154 - if your biobank contains individuals of non-European ancestry/those that have principal components calculated for NON-EUROPEAN ancestry, i.e. within ancestry principal components, not global genetic principal components, please add code to only retain individuals of European ancestry after this line, for example,:
+7. Lines 96-122 - Run if ISCED 2011 has not yet been recoded to ISCED 1997 (otherwise out-comment); remove the ISCED 1997 levels not available in your biobank
+8. Lines 131-133 - remove the ISCED 1997 levels not available in your biobank
+9. Line 149 - please replace the identifier names with those used in your biobank.
+10. Line 154 - if your biobank contains individuals of non-European ancestry/those that have principal components calculated for NON-EUROPEAN ancestry, i.e., within ancestry principal components, not global genetic principal components, please add code to only retain individuals of European ancestry after this line (*In case of multiple ancestries in a Biobank, generate each file separately per ancestry, in which case the following has to be adapted to only retain the ancestry of interest*), for example,:
 ```
 pheno <- subset(pheno, ANCESTRY=='EUR')
 ```
-11. Lines 168-224 - Code assumes you have kept the same shorthand names for the phenotypes as within [FinnGen](https://docs.google.com/spreadsheets/d/1DNKd1KzI8WOIfG2klXWskbCSyX6h5gTu/edit#gid=334983519) (column B) and you have kept the same naming structure for the PRS files as when you downloaded them. Please adjust the names of the standard covariates before running this code if the current names do not match the naming convention in your biobank and add additional (technical) covariates as required. Remove any of the traits not applicable in your biobank (i.e., if the biobank was included in GWAS the summary statistics were based on, see Supplementary Table 4 of the [INTERVENE flagship preprint](https://doi.org/10.1101/2023.06.12.23291186).
-12. Line 261, 266, 278, 286, 296, 333, 340, 350, 353, 356, 412, 415, 418, 421, 426, 429, 432 + 435 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
-13. Lines 300 + 305 - add additional (technical) covariates if required
-14. Line 324-328 - If none of the PRSs have been flipped (e.g., all associations are positive) then you must out-comment these lines. 
-15. Lines 366-373 - remove birth decades _not_ present in your biobank and _add_ birth decades not included in the code that are included in your biobank. 
+11. Lines 167-223 - Code assumes you have kept the same shorthand names for the phenotypes as within [FinnGen](https://docs.google.com/spreadsheets/d/1DNKd1KzI8WOIfG2klXWskbCSyX6h5gTu/edit#gid=334983519) (column B) and you have kept the same naming structure for the PGS files as when you downloaded them. Please adjust the names of the standard covariates before running this code if the current names do not match the naming convention in your biobank and add additional (technical) covariates as required. Remove any of the traits not applicable in your biobank (i.e., if the biobank was included in GWAS the summary statistics were based on, see Supplementary Data 10 of the [INTERVENE flagship manuscript](https://doi.org/10.1038/s41467-024-48938-2).
+12. Line 260, 265, 277, 285, 295, 386 + 391 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
+13. Lines 299 + 304 - add additional (technical) covariates if required
+14. Line 323-327 - If none of the PGSs have been flipped (e.g., all associations are positive) then you must out-comment these lines. 
+15. Lines 343-350 - remove birth decades _not_ present in your biobank and _add_ birth decades not included in the code that are included in your biobank. 
 **16. Before writing the output to file, please check whether each subgroup for each trait has >=5 individuals!** Remove traits from the list if <5 individuals in a subgroup, e.g., with the following code: 
 ```
 Listname[c(x,y,z)] <- NULL # where x, y, and z are the shorthand names for the phenotypes as in FinnGen
 ```
-17. Lines 443, 445, 447 + 449 - specify the location you want to save the .Rdata files.  
-- Output files are "&#42;_INTERVENE_EducationalAttainment_dat.RData", "&#42;_INTERVENE_PGSgroup1_EducationalAttainment_dat.RData", "&#42;_INTERVENE_PGSgroup2_EducationalAttainment_dat.RData", and "&#42;_INTERVENE_PGSgroup3_EducationalAttainment_dat.RData".
+17. Lines 399 - specify the location you want to save the .Rdata file. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 400.*
+- Output files is "&#42;_INTERVENE_EducationalAttainment_dat.RData".
 
-### Step 5b: Occupation
-Run [DataPrep_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/DataPrep_Occupation.R) to create the occupation-specific sample for each trait in your Biobank. Please make the following adjustments: 
-1. Line 51 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line 
-2. Line 54 - replace with the name of your biobank (don't include spaces in the biobank name)
-3. Line 64 - specify phenotype file location + filename
-4. Line 68 - If not already included in the phenotype file, specify occupation file location + filename. Otherwise, out-comment this line.
-5. Lines 71 + 80 - specify the location of the folder containing PRS weights
-6. Line 85 - please replace the identifier name with that used in your biobank.
-7. Lines 99-125 - Replace the example coding (based on UKB data) with the codes relevant to your biobank and remove lines related to the occupation category not included in your biobank. _Note, that the UKB data does not include the "Self-employed" category._ If your biobank contains the information to categorize occupation information into a "Self-employed" class, please replace lines 116-117 with the following, where XX, YY, and ZZ are fictional codes in the relevant UKB field:
+### Step 5b: Educational Attainment - Split data into 80% training and 20% test for prediction models
+Run [DataPrep_EducationalAttainment_TrainTestSplit.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/DataPrep_EducationalAttainment_TrainTestSplit.R) to create the EA-specific samples (80% train + 20% test) for each trait in your Biobank. Please make the following adjustments: 
+1. Line 50 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
+2. Line 53 - replace with the name of your biobank (don't include spaces in the biobank name)
+3. Line 63 - specify phenotype file location + filename
+4. Lines 66 + 75 - specify the location of the folder containing PGS weights
+5. Line 80 - please replace the identifier name with that used in your biobank.
+6. Lines 92-93 - if Educational Attainment has not been converted to ISCED 1997 from ISCED 2011, replace _"EDUCATION_11"_ in the code that creates the factor with the naming convention for ISCED 2011 education in your biobank; if Educational Attainment has already been converted to ISCED 1997 instead of ISCED 2011, replace it (if applicable) with code to make the ISCED 1997 variable a factor: 
 ```
-	} 
-	else if(!is.na(dat$`20277-0.0`[i]) & (grepl("^XX", dat$`20277-0.0`[i]) | grepl("^YY", dat$`20277-0.0`[i]) | grepl("^ZZ", dat$`20277-0.0`[i]))) {
-	Occupation[i] <- "Self-employed"
-	}
-}
+pheno$ISCED97 <- factor(pheno$ISCED97, levels = c(1,2,3,4,5,6), # remove the ISCED 1997 levels not available in your biobank
+                    labels = c("ISCED 1","ISCED 2","ISCED 3","ISCED 4","ISCED 5", "ISCED 6)) # remove the ISCED 1997 not available in your biobank
 ```
-And adjust lines 120-121 as follows (alternatively, if not all occupation classes are present in your biobank remove those not included):
-```
-Occupation <- factor(Occupation, levels = c("Manual worker","Self-employed",
-                                            "Lower-level","Upper-level"))
-```
-8. Lines 128-131 - If occupation information has already been categorized, out-comment these lines, if occupation information has not been categorized, please replace the identifier names with those used in your biobank. 
-9. Line 134 - If occupation information has already been categorized, please replace _"phenos"_ with _"pheno"_, and replace the identifier names with those used in your biobank.
-10. Line 138 - if your biobank contains individuals of non-European ancestry/those that have principal components calculated for NON-EUROPEAN ancestry, i.e. within ancestry principal components, not global genetic principal components, please add code to only retain individuals of European ancestry after this line, for example,:
+7. Lines 96-122 - Run if ISCED 2011 has not yet been recoded to ISCED 1997 (otherwise out-comment); remove the ISCED 1997 levels not available in your biobank
+8. Lines 131-133 - remove the ISCED 1997 levels not available in your biobank
+9. Line 149 - please replace the identifier names with those used in your biobank.
+10. Line 154 - if your biobank contains individuals of non-European ancestry/those that have principal components calculated for NON-EUROPEAN ancestry, i.e. within ancestry principal components, not global genetic principal components, please add code to only retain individuals of European ancestry after this line, for example,:
 ```
 pheno <- subset(pheno, ANCESTRY=='EUR')
 ```
-11. Lines 152-208 - Code assumes you have kept the same shorthand names for the phenotypes as within [FinnGen](https://docs.google.com/spreadsheets/d/1DNKd1KzI8WOIfG2klXWskbCSyX6h5gTu/edit#gid=334983519) (column B) and you have kept the same naming structure for the PRS files as when you downloaded them. Please adjust the names of the standard covariates before running this code if the current names do not match the naming convention in your biobank and add additional (technical) covariates as required. Remove any of the traits not applicable in your biobank (i.e., if the biobank was included in GWAS the summary statistics were based on, see Supplementary Table 4 of the [INTERVENE flagship preprint](https://doi.org/10.1101/2023.06.12.23291186).
-12. Lines 245, 250, 265, 273, 281, 320, 326, 336, 339 + 342 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
-13. Lines 283 + 288 - add additional (technical) covariates if required
-14. Line 307-311 - If none of the PRSs have been flipped (e.g., all associations are positive) then you must out-comment these lines. 
+11. Lines 177-162 + 428-446 - Code assumes you have kept the same shorthand names for the phenotypes as within [FinnGen](https://docs.google.com/spreadsheets/d/1DNKd1KzI8WOIfG2klXWskbCSyX6h5gTu/edit#gid=334983519) (column B) and you have kept the same naming structure for the PGS files as when you downloaded them. Please adjust the names of the standard covariates before running this code if the current names do not match the naming convention in your biobank and add additional (technical) covariates as required. Remove any of the traits not applicable in your biobank (i.e., if the biobank was included in GWAS the summary statistics were based on, see Supplementary Data 10 of the [INTERVENE flagship manuscript](https://doi.org/10.1038/s41467-024-48938-2).
+12. Line 277, 282, 294, 302, 312, 403, 408, 450, 455, 467, 475, 485, 525 + 530 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
+13. Lines 316, 321, 489 + 494 - add additional (technical) covariates if required
+14. Lines 340-344 + 512-517 - If none of the PGSs have been flipped (e.g., all associations are positive) then you must out-comment these lines. 
+15. Lines 360-367 - remove birth decades _not_ present in your biobank and _add_ birth decades not included in the code that are included in your biobank. 
+**16. Before writing the output to file, please check whether each subgroup for each trait has >=5 individuals!** Remove traits from the list if <5 individuals in a subgroup, e.g., with the following code: 
+```
+Listname[c(x,y,z)] <- NULL # where x, y, and z are the shorthand names for the phenotypes as in FinnGen
+```
+17. Lines 416 + 538 - specify the locations you want to save the .Rdata files.  
+- Output files are "&#42;_INTERVENE_EducationalAttainment_dat_80percent.RData" and "&#42;_INTERVENE_EducationalAttainment_dat_20percent.RData".
+
+### Step 5c: Occupation
+Run [DataPrep_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/DataPrep_Occupation.R) to create the occupation-specific sample for each trait in your Biobank. Please make the following adjustments: 
+1. Line 52 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line 
+2. Line 55 - replace with the name of your biobank (don't include spaces in the biobank name)
+3. Line 65 - specify phenotype file location + filename
+4. Line 69 - If not already included in the phenotype file, specify occupation file location + filename. Otherwise, out-comment this line.
+5. Lines 72 + 81 - specify the location of the folder containing PGS weights
+6. Line 86 - please replace the identifier name with that used in your biobank.
+7. Lines 100-123 - Replace the example coding (based on UKB data) with the codes relevant to your biobank and remove lines related to the occupation category not included in your biobank. 
+8. Lines 126-129 - If occupation information has already been categorized, out-comment these lines, if occupation information has not been categorized, please replace the identifier names with those used in your biobank. 
+9. Line 132 - If occupation information has already been categorized, please replace _"phenos"_ with _"pheno"_, and replace the identifier names with those used in your biobank.
+10. Line 136 - if your biobank contains individuals of non-European ancestry/those that have principal components calculated for NON-EUROPEAN ancestry, i.e., within ancestry principal components, not global genetic principal components, please add code to only retain individuals of European ancestry after this line, for example,:
+```
+pheno <- subset(pheno, ANCESTRY=='EUR')
+```
+11. Lines 150-228 - Code assumes you have kept the same shorthand names for the phenotypes as within [FinnGen](https://docs.google.com/spreadsheets/d/1DNKd1KzI8WOIfG2klXWskbCSyX6h5gTu/edit#gid=334983519) (column B) and you have kept the same naming structure for the PGS files as when you downloaded them. Please adjust the names of the standard covariates before running this code if the current names do not match the naming convention in your biobank and add additional (technical) covariates as required. Remove any of the traits not applicable in your biobank (i.e., if the biobank was included in GWAS the summary statistics were based on, see Supplementary Data 10 of the [INTERVENE flagship manuscript](https://doi.org/10.1038/s41467-024-48938-2).
+12. Lines 243, 248, 260, 268 + 277 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
+13. Lines 281 + 286 - add additional (technical) covariates if required
+14. Line 305-309 - If none of the PGSs have been flipped (e.g., all associations are positive) then you must out-comment these lines. 
 
 **15. Before writing the output to file, please check whether each subgroup for each trait has >=5 individuals!** Remove traits from the list if <5 individuals in a subgroup, e.g., with the following code: 
 ```
 Listname[c(x,y,z)] <- NULL # where x, y, and z are the shorthand names for the phenotypes as in FinnGen
 ```
-16. Lines 350-357 - specify the location you want to save the .Rdata files.  
-- Output files are "&#42;_INTERVENE_Occupation_dat.RData", "&#42;_INTERVENE_PGSgroup1_Occupation_dat.RData", "&#42;_INTERVENE_PGSgroup2_Occupation_dat.RData", and "&#42;_INTERVENE_PGSgroup3_Occupation_dat.RData".
+16. Line 323 - specify the location you want to save the .Rdata file.  
+- Output file is "&#42;_INTERVENE_Occupation_dat.RData".
 
 ## Step 6: Calculate descriptives for each of the socioeconomic indices and trait combinations
 ### Step 6a: Educational Attainment
 Run [Descriptives_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/Descriptives_EducationalAttainment.R) to calculate the summary statistics on the phenotype files including Educational Attainment. Please make the following adjustments: 
-1. Line 50 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
-2. Line 53 - replace with the name of your biobank (don't include spaces in the biobank name)
-3. Lines 62-67 - specify file locations + filenames
-4. Line 149, 179, 207 + 235 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
-5. Lines 158-163, 188-193, 216-221 + 224-249  - if your Biobank was included in the prostate cancer GWASs or the number of individuals in any subgroup was <5, and you cannot investigate this trait, out-comment or remove these lines
-7. Lines 165-170, 195-200, 223-228 + 251-256 - if your Biobank was included in the breast cancer GWASs or the number of individuals in any subgroup was <5, and you cannot investigate this trait, out-comment or remove these lines
-6. Lines 173 + 265 - specify the location you want to save the descriptive files.  
-- Output files are  "&#42;_INTERVENE_EducationalAttainment_SampleDescriptives.txt" and "&#42;_INTERVENE_EducationalAttainment_SampleDescriptives_byPGS3group.txt"
+1. Line 49 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
+2. Line 52 - replace with the name of your biobank (don't include spaces in the biobank name)
+3. Line 61 - specify file location + filename
+4. Line 143 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
+5. Lines 152-157  - if your Biobank was included in the prostate cancer GWASs or the number of individuals in any subgroup was <5, and you cannot investigate this trait, out-comment or remove these lines
+7. Lines 159-164 - if your Biobank was included in the breast cancer GWASs or the number of individuals in any subgroup was <5, and you cannot investigate this trait, out-comment or remove these lines
+6. Line 164 - specify the location you want to save the descriptive file. *If the descriptives were generated for the 80-20% split files, change the file name on line 168 to reflect this by adding "_80percent" or "_20percent" at the end of the file name, respectively.*
+- Output files is  "&#42;_INTERVENE_EducationalAttainment_SampleDescriptives.txt"
 
 ### Step 6b: Occupation
 Run [Descriptives_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/Descriptives_Occupation.R) to calculate the summary statistics on the phenotype files including Occupation. Please make the following adjustments: 
 1. Line 50 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
 2. Line 53 - replace with the name of your biobank (don't include spaces in the biobank name)
-3. Lines 62-67 - specify file locations + filenames
-4. Lines 107-112 - remove lines related to the occupation categories not included in your biobank. As this example is based on UKB, _which does not include the "Self-employed" occupation class_, please add the following two lines of code if your biobank does include the "Self-employed" occupation class:
-```
-Ncontrols_Selfemployed <- sum(filelist$Occupation[which(filelist[,15]==0)]=="Self-employed")
-Ncases_Selfemployed <- sum(filelist$Occupation[which(filelist[,15]==1)]=="Self-employed")
-```
-5. Lines 115-117 - remove lines related to occupation categories not included in your biobank. As this example is based on UKB, _which does not include the "Self-employed" occupation class_, please add the following line of code if your biobank does include the "Self-employed" occupation class:
-```
-prevalence_Selfemployed <- round(Ncases_Selfemployed/(Ncases_Selfemployed+Ncontrols_Selfemployed)*100,2)
-```
-6. Lines 120-143 - remove lines related to occupation categories not included in your biobank. As this example is based on UKB, _which does not include the "Self-employed" occupation class_, please add the following two lines of code if your biobank does include the "Self-employed" occupation class:
-```
-Ncontrols_females_Selfemployed <- c(paste0(sum(filelist$SEX[which(filelist[,15]==0 & filelist$Occupation=="Self-employed")]==1), 
-                                             " (", 
-                                             round(prop.table(table(filelist$SEX[which(filelist[,15]==0 & filelist$Occupation=="Self-employed")]))[2]*100,1), 
-                                             "%)"))
-Ncases_females_Selfemployed <- c(paste0(sum(filelist$SEX[which(filelist[,15]==1 & filelist$Occupation=="Self-employed")]==1), 
-                                          " (", 
-                                          round(prop.table(table(filelist$SEX[which(filelist[,15]==1 & filelist$Occupation=="Self-employed")]))[2]*100,1), 
-                                          "%)"))
-```
-7. Lines 146-156 - remove lines related to occupation categories not included in your biobank. As this example is based on UKB, _which does not include the "Self-employed" occupation class_, please adjust the code if your biobank does include the "Self-employed" occupation class (example code now assumes all four occupation classes are present in your biobank):
-```
-dat <- as.data.frame(cbind(trait,Ncontrols,Ncases,Ncontrols_females,
-                             Ncases_females,prevalence,AgeOnset_q25,
-                             AgeOnstet_q50,AgeOnset_q75,AgeOnset_IQR,
-                             Followup_IQR,Followup_Median,Ncontrols_Manualworker,Ncases_Manualworker,
-                             Ncontrols_Selfemployed,Ncases_Selfemployed,Ncontrols_Lowerlevel,
-                             Ncases_Lowerlevel,Ncontrols_Upperlevel,Ncases_Upperlevel,
-                             prevalence_Manualworker,prevalence_Selfemployed,
-                             prevalence_Lowerlevel,prevalence_Upperlevel,
-                             Ncontrols_females_Manualworker,Ncases_females_Manualworker,
-                             Ncontrols_females_Selfemployed,Ncases_females_Selfemployed,
-                             Ncontrols_females_Lowerlevel,Ncases_females_Lowerlevel,
-                             Ncontrols_females_Upperlevel,Ncases_females_Upperlevel))
-```
-8. Line 163, 198, 231 + 264 - if running on a single core or a Rstudio session with automatic multi-threading, replace %dopar& with %do%
-9. Lines 172-179, 207-214, 240-247 + 273-280 - if your Biobank was included in the prostate cancer GWASs or the number of individuals in any subgroup was <5, and you cannot investigate this trait, out-comment or remove these lines
-10. Lines 181-188, 216-223, 249-256 + 282-289 - if your Biobank was included in the breast cancer GWASs or the number of individuals in any subgroup was <5, and you cannot investigate this trait, out-comment or remove these lines
-11. Lines 191 and 298 - specify the location you want to save the descriptive files.  
-- Output files are  "&#42;_INTERVENE_Occupation_SampleDescriptives.txt" and "&#42;_INTERVENE_Occupation_SampleDescriptives_byPGS3group.txt"
+3. Line 62 - specify file location + filename
+4. Line 144 - if running on a single core or a Rstudio session with automatic multi-threading, replace %dopar& with %do%
+5. Lines 153-158 - if your Biobank was included in the prostate cancer GWASs or the number of individuals in any subgroup was <5, and you cannot investigate this trait, out-comment or remove these lines
+6. Lines 160-165 - if your Biobank was included in the breast cancer GWASs or the number of individuals in any subgroup was <5, and you cannot investigate this trait, out-comment or remove these lines
+7. Line 168 - specify the location you want to save the descriptive file.  
+- Output files is  "&#42;_INTERVENE_Occupation_SampleDescriptives.txt"
 
 ## Step 7: Create plots of the distribution of the scaled polygenic scores by level of the socioeconomic index
 ### Step 7a: Educational Attainment
@@ -192,7 +176,7 @@ Run [ComparePGSDistribution_EducationalAttainment.R](https://github.com/interven
 1. Line 52 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
 2. Line 55 - replace with the name of your biobank (don't include spaces in the biobank name)
 3. Line 65 - specify phenotype file location + filename
-4. Lines 68 + 77 - specify the location of the folder containing PRS weights
+4. Lines 68 + 77 - specify the location of the folder containing PGS weights
 5. Line 82 - please replace the identifier name with that used in your biobank.
 6. Lines 95-96 - if Educational Attainment has not been converted to ISCED 1997 from ISCED 2011, replace _"EDUCATION_11"_ in the code that creates the factor with the naming convention for ISCED 2011 education in your biobank; if Educational Attainment has already been converted to ISCED 1997 instead of ISCED 2011, replace it (if applicable) with code to make the ISCED 1997 variable a factor: 
 ```
@@ -210,7 +194,7 @@ pheno <- subset(pheno, ANCESTRY=='EUR')
 - Output file is "&#42;_INTERVENE_FIG_CompareScaledPGSDistribution_ByEducationalAttainment.pdf".
 
 # Part 2: Biobank-specific analyses
-## Model 1: Determine the individual effect of the socioeconomic indices or trait-specific polygenic risk score (PRS) on disease risk
+## Model 1: Determine the individual effect of the socioeconomic indices or trait-specific polygenic score (PGS) on disease risk
 ### Model 1a SES effect, with Educational Attainment as the socioeconomic index
 Run [CoxPHmodel1a_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel1a_EducationalAttainment.R) to run the Cox proportional hazard models with age at disease onset as timescale, where EA is dichotomized into low vs high EA (reference = low EA), and include sex (except for prostate and breast cancer), birth decade and the first 5 genetic principal components (PCs) as covariates. Please make the following adjustments: 
 1. Line 51 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
@@ -219,7 +203,7 @@ Run [CoxPHmodel1a_EducationalAttainment.R](https://github.com/intervene-EU-H2020
 4. Lines 89, 115, 125, 135, 145,155 + 165 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
 5. Lines 181 - if you cannot run the analyses for prostate and breast cancer, rename _"modcoefffs.cox.model1a.sex"_ to _"modcoeffs.cox.model1a"_
 6. Lines 184-187 - if you cannot run the analyses for prostate and breast cancer, out-comment or remove these lines
-7. Line 190 - specify the location you want to save the model 1a output.  
+7. Line 190 - specify the location you want to save the model 1a output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 191.* 
 - Output file is "&#42;_INTERVENE_EducationalAttainment_CoxPH_model1a_Coeffs.txt"
 
 ### Model 1a SES effect, with Occupation as the socioeconomic index
@@ -233,8 +217,8 @@ Run [CoxPHmodel1a_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDis
 7. Line 189 - specify the location you want to save the model 1a output.  
 - Output file is "&#42;_INTERVENE_Occupation_CoxPH_model1a_Coeffs.txt"
 
-### Model 1b PRS effect, without Educational Attainment as the socioeconomic index
-Run [CoxPHmodel1b_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel1b_EducationalAttainment.R) to run the Cox proportional hazard models with age at disease onset as timescale, with the trait-specific PRS, sex (except for prostate and breast cancer), the first 10 genetic PCs, and birth decade as covariates. Please make the following adjustments: 
+### Model 1b PGS effect, without Educational Attainment as the socioeconomic index
+Run [CoxPHmodel1b_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel1b_EducationalAttainment.R) to run the Cox proportional hazard models with age at disease onset as timescale, with the trait-specific PGS, sex (except for prostate and breast cancer), the first 10 genetic PCs, and birth decade as covariates. Please make the following adjustments: 
 1. Line 51 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
 2. Line 54 - replace with the name of your biobank (don't include spaces in the biobank name)
 3. Line 63 - specify file location + filename
@@ -242,11 +226,11 @@ Run [CoxPHmodel1b_EducationalAttainment.R](https://github.com/intervene-EU-H2020
 5. Lines 90, 116, 126, 136, 146, 156 + 166 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
 6. Lines 182 + 188 - if you cannot run the analyses for prostate and breast cancer, rename _"modcoefffs.cox.model1b.sex"_ to _"modcoeffs.cox.model1b"_
 7. Lines 185-186 + 189-190 - if you cannot run the analyses for prostate and breast cancer, out-comment or remove these lines
-8. Line 193 - specify the location you want to save the model 1b output.  
+8. Line 193 - specify the location you want to save the model 1b output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 194.*  
 - Output file is "&#42;_INTERVENE_EducationalAttainment_CoxPH_model1b_Coeffs.txt"
 
-### Model 1b PRS effect, without Occupation as the socioeconomic index
-Run [CoxPHmodel1b_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel1b_Occupation.R) to run the Cox proportional hazard models with age at disease onset as timescale, with the trait-specific PRS, sex (except for prostate and breast cancer), the first 10 genetic PCs, and birth decade as covariates. Please make the following adjustments: 
+### Model 1b PGS effect, without Occupation as the socioeconomic index
+Run [CoxPHmodel1b_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel1b_Occupation.R) to run the Cox proportional hazard models with age at disease onset as timescale, with the trait-specific PGS, sex (except for prostate and breast cancer), the first 10 genetic PCs, and birth decade as covariates. Please make the following adjustments: 
 1. Line 51 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
 2. Line 54 - replace with the name of your biobank (don't include spaces in the biobank name)
 3. Line 63 - specify file location + filename
@@ -257,9 +241,9 @@ Run [CoxPHmodel1b_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDis
 8. Line 193 - specify the location you want to save the model 1b output.  
 - Output file is "&#42;_INTERVENE_Occupation_CoxPH_model1b_Coeffs.txt"
 
-## Model 2: Determine the effect of the socioeconomic indices and the trait-specific polygenic risk score (PRS) together on disease risk 
+## Model 2: Determine the effect of the socioeconomic indices and the trait-specific polygenic score (PGS) together on disease risk 
 ### Educational Attainment 
-Run [CoxPHmodel2_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel2_EducationalAttainment.R) to run the Cox proportional hazard models with age at disease onset as timescale, where EA is dichotomized into low vs high EA (reference = low EA), and include the trait-specific PRS, sex (except for prostate and breast cancer), birth decade and the first 10 genetic PCs as covariates. Please make the following adjustments: 
+Run [CoxPHmodel2_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel2_EducationalAttainment.R) to run the Cox proportional hazard models with age at disease onset as timescale, where EA is dichotomized into low vs high EA (reference = low EA), and include the trait-specific PGS, sex (except for prostate and breast cancer), birth decade and the first 10 genetic PCs as covariates. Please make the following adjustments: 
 1. Line 51 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
 2. Line 54 - replace with the name of your biobank (don't include spaces in the biobank name)
 3. Line 63 - specify file location + filename
@@ -267,11 +251,11 @@ Run [CoxPHmodel2_EducationalAttainment.R](https://github.com/intervene-EU-H2020/
 5. Lines 91, 117, 127, 137, 147, 157 + 167 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
 6. Lines 174 + 180 - if you cannot run the analyses for prostate and breast cancer, rename _"modcoefffs.cox.model2.sex"_ to _"modcoeffs.cox.model2"_
 7. Lines 186-187 + 190-191 - if you cannot run the analyses for prostate and breast cancer, out-comment or remove these lines
-8. Line 194 - specify the location you want to save the model 2 output.  
+8. Line 194 - specify the location you want to save the model 2 output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 195.*  
 - Output file is "&#42;_INTERVENE_EducationalAttainment_CoxPH_model2_Coeffs.txt"
 
 ### Occupation 
-Run [CoxPHmodel2_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel2_Occupation.R) to run the Cox proportional hazard models with age at disease onset as timescale, where occupation is classified into "Manual worker", "Lower-level", "Upper-level" and **(optional)** "Self-employed" (reference = Manual worker), and include the trait-specific PRS, sex (except for prostate and breast cancer), birth decade and the first 10 genetic PCs as covariates. Please make the following adjustments:
+Run [CoxPHmodel2_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel2_Occupation.R) to run the Cox proportional hazard models with age at disease onset as timescale, where occupation is classified into "Manual worker", "Lower-level", "Upper-level" and **(optional)** "Self-employed" (reference = Manual worker), and include the trait-specific PGS, sex (except for prostate and breast cancer), birth decade and the first 10 genetic PCs as covariates. Please make the following adjustments:
 1. Line 52 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
 2. Line 55 - replace with the name of your biobank (don't include spaces in the biobank name)
 3. Line 64 - specify file location + filename
@@ -282,9 +266,9 @@ Run [CoxPHmodel2_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDise
 8. Line 197 - specify the location you want to save the model 2 output.  
 - Output file is "&#42;_INTERVENE_Occupation_CoxPH_model2_Coeffs.txt"
 
-## Model 3: Determine the effect of the trait-specific polygenic risk score (PRS) stratified by level of the socioeconomic index on disease risk
+## Model 3: Determine the effect of the trait-specific polygenic score (PGS) stratified by level of the socioeconomic index on disease risk
 ### Educational Attainment
-Run [CoxPHmodel3_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel3_EducationalAttainment.R) to run the Education stratified (where EA is dichotomized into low vs high EA) Cox proportional hazard models with age at disease onset as timescale, and include the trait-specific PRS, sex (except for breast and prostate cancer), bith decade, and the first 10 genetic PCS as covariates. Please make the following adjustments: 
+Run [CoxPHmodel3_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel3_EducationalAttainment.R) to run the Education stratified (where EA is dichotomized into low vs high EA) Cox proportional hazard models with age at disease onset as timescale, and include the trait-specific PGS, sex (except for breast and prostate cancer), bith decade, and the first 10 genetic PCS as covariates. Please make the following adjustments: 
 1. Line 50 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
 2. Line 53 - replace with the name of your biobank (don't include spaces in the biobank name)
 3. Line 62 - specify file location + filename
@@ -293,51 +277,24 @@ Run [CoxPHmodel3_EducationalAttainment.R](https://github.com/intervene-EU-H2020/
 6. Lines 219-222 + lines 230-231 - if you cannot run the analyses for prostate and breast cancer, rename _"modcoefffs.cox.model3.sex.low"_ and _"modcoeffs.cox.model3.sex.high"_ to _"modcoeffs.cox.model3.low"_ and _"modcoeffs,cox.model3.high"_ 
 7. Lines 223-227 + lines 232-233 - if you cannot run the analyses for prostate and breast cancer, out-comment or remove these lines
 8. Line 234 - if you cannot run the analyses for prostate and breast cancer, remove _"modcoeffs.cox.model3.nosex.low"_ and _"modcoeffs.cox.model3.nosex.high"_
-9. Line 231 - specify the location you want to save the model 3 output.  
+9. Line 231 - specify the location you want to save the model 3 output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 238.*  
 - Output file is "&#42;_INTERVENE_EducationalAttainment_CoxPH_model3_Coeffs.txt"
 
 ### Occupation
-Run [CoxPHmodel3_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel3_Occupation.R) to run the Cox proportional hazard models with age at disease onset as timescale, where occupation is classified into "Manual worker", "Lower-level", "Upper-level" and **(optional)** "Self-employed" (reference = Manual worker), and include the trait-specific PRS by occupation level _(created in this script)_, sex (except for breast and prostate cancer), bith decade, and the first 10 genetic PCS as covariates. Please make the following adjustments:
-1. Line 50 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
-2. Line 53 - replace with the name of your biobank (don't include spaces in the biobank name)
-3. Line 62 - specify file location + filename
-4. Lines 75-77 - remove the lines related to the occupation categories not included in your biobank. As this example is based on UKB, _which does not include the "Self-employed" occupation class_, please adjust the code if your biobank does include the "Self-employed" occupation class:
-```
-Selfemployed <- ifelse(filelist$Occupation=="Self-employed", 1, 0)
-```
-5. Lines 80-82 - remove the lines related to the occupation categories not included in your biobank. As this example is based on UKB, _which does not include the "Self-employed" occupation class_, please adjust the code if your biobank does include the "Self-employed" occupation class:
-```
-GxSelfemployed <- filelist[,19] * Selfemployed
-```
-6. Line 85 - remove the occupation classes not included in your biobank. As this example is based on UKB, _which does not include the "Self-employed" occupation class_, please adjust the code if your biobank does include the "Self-employed" occupation class (the following example assumes all four occupation classes are present in your biobank):
-```
-out = cbind(GxManualworker,GxSelfemployed,GxLowerlevel,GxUpperlevel)
-```
-7. Lines 93, 98, 137, 163, 173, 183, 193, 203 + 213 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
-8. Line 104-107 - adjust _"21"_ to the total number of columns in the dataset before adding the new variables and remove occupation classes not included in your biobank. As this example is based on UKB, _which does not include the "Self-employed" occupation class_, please adjust the code if your biobank does include the "Self-employed" occupation class (the following example assumes all four occupation classes are present in your biobank):
-```
-for (i in 1:length(INTERVENE.list)) {
-  names(INTERVENE.list[[i]]) <- c(names(INTERVENE.list[[i]][1:21]),
-                                  "GxManualworker","GxSelfemployed","GxLowerlevel","GxUpperlevel")
-}
-```
-9. Lines 129-134 - add biobank-specific technical covariates if required and remove the occupation classes not included in your biobank. As this example is based on UKB, _which does not include the "Self-employed" occupation class_, please adjust the code if your biobank does include the "Self-employed" occupation class (the following example assumes all four occupation classes are present in your biobank):
-```
-mod3sex.formula <- paste0("GxManualworker + GxSelfemployed + GxLowerlevel + GxUpperlevel + 
-                          SEX + PC1 + PC2 + PC3 + PC4 + PC5 + 
-                          PC6 + PC7 + PC8 + PC9 + PC10")
-mod3nosex.formula <- paste0("GxManualworker + GxSelfemployed + GxLowerlevel + GxUpperlevel + 
-                          PC1 + PC2 + PC3 + PC4 + PC5 + 
-                          PC6 + PC7 + PC8 + PC9 + PC10")
-```
-10. Lines 229 - if you cannot run the analyses for prostate and breast cancer, rename _"modcoefffs.cox.model3.sex"_ to _"modcoeffs.cox.model3"_
-11. Lines 232-235 - if you cannot run the analyses for prostate and breast cancer, out-comment or remove these lines
-12. Line 238 - specify the location you want to save the model 3 output.  
+Run [CoxPHmodel3_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel3_Occupation.R) to run the Occupation stratified (where occupation is dichotomized into lower-level vs upper-level occupation) Cox proportional hazard models with age at disease onset as timescale, and include the trait-specific PGS, sex (except for breast and prostate cancer), bith decade, and the first 10 genetic PCS as covariates. Please make the following adjustments:
+1. Line 49 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
+2. Line 52 - replace with the name of your biobank (don't include spaces in the biobank name)
+3. Line 61 - specify file location + filename
+4. Lines 70, 75, 152, 162, 172, 182, 192 + 202 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
+5. Lines 113-114 - add biobank-specific technical covariates if required 
+10. Lines 218-221, 229-230 + 233 - if you cannot run the analyses for prostate and breast cancer, rename _"modcoefffs.cox.model3.sex.low"_ to _"modcoeffs.cox.model3.low"_ and _"modcoefffs.cox.model3.sex.high"_ to _"modcoeffs.cox.model3.high"_
+11. Lines 223-226 + 231-232 - if you cannot run the analyses for prostate and breast cancer, out-comment or remove these lines
+12. Line 239 - specify the location you want to save the model 3 output.  
 - Output file is "&#42;_INTERVENE_Occupation_CoxPH_model3_Coeffs.txt"
 
-## Model 4: Determine the effect of the socioeconomic index, the trait-specific polygenic risk score (PRS), and their interaction on disease risk
+## Model 4: Determine the effect of the socioeconomic index, the trait-specific polygenic score (PGS), and their interaction on disease risk
 ### Educational Attainment
-Run [CoxPHmodel4_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel4_EducationalAttainment.R) to run the Cox proportional hazard models with age at disease onset as timescale, where EA is dichotomized into low vs high EA (reference = low EA), and include EA, the trait-specific PRS, the EA * trait-specific PRS interaction, sex (except for prostate and breast cancer), the first 10 genetics PCs, and birth decade as covariates. Please make the following adjustments: 
+Run [CoxPHmodel4_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel4_EducationalAttainment.R) to run the Cox proportional hazard models with age at disease onset as timescale, where EA is dichotomized into low vs high EA (reference = low EA), and include EA, the trait-specific PGS, the EA * trait-specific PGS interaction, sex (except for prostate and breast cancer), the first 10 genetics PCs, and birth decade as covariates. Please make the following adjustments: 
 1. Line 51 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
 2. Line 54 - replace with the name of your biobank (don't include spaces in the biobank name)
 3. Line 63 - specify file location + filename
@@ -345,11 +302,11 @@ Run [CoxPHmodel4_EducationalAttainment.R](https://github.com/intervene-EU-H2020/
 5. Lines 93, 119, 129, 139, 149, 159 + 169 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
 6. Lines 185 + 191 - if you cannot run the analyses for prostate and breast cancer, rename _"modcoefffs.cox.model4.sex"_ to _"modcoeffs.cox.model4"_
 7. Lines 188-189 + 192-193 - if you cannot run the analyses for prostate and breast cancer, out-comment or remove these lines
-8. Line 196 - specify the location you want to save the model 4 output.  
+8. Line 196 - specify the location you want to save the model 4 output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 197.*  
 - Output file is "&#42;_INTERVENE_EducationalAttainment_CoxPH_model4_Coeffs.txt"
 
 ### Occupation
-Run [CoxPHmodel4_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel4_Occupation.R) to run the Cox proportional hazard models with age at disease onset as timescale, where occupation is classified into "Manual worker", "Lower-level", "Upper-level" and **(optional)** "Self-employed" (reference = Manual worker), and include occupation, the trait-specific PRS, the occupation * trait-specific PRS interaction, sex (except for prostate and breast cancer), the first 10 genetics PCs, and birth decade as covariates. Please make the following adjustments:
+Run [CoxPHmodel4_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel4_Occupation.R) to run the Cox proportional hazard models with age at disease onset as timescale, where occupation is classified into "Manual worker", "Lower-level", "Upper-level" and **(optional)** "Self-employed" (reference = Manual worker), and include occupation, the trait-specific PGS, the occupation * trait-specific PGS interaction, sex (except for prostate and breast cancer), the first 10 genetics PCs, and birth decade as covariates. Please make the following adjustments:
 1. Line 51 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
 2. Line 54 - replace with the name of your biobank (don't include spaces in the biobank name)
 3. Line 63 - specify file location + filename
@@ -360,55 +317,55 @@ Run [CoxPHmodel4_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDise
 8. Line 197 - specify the location you want to save the model 4 output.  
 - Output file is "&#42;_INTERVENE_Occupation_CoxPH_model4_Coeffs.txt"
 
-## Model 5: Determine the effect of the socioeconomic indices on disease risk in each of the three trait-specific polygenic risk score (PRS) groups
+## Model 5: Determine the effect of the socioeconomic indices on disease risk in each of the three trait-specific polygenic score (PGS) groups
 ### Educational Attainment
-Run [CoxPHmodel5_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel5_EducationalAttainment.R) to run the Cox proportional hazard models with age at disease onset as timescale, where EA is dichotomized into low vs high EA (reference = low EA), and include sex (except for prostate and breast cancer), birth decade, and the first 5 genetic PCs as covariates in each of the groups stratified by PRS ("<25%", "25-75%", and ">75%").  
+Run [CoxPHmodel5_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel5_EducationalAttainment.R) to run the Cox proportional hazard models with age at disease onset as timescale, where EA is dichotomized into low vs high EA (reference = low EA), and include sex (except for prostate and breast cancer), birth decade, and the first 5 genetic PCs as covariates in each of the groups stratified by PGS ("<25%", "25-75%", and ">75%").  
 **Please note that these analyses have been discontinued.**
 
 ### Occupation
-Run [CoxPHmodel5_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel5_Occupation.R) to run the Cox proportional hazard models with age at disease onset as timescale, where occupation is classified into "Manual worker", "Lower-level", "Upper-level" and (optional) "Self-employed" (reference = Manual worker), and include sex (except for prostate and breast cancer), birth decade, and the first 5 genetic PCs as covariates in each of the groups stratified by PRS ("<25%", "25-75%", and ">75%").  
+Run [CoxPHmodel5_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel5_Occupation.R) to run the Cox proportional hazard models with age at disease onset as timescale, where occupation is classified into "Manual worker", "Lower-level", "Upper-level" and (optional) "Self-employed" (reference = Manual worker), and include sex (except for prostate and breast cancer), birth decade, and the first 5 genetic PCs as covariates in each of the groups stratified by PGS ("<25%", "25-75%", and ">75%").  
 **Please note that these analyses have been discontinued.**
 
 
 # Part 3: Meta-analyses across biobank studies
 Please note that the meta-analysis scripts are only provided for Educational Attainment. 
-## Model 1: Meta-analyze the individual effect of the socioeconomic indices or trait-specific polygenic risk score (PRS) on disease risk
+## Model 1: Meta-analyze the individual effect of the socioeconomic indices or trait-specific polygenic score (PGS) on disease risk
 ### Model 1a SES effect, with Educational Attainment as the socioeconomic index
 Run [MetaAnalysismodel1a_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Meta-analyses/MetaAnalysismodel1a_EducationalAttainment.R) to run the fixed-effect meta-analysis across biobank studies using the beta coefficients from the Cox proportional hazard models with age at disease onset as timescale, where EA is dichotomized into low vs high EA (reference = low EA), and including sex (except for prostate and breast cancer), birth decade and the first 5 genetic principal components (PCs) as covariates. This script downloads the summary statistics per biobank study from Google Drive and also uploads the resulting meta-analysis to Google Drive. In this project, we meta-analysed across the FinnGen study, the UK Biobank, and Generation Scotland.
 - Output file is "&#42;_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model1a_anyN.csv"
 
-### Model 1b PRS effect, without Educational Attainment as the socioeconomic index
-Run [MetaAnalysismodel1b_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Meta-analyses/MetaAnalysismodel1b_EducationalAttainment.R) to run the fixed-effect meta-analysis across biobank studies using the beta coefficients from the Cox proportional hazard models with age at disease onset as timescale, with the trait-specific PRS, sex (except for prostate and breast cancer), the first 10 genetic PCs, and birth decade as covariates. This script downloads the summary statistics per biobank study from Google Drive and also uploads the resulting meta-analysis to Google Drive. In this project, we meta-analysed across the FinnGen study, the UK Biobank, and Generation Scotland.
+### Model 1b PGS effect, without Educational Attainment as the socioeconomic index
+Run [MetaAnalysismodel1b_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Meta-analyses/MetaAnalysismodel1b_EducationalAttainment.R) to run the fixed-effect meta-analysis across biobank studies using the beta coefficients from the Cox proportional hazard models with age at disease onset as timescale, with the trait-specific PGS, sex (except for prostate and breast cancer), the first 10 genetic PCs, and birth decade as covariates. This script downloads the summary statistics per biobank study from Google Drive and also uploads the resulting meta-analysis to Google Drive. In this project, we meta-analysed across the FinnGen study, the UK Biobank, and Generation Scotland.
 - Output file is "&#42;_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model1b_anyN.csv"
 
-## Model 2: Meta-analyze the effect of the socioeconomic indices and the trait-specific polygenic risk score (PRS) together on disease risk 
-Run [MetaAnalysismodel2_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Meta-analyses/MetaAnalysismodel2_EducationalAttainment.R) to run the fixed-effect meta-analysis across biobank studies using the beta coefficients from the Cox proportional hazard models with age at disease onset as timescale, where EA is dichotomized into low vs high EA (reference = low EA), and including the trait-specific PRS, sex (except for prostate and breast cancer), birth decade and the first 10 genetic PCs as covariates. This script downloads the summary statistics per biobank study from Google Drive and also uploads the resulting meta-analysis to Google Drive. In this project, we meta-analysed across the FinnGen study, the UK Biobank, and Generation Scotland.
+## Model 2: Meta-analyze the effect of the socioeconomic indices and the trait-specific polygenic score (PGS) together on disease risk 
+Run [MetaAnalysismodel2_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Meta-analyses/MetaAnalysismodel2_EducationalAttainment.R) to run the fixed-effect meta-analysis across biobank studies using the beta coefficients from the Cox proportional hazard models with age at disease onset as timescale, where EA is dichotomized into low vs high EA (reference = low EA), and including the trait-specific PGS, sex (except for prostate and breast cancer), birth decade and the first 10 genetic PCs as covariates. This script downloads the summary statistics per biobank study from Google Drive and also uploads the resulting meta-analysis to Google Drive. In this project, we meta-analysed across the FinnGen study, the UK Biobank, and Generation Scotland.
 - Output file is "&#42;_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model2_anyN.csv"
 
-## Compare the meta-analyzed effects of the socioeconomic indices and the trait-specific polygenic risk scores (PRS) as obtained from model 1 (unadjusted) with those obtained in model 2 (adjusted). 
+## Compare the meta-analyzed effects of the socioeconomic indices and the trait-specific polygenic scores (PGS) as obtained from model 1 (unadjusted) with those obtained in model 2 (adjusted). 
 Comparisons are done with two-sided Wald tests after Bonferroni correction for multiple testing of 19 phenotypes (p < 2.63x10-03).
-Run [MetaAnalysismodel1vs2differences_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Meta-analyses/MetaAnalysismodel1vs2differences_EducationalAttainment.R) to compare the meta-analyzed estimates from model 1 and model 2 to determine whether analyzing the socioeconomic indices and PRSs jointly significantly differ from analyzing them separately. This script downloads the summary statistics per biobank study and across biobank studies (meta-analysis) from Google Drive and also uploads the result of the comparisons to Google Drive. In this project, we meta-analysed across the FinnGen study, the UK Biobank, and Generation Scotland.
+Run [MetaAnalysismodel1vs2differences_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Meta-analyses/MetaAnalysismodel1vs2differences_EducationalAttainment.R) to compare the meta-analyzed estimates from model 1 and model 2 to determine whether analyzing the socioeconomic indices and PGSs jointly significantly differ from analyzing them separately. This script downloads the summary statistics per biobank study and across biobank studies (meta-analysis) from Google Drive and also uploads the result of the comparisons to Google Drive. In this project, we meta-analysed across the FinnGen study, the UK Biobank, and Generation Scotland.
 - Output file is "&#42;_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model1vs2_Differences.csv"
 
-## Model 3: Meta-analyze the effect of the trait-specific polygenic risk score (PRS) per level of the socioeconomic index on disease risk
-Run [MetaAnalysismodel3_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Meta-analyses/MetaAnalysismodel3_EducationalAttainment.R) to run the fixed-effect meta-analysis across biobank studies using the beta coefficients from the Cox proportional hazard models with age at disease onset as timescale, where EA is dichotomized into low vs high EA (reference = low EA), and including the trait-specific PRS by EA level _(created in this script)_, sex (except for breast and prostate cancer), bith decade, and the first 10 genetic PCS as covariates. This script downloads the summary statistics per biobank study from Google Drive and also uploads the resulting meta-analysis to Google Drive. In this project, we meta-analysed across the FinnGen study, the UK Biobank, and Generation Scotland.
+## Model 3: Meta-analyze the effect of the trait-specific polygenic score (PGS) per level of the socioeconomic index on disease risk
+Run [MetaAnalysismodel3_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Meta-analyses/MetaAnalysismodel3_EducationalAttainment.R) to run the fixed-effect meta-analysis across biobank studies using the beta coefficients from the Cox proportional hazard models with age at disease onset as timescale, where EA is dichotomized into low vs high EA (reference = low EA), and including the trait-specific PGS by EA level _(created in this script)_, sex (except for breast and prostate cancer), bith decade, and the first 10 genetic PCS as covariates. This script downloads the summary statistics per biobank study from Google Drive and also uploads the resulting meta-analysis to Google Drive. In this project, we meta-analysed across the FinnGen study, the UK Biobank, and Generation Scotland.
 - Output file is "&#42;_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model3_anyN.csv"
 
-## Compare the meta-analyzed effects the trait-specific polygenic risk score (PRS) per level of the socioeconomic index on disease risk between the levels of the socioeconomic index
+## Compare the meta-analyzed effects the trait-specific polygenic score (PGS) per level of the socioeconomic index on disease risk between the levels of the socioeconomic index
 Comparisons are done with two-sided Wald tests after Bonferroni correction for multiple testing of 19 phenotypes (p < 2.63x10-03).
-Run [MetaAnalysismodel3differences_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Meta-analyses/MetaAnalysismodel3differences_EducationalAttainment.R) to compare the meta-analyzed estimates effects the trait-specific polygenic risk score (PRS) per level of the socioeconomic index on disease risk between the levels of the socioeconomic index to determine whether the effect of the PRS differs significantly between the levels of the socioeconomic index. This script downloads the summary statistics per biobank study and across biobank studies (meta-analysis) from Google Drive and also uploads the result of the comparisons to Google Drive.   
+Run [MetaAnalysismodel3differences_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Meta-analyses/MetaAnalysismodel3differences_EducationalAttainment.R) to compare the meta-analyzed estimates effects the trait-specific polygenic score (PGS) per level of the socioeconomic index on disease risk between the levels of the socioeconomic index to determine whether the effect of the PGS differs significantly between the levels of the socioeconomic index. This script downloads the summary statistics per biobank study and across biobank studies (meta-analysis) from Google Drive and also uploads the result of the comparisons to Google Drive.   
 **Please note that these analyses have been discontinued.**
 
-## Model 4: Meta-analyze the effect of the socioeconomic index, the trait-specific polygenic risk score (PRS), and their interaction on disease risk
-Run [MetaAnalysismodel4_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Meta-analyses/MetaAnalysismodel4_EducationalAttainment.R) to run the fixed-effect meta-analysis across biobank studies using the beta coefficients from the Cox proportional hazard models with age at disease onset as timescale, where EA is dichotomized into low vs high EA (reference = low EA), and including EA, the trait-specific PRS, the EA * trait-specific PRS interaction, sex (except for prostate and breast cancer), the first 10 genetics PCs, and birth decade as covariates. This script downloads the summary statistics per biobank study from Google Drive and also uploads the resulting meta-analysis to Google Drive. In this project, we meta-analysed across the FinnGen study, the UK Biobank, and Generation Scotland.
+## Model 4: Meta-analyze the effect of the socioeconomic index, the trait-specific polygenic score (PGS), and their interaction on disease risk
+Run [MetaAnalysismodel4_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Meta-analyses/MetaAnalysismodel4_EducationalAttainment.R) to run the fixed-effect meta-analysis across biobank studies using the beta coefficients from the Cox proportional hazard models with age at disease onset as timescale, where EA is dichotomized into low vs high EA (reference = low EA), and including EA, the trait-specific PGS, the EA * trait-specific PGS interaction, sex (except for prostate and breast cancer), the first 10 genetics PCs, and birth decade as covariates. This script downloads the summary statistics per biobank study from Google Drive and also uploads the resulting meta-analysis to Google Drive. In this project, we meta-analysed across the FinnGen study, the UK Biobank, and Generation Scotland.
 - Output file is "&#42;_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model4_anyN.csv"
 
 ## Meta-analyze models 2 and 4 in the UK Biobank and Generation Scotland only
-Run [MetaAnalysismodel2and4_EducationalAttainment_UKB_GenScot_only.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Meta-analyses/MetaAnalysismodel2and4_EducationalAttainment_UKB_GenScot_only.R) to run the fixed-effect meta-analysis across biobank studies using the beta coefficients from the Cox proportional hazard models with age at disease onset as timescale, where EA is dichotomized into low vs high EA (reference = low EA), and including the trait-specific PRS, sex (except for prostate and breast cancer), birth decade and the first 10 genetic PCs as covariates (model 2) and to run the fixed-effect meta-analysis across biobank studies using the beta coefficients from the Cox proportional hazard models with age at disease onset as timescale, where EA is dichotomized into low vs high EA (reference = low EA), and including EA, the trait-specific PRS, the EA * trait-specific PRS interaction, sex (except for prostate and breast cancer), the first 10 genetics PCs, and birth decade as covariates (model 4). This script downloads the summary statistics per biobank study from Google Drive and also uploads the resulting meta-analysis to Google Drive. In this script, we only meta-analysed across the UK Biobank and Generation Scotland so we could use the resulting estimates to compare the predictive accuracy of model 2 vs. model 4 in the FinnGen study.  
+Run [MetaAnalysismodel2and4_EducationalAttainment_UKB_GenScot_only.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Meta-analyses/MetaAnalysismodel2and4_EducationalAttainment_UKB_GenScot_only.R) to run the fixed-effect meta-analysis across biobank studies using the beta coefficients from the Cox proportional hazard models with age at disease onset as timescale, where EA is dichotomized into low vs high EA (reference = low EA), and including the trait-specific PGS, sex (except for prostate and breast cancer), birth decade and the first 10 genetic PCs as covariates (model 2) and to run the fixed-effect meta-analysis across biobank studies using the beta coefficients from the Cox proportional hazard models with age at disease onset as timescale, where EA is dichotomized into low vs high EA (reference = low EA), and including EA, the trait-specific PGS, the EA * trait-specific PGS interaction, sex (except for prostate and breast cancer), the first 10 genetics PCs, and birth decade as covariates (model 4). This script downloads the summary statistics per biobank study from Google Drive and also uploads the resulting meta-analysis to Google Drive. In this script, we only meta-analysed across the UK Biobank and Generation Scotland so we could use the resulting estimates to compare the predictive accuracy of model 2 vs. model 4 in the FinnGen study.  
 **Please note that these analyses have been discontinued.**
 
-## Model 5: Meta-analyze the effect of the socioeconomic indices on disease risk in each of the three trait-specific polygenic risk score (PRS) groups
-Run [MetaAnalysismodel5_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Meta-analyses/MetaAnalysismodel5_EducationalAttainment.R) to run the fixed-effect meta-analysis across biobank studies using the beta coefficients from the Cox proportional hazard models with age at disease onset as timescale, where EA is dichotomized into low vs high EA (reference = low EA), and including sex (except for prostate and breast cancer), birth decade, and the first 5 genetic PCs as covariates in each of the groups stratified by PRS ("<25%", "25-75%", and ">75%"). This script downloads the summary statistics per biobank study from Google Drive and also uploads the resulting meta-analysis to Google Drive.   
+## Model 5: Meta-analyze the effect of the socioeconomic indices on disease risk in each of the three trait-specific polygenic score (PGS) groups
+Run [MetaAnalysismodel5_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Meta-analyses/MetaAnalysismodel5_EducationalAttainment.R) to run the fixed-effect meta-analysis across biobank studies using the beta coefficients from the Cox proportional hazard models with age at disease onset as timescale, where EA is dichotomized into low vs high EA (reference = low EA), and including sex (except for prostate and breast cancer), birth decade, and the first 5 genetic PCs as covariates in each of the groups stratified by PGS ("<25%", "25-75%", and ">75%"). This script downloads the summary statistics per biobank study from Google Drive and also uploads the resulting meta-analysis to Google Drive.   
 **Please note that these analyses have been discontinued.**
 
 # Part 4: Prediction comparison in each biobank study
@@ -448,10 +405,10 @@ Run [SupplementaryTables.R](https://github.com/intervene-EU-H2020/GxE_SESDisease
 ## (Supplemental) Figures: Scripts that create the Main Figures 1 and 2 and the supplemental figures depicting the results from this project. 
 Please note that Main Figures 1 and 2 are completed in InkScape after creating the base figures in R.
 
-Run [MainFigure1.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/MainFigure1.R) to create the base for Main Figure 1 in the manuscript, which contains 4 panels: A: meta-analyzed results model 1a; B: comparison meta-analyzed education results model 1a vs. model 2; C: meta-analyzed PRS results model 1b; D: comparison meta-analyzed PRS results model 1b vs. model 2.
+Run [MainFigure1.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/MainFigure1.R) to create the base for Main Figure 1 in the manuscript, which contains 4 panels: A: meta-analyzed results model 1a; B: comparison meta-analyzed education results model 1a vs. model 2; C: meta-analyzed PGS results model 1b; D: comparison meta-analyzed PGS results model 1b vs. model 2.
 - Output file is "&#42;_INTERVENE_SESDiffDiseases_MainFigure1.png"
 
-Run [MainFigure2.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/MainFigure2.R) to create the base for Main Figure 2 in the manuscript, which contains the meta-analyzed results of model 3, including the comparison of the PRS estimates between the education groups.
+Run [MainFigure2.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/MainFigure2.R) to create the base for Main Figure 2 in the manuscript, which contains the meta-analyzed results of model 3, including the comparison of the PGS estimates between the education groups.
 - Output file is "&#42;_INTERVENE_SESDiffDiseases_MainFigure2.png"
 
 Run [SupplementaryFigures.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/SupplementaryFigures.R) to create the four supplemental figures for the manuscript, namely: Figure S1: comparison of the hazard ratios per biobank study and the fixed-effect meta-analysis of model 1a and 1b; Figure S2: comparison of the hazard ratios per biobank study and the fixed-effect meta-analysis of model 2; Figure S3: comparison of the hazard ratios per biobank study and the fixed-effect meta-analysis of model 3; and Figure S4: comparison of the hazard ratios per biobank study and the fixed-effect meta-analysis of model 5.
