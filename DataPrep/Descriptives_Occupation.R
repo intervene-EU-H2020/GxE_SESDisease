@@ -16,8 +16,8 @@ rm(list=ls())
 # Required input data: biobank-specific INTERVENE combined phenotype and PGS
 # files
 #
-# Last edits: 19/04/2024 (FAH, edits: globalize script for use in other
-# INTERVENE biobanks and upload to GitHub)
+# Last edits: 19/06/2025 (FAH, edits: remove PGS groups and update code to 
+# reflect that occupation is now 2 groups: "lower-level" vs "upper-level")
 #
 ################################################################################
 
@@ -61,11 +61,6 @@ Biobank <- c("Biobank")
 # full sample
 load("[PathToPhenotypeFile/PhenotypeFile.RData]")
 
-# each of the 3 PRS groups
-load("[PathToPhenotypeFile/PhenotypeFile.RData]")
-load("[PathToPhenotypeFile/PhenotypeFile.RData]")
-load("[PathToPhenotypeFile/PhenotypeFile.RData]")
-
 
 ################################################################################
 #
@@ -104,27 +99,16 @@ desc.table.Occ <- function(filelist) {
   Followup_Median <- round(median((filelist$DATE_OF_BIRTH %--% filelist$END_OF_FOLLOWUP) / years(1)),2)
   
   # extract N per Occupation level for the controls and cases
-  Ncontrols_Manualworker <- sum(filelist$Occupation[which(filelist[,15]==0)]=="Manual worker")
-  Ncases_Manualworker <- sum(filelist$Occupation[which(filelist[,15]==1)]=="Manual worker")
   Ncontrols_Lowerlevel <- sum(filelist$Occupation[which(filelist[,15]==0)]=="Lower-level")
   Ncases_Lowerlevel <- sum(filelist$Occupation[which(filelist[,15]==1)]=="Lower-level")
   Ncontrols_Upperlevel <- sum(filelist$Occupation[which(filelist[,15]==0)]=="Upper-level")
   Ncases_Upperlevel <- sum(filelist$Occupation[which(filelist[,15]==1)]=="Upper-level")
   
   # calculate prevalences per EA level
-  prevalence_Manualworker <- round(Ncases_Manualworker/(Ncases_Manualworker+Ncontrols_Manualworker)*100,2)
   prevalence_Lowerlevel <- round(Ncases_Lowerlevel/(Ncases_Lowerlevel+Ncontrols_Lowerlevel)*100,2)
   prevalence_Upperlevel <- round(Ncases_Upperlevel/(Ncases_Upperlevel+Ncontrols_Upperlevel)*100,2)
   
   # extract N and % females for the controls and cases per EA level
-  Ncontrols_females_Manualworker <- c(paste0(sum(filelist$SEX[which(filelist[,15]==0 & filelist$Occupation=="Manual worker")]==1), 
-                                             " (", 
-                                             round(prop.table(table(filelist$SEX[which(filelist[,15]==0 & filelist$Occupation=="Manual worker")]))[2]*100,1), 
-                                             "%)"))
-  Ncases_females_Manualworker <- c(paste0(sum(filelist$SEX[which(filelist[,15]==1 & filelist$Occupation=="Manual worker")]==1), 
-                                          " (", 
-                                          round(prop.table(table(filelist$SEX[which(filelist[,15]==1 & filelist$Occupation=="Manual worker")]))[2]*100,1), 
-                                          "%)"))
   Ncontrols_females_Lowerlevel <- c(paste0(sum(filelist$SEX[which(filelist[,15]==0 & filelist$Occupation=="Lower-level")]==1), 
                                            " (", 
                                            round(prop.table(table(filelist$SEX[which(filelist[,15]==0 & filelist$Occupation=="Lower-level")]))[2]*100,1), 
@@ -146,12 +130,9 @@ desc.table.Occ <- function(filelist) {
   dat <- as.data.frame(cbind(trait,Ncontrols,Ncases,Ncontrols_females,
                              Ncases_females,prevalence,AgeOnset_q25,
                              AgeOnstet_q50,AgeOnset_q75,AgeOnset_IQR,
-                             Followup_IQR,Followup_Median,Ncontrols_Manualworker,
-                             Ncases_Manualworker,Ncontrols_Lowerlevel,
+                             Followup_IQR,Followup_Median,Ncontrols_Lowerlevel,
                              Ncases_Lowerlevel,Ncontrols_Upperlevel,
-                             Ncases_Upperlevel,prevalence_Manualworker,
-                             prevalence_Lowerlevel,prevalence_Upperlevel,
-                             Ncontrols_females_Manualworker,Ncases_females_Manualworker,
+                             Ncases_Upperlevel,prevalence_Lowerlevel,prevalence_Upperlevel,
                              Ncontrols_females_Lowerlevel,Ncases_females_Lowerlevel,
                              Ncontrols_females_Upperlevel,Ncases_females_Upperlevel))
   return(dat)
@@ -171,8 +152,6 @@ desc.table.comb <- rbindlist(desc.table.dat)
 # females, fix the % to reflect this
 desc.table.comb$Ncontrols_females[which(desc.table.comb$trait=="C3_PROSTATE")] <- paste0("0 (0%)")
 desc.table.comb$Ncases_females[which(desc.table.comb$trait=="C3_PROSTATE")] <- paste0("0 (0%)")
-desc.table.comb$Ncontrols_females_Manualworker[which(desc.table.comb$trait=="C3_PROSTATE")] <- paste0("0 (0%)")
-desc.table.comb$Ncases_females_Manualworker[which(desc.table.comb$trait=="C3_PROSTATE")] <- paste0("0 (0%)")
 desc.table.comb$Ncontrols_females_Lowerlevel[which(desc.table.comb$trait=="C3_PROSTATE")] <- paste0("0 (0%)")
 desc.table.comb$Ncases_females_Lowerlevel[which(desc.table.comb$trait=="C3_PROSTATE")] <- paste0("0 (0%)")
 desc.table.comb$Ncontrols_females_Upperlevel[which(desc.table.comb$trait=="C3_PROSTATE")] <- paste0("0 (0%)")
@@ -180,8 +159,6 @@ desc.table.comb$Ncases_females_Upperlevel[which(desc.table.comb$trait=="C3_PROST
 #
 desc.table.comb$Ncontrols_females[which(desc.table.comb$trait=="C3_BREAST")] <- paste0(sum(INTERVENE.list[["C3_BREAST"]]$SEX[which(INTERVENE.list[["C3_BREAST"]][,15]==0)]==1), " (100%)")
 desc.table.comb$Ncases_females[which(desc.table.comb$trait=="C3_BREAST")] <- paste0(sum(INTERVENE.list[["C3_BREAST"]]$SEX[which(INTERVENE.list[["C3_BREAST"]][,15]==1)]==1), " (100%)")
-desc.table.comb$Ncontrols_females_Manualworker[which(desc.table.comb$trait=="C3_BREAST")] <- paste0(sum(INTERVENE.list[["C3_BREAST"]]$SEX[which(INTERVENE.list[["C3_BREAST"]][,15]==0 & INTERVENE.list[["C3_BREAST"]]$Occupation=="Manual worker")]==1)," (100%)")
-desc.table.comb$Ncases_females_Manualworker[which(desc.table.comb$trait=="C3_BREAST")] <- paste0(sum(INTERVENE.list[["C3_BREAST"]]$SEX[which(INTERVENE.list[["C3_BREAST"]][,15]==1 & INTERVENE.list[["C3_BREAST"]]$Occupation=="Manual worker")]==1), " (100%)")
 desc.table.comb$Ncontrols_females_Lowerlevel[which(desc.table.comb$trait=="C3_BREAST")] <- paste0(sum(INTERVENE.list[["C3_BREAST"]]$SEX[which(INTERVENE.list[["C3_BREAST"]][,15]==0 & INTERVENE.list[["C3_BREAST"]]$Occupation=="Lower-level")]==1)," (100%)")
 desc.table.comb$Ncases_females_Lowerlevel[which(desc.table.comb$trait=="C3_BREAST")] <- paste0(sum(INTERVENE.list[["C3_BREAST"]]$SEX[which(INTERVENE.list[["C3_BREAST"]][,15]==1 & INTERVENE.list[["C3_BREAST"]]$Occupation=="Lower-level")]==1), " (100%)")
 desc.table.comb$Ncontrols_females_Upperlevel[which(desc.table.comb$trait=="C3_BREAST")] <- paste0(sum(INTERVENE.list[["C3_BREAST"]]$SEX[which(INTERVENE.list[["C3_BREAST"]][,15]==0 & INTERVENE.list[["C3_BREAST"]]$Occupation=="Upper-level")]==1)," (100%)")
@@ -190,111 +167,4 @@ desc.table.comb$Ncases_females_Upperlevel[which(desc.table.comb$trait=="C3_BREAS
 # write table with descriptives to output as tab-delimited text file
 write.table(desc.table.comb, file=paste0("[PathToOutputFolder/]",as.character(Sys.Date()),
                                          "_",Biobank,"_INTERVENE_Occupation_SampleDescriptives.txt"),
-            row.names=F, col.names = T, sep="\t",quote = F)
-
-## Group 1 ## 
-#create descriptive table in a foreach loop foreach of the 19 traits (function
-#from source code).
-desc.table.Group1 <- foreach(i=1:length(Group1)) %dopar% {
-  desc.table.Occ(filelist = Group1[[i]])
-}
-
-# combine separate descriptives tables into 1 big table
-desc.table.comb.Group1 <- rbindlist(desc.table.Group1)
-
-# as prostate cancer is only assessed in males and breast cancer only in
-# females, fix the % to reflect this
-desc.table.comb.Group1$Ncontrols_females[which(desc.table.comb.Group1$trait=="C3_PROSTATE")] <- paste0("0 (0%)")
-desc.table.comb.Group1$Ncases_females[which(desc.table.comb.Group1$trait=="C3_PROSTATE")] <- paste0("0 (0%)")
-desc.table.comb.Group1$Ncontrols_females_Manualworker[which(desc.table.comb.Group1$trait=="C3_PROSTATE")] <- paste0("0 (0%)")
-desc.table.comb.Group1$Ncases_females_Manualworker[which(desc.table.comb.Group1$trait=="C3_PROSTATE")] <- paste0("0 (0%)")
-desc.table.comb.Group1$Ncontrols_females_Lowerlevel[which(desc.table.comb.Group1$trait=="C3_PROSTATE")] <- paste0("0 (0%)")
-desc.table.comb.Group1$Ncases_females_Lowerlevel[which(desc.table.comb.Group1$trait=="C3_PROSTATE")] <- paste0("0 (0%)")
-desc.table.comb.Group1$Ncontrols_females_Upperlevel[which(desc.table.comb.Group1$trait=="C3_PROSTATE")] <- paste0("0 (0%)")
-desc.table.comb.Group1$Ncases_females_Upperlevel[which(desc.table.comb.Group1$trait=="C3_PROSTATE")] <- paste0("0 (0%)")
-#
-desc.table.comb.Group1$Ncontrols_females[which(desc.table.comb.Group1$trait=="C3_BREAST")] <- paste0(sum(Group1[["C3_BREAST"]]$SEX[which(Group1[["C3_BREAST"]][,15]==0)]==1), " (100%)")
-desc.table.comb.Group1$Ncases_females[which(desc.table.comb.Group1$trait=="C3_BREAST")] <- paste0(sum(Group1[["C3_BREAST"]]$SEX[which(Group1[["C3_BREAST"]][,15]==1)]==1), " (100%)")
-desc.table.comb.Group1$Ncontrols_females_Manualworker[which(desc.table.comb.Group1$trait=="C3_BREAST")] <- paste0(sum(Group1[["C3_BREAST"]]$SEX[which(Group1[["C3_BREAST"]][,15]==0 & Group1[["C3_BREAST"]]$Occupation=="Manual worker")]==1)," (100%)")
-desc.table.comb.Group1$Ncases_females_Manualworker[which(desc.table.comb.Group1$trait=="C3_BREAST")] <- paste0(sum(Group1[["C3_BREAST"]]$SEX[which(Group1[["C3_BREAST"]][,15]==1 & Group1[["C3_BREAST"]]$Occupation=="Manual worker")]==1), " (100%)")
-desc.table.comb.Group1$Ncontrols_females_Lowerlevel[which(desc.table.comb.Group1$trait=="C3_BREAST")] <- paste0(sum(Group1[["C3_BREAST"]]$SEX[which(Group1[["C3_BREAST"]][,15]==0 & Group1[["C3_BREAST"]]$Occupation=="Lower-level")]==1)," (100%)")
-desc.table.comb.Group1$Ncases_females_Lowerlevel[which(desc.table.comb.Group1$trait=="C3_BREAST")] <- paste0(sum(Group1[["C3_BREAST"]]$SEX[which(Group1[["C3_BREAST"]][,15]==1 & Group1[["C3_BREAST"]]$Occupation=="Lower-level")]==1), " (100%)")
-desc.table.comb.Group1$Ncontrols_females_Upperlevel[which(desc.table.comb.Group1$trait=="C3_BREAST")] <- paste0(sum(Group1[["C3_BREAST"]]$SEX[which(Group1[["C3_BREAST"]][,15]==0 & Group1[["C3_BREAST"]]$Occupation=="Upper-level")]==1)," (100%)")
-desc.table.comb.Group1$Ncases_females_Upperlevel[which(desc.table.comb.Group1$trait=="C3_BREAST")] <- paste0(sum(Group1[["C3_BREAST"]]$SEX[which(Group1[["C3_BREAST"]][,15]==1 & Group1[["C3_BREAST"]]$Occupation=="Upper-level")]==1), " (100%)")
-
-# adjust names of descriptive table
-names(desc.table.comb.Group1)[2:length(desc.table.comb.Group1)] <- gsub(".*^","Group1_",names(desc.table.comb.Group1)[2:length(desc.table.comb.Group1)])
-
-## Group 2 ## 
-#create descriptive table in a foreach loop foreach of the 19 traits (function
-#from source code).
-desc.table.Group2 <- foreach(i=1:length(Group2)) %dopar% {
-  desc.table.Occ(filelist = Group2[[i]])
-}
-
-# combine separate descriptives tables into 1 big table
-desc.table.comb.Group2 <- rbindlist(desc.table.Group2)
-
-# as prostate cancer is only assessed in males and breast cancer only in
-# females, fix the % to reflect this
-desc.table.comb.Group2$Ncontrols_females[which(desc.table.comb.Group2$trait=="C3_PROSTATE")] <- paste0("0 (0%)")
-desc.table.comb.Group2$Ncases_females[which(desc.table.comb.Group2$trait=="C3_PROSTATE")] <- paste0("0 (0%)")
-desc.table.comb.Group2$Ncontrols_females_Manualworker[which(desc.table.comb.Group2$trait=="C3_PROSTATE")] <- paste0("0 (0%)")
-desc.table.comb.Group2$Ncases_females_Manualworker[which(desc.table.comb.Group2$trait=="C3_PROSTATE")] <- paste0("0 (0%)")
-desc.table.comb.Group2$Ncontrols_females_Lowerlevel[which(desc.table.comb.Group2$trait=="C3_PROSTATE")] <- paste0("0 (0%)")
-desc.table.comb.Group2$Ncases_females_Lowerlevel[which(desc.table.comb.Group2$trait=="C3_PROSTATE")] <- paste0("0 (0%)")
-desc.table.comb.Group2$Ncontrols_females_Upperlevel[which(desc.table.comb.Group2$trait=="C3_PROSTATE")] <- paste0("0 (0%)")
-desc.table.comb.Group2$Ncases_females_Upperlevel[which(desc.table.comb.Group2$trait=="C3_PROSTATE")] <- paste0("0 (0%)")
-#
-desc.table.comb.Group2$Ncontrols_females[which(desc.table.comb.Group2$trait=="C3_BREAST")] <- paste0(sum(Group2[["C3_BREAST"]]$SEX[which(Group2[["C3_BREAST"]][,15]==0)]==1), " (100%)")
-desc.table.comb.Group2$Ncases_females[which(desc.table.comb.Group2$trait=="C3_BREAST")] <- paste0(sum(Group2[["C3_BREAST"]]$SEX[which(Group2[["C3_BREAST"]][,15]==1)]==1), " (100%)")
-desc.table.comb.Group2$Ncontrols_females_Manualworker[which(desc.table.comb.Group2$trait=="C3_BREAST")] <- paste0(sum(Group2[["C3_BREAST"]]$SEX[which(Group2[["C3_BREAST"]][,15]==0 & Group2[["C3_BREAST"]]$Occupation=="Manual worker")]==1)," (100%)")
-desc.table.comb.Group2$Ncases_females_Manualworker[which(desc.table.comb.Group2$trait=="C3_BREAST")] <- paste0(sum(Group2[["C3_BREAST"]]$SEX[which(Group2[["C3_BREAST"]][,15]==1 & Group2[["C3_BREAST"]]$Occupation=="Manual worker")]==1), " (100%)")
-desc.table.comb.Group2$Ncontrols_females_Lowerlevel[which(desc.table.comb.Group2$trait=="C3_BREAST")] <- paste0(sum(Group2[["C3_BREAST"]]$SEX[which(Group2[["C3_BREAST"]][,15]==0 & Group2[["C3_BREAST"]]$Occupation=="Lower-level")]==1)," (100%)")
-desc.table.comb.Group2$Ncases_females_Lowerlevel[which(desc.table.comb.Group2$trait=="C3_BREAST")] <- paste0(sum(Group2[["C3_BREAST"]]$SEX[which(Group2[["C3_BREAST"]][,15]==1 & Group2[["C3_BREAST"]]$Occupation=="Lower-level")]==1), " (100%)")
-desc.table.comb.Group2$Ncontrols_females_Upperlevel[which(desc.table.comb.Group2$trait=="C3_BREAST")] <- paste0(sum(Group2[["C3_BREAST"]]$SEX[which(Group2[["C3_BREAST"]][,15]==0 & Group2[["C3_BREAST"]]$Occupation=="Upper-level")]==1)," (100%)")
-desc.table.comb.Group2$Ncases_females_Upperlevel[which(desc.table.comb.Group2$trait=="C3_BREAST")] <- paste0(sum(Group2[["C3_BREAST"]]$SEX[which(Group2[["C3_BREAST"]][,15]==1 & Group2[["C3_BREAST"]]$Occupation=="Upper-level")]==1), " (100%)")
-
-# adjust names of descriptive table
-names(desc.table.comb.Group2)[2:length(desc.table.comb.Group2)] <- gsub(".*^","Group2_",names(desc.table.comb.Group2)[2:length(desc.table.comb.Group2)])
-
-## Group 3 ## 
-#create descriptive table in a foreach loop foreach of the 19 traits (function
-#from source code).
-desc.table.Group3 <- foreach(i=1:length(Group3)) %dopar% {
-  desc.table.Occ(filelist = Group3[[i]])
-}
-
-# combine separate descriptives tables into 1 big table
-desc.table.comb.Group3 <- rbindlist(desc.table.Group3)
-
-# as prostate cancer is only assessed in males and breast cancer only in
-# females, fix the % to reflect this
-desc.table.comb.Group3$Ncontrols_females[which(desc.table.comb.Group3$trait=="C3_PROSTATE")] <- paste0("0 (0%)")
-desc.table.comb.Group3$Ncases_females[which(desc.table.comb.Group3$trait=="C3_PROSTATE")] <- paste0("0 (0%)")
-desc.table.comb.Group3$Ncontrols_females_Manualworker[which(desc.table.comb.Group3$trait=="C3_PROSTATE")] <- paste0("0 (0%)")
-desc.table.comb.Group3$Ncases_females_Manualworker[which(desc.table.comb.Group3$trait=="C3_PROSTATE")] <- paste0("0 (0%)")
-desc.table.comb.Group3$Ncontrols_females_Lowerlevel[which(desc.table.comb.Group3$trait=="C3_PROSTATE")] <- paste0("0 (0%)")
-desc.table.comb.Group3$Ncases_females_Lowerlevel[which(desc.table.comb.Group3$trait=="C3_PROSTATE")] <- paste0("0 (0%)")
-desc.table.comb.Group3$Ncontrols_females_Upperlevel[which(desc.table.comb.Group3$trait=="C3_PROSTATE")] <- paste0("0 (0%)")
-desc.table.comb.Group3$Ncases_females_Upperlevel[which(desc.table.comb.Group3$trait=="C3_PROSTATE")] <- paste0("0 (0%)")
-#
-desc.table.comb.Group3$Ncontrols_females[which(desc.table.comb.Group3$trait=="C3_BREAST")] <- paste0(sum(Group3[["C3_BREAST"]]$SEX[which(Group3[["C3_BREAST"]][,15]==0)]==1), " (100%)")
-desc.table.comb.Group3$Ncases_females[which(desc.table.comb.Group3$trait=="C3_BREAST")] <- paste0(sum(Group3[["C3_BREAST"]]$SEX[which(Group3[["C3_BREAST"]][,15]==1)]==1), " (100%)")
-desc.table.comb.Group3$Ncontrols_females_Manualworker[which(desc.table.comb.Group3$trait=="C3_BREAST")] <- paste0(sum(Group3[["C3_BREAST"]]$SEX[which(Group3[["C3_BREAST"]][,15]==0 & Group3[["C3_BREAST"]]$Occupation=="Manual worker")]==1)," (100%)")
-desc.table.comb.Group3$Ncases_females_Manualworker[which(desc.table.comb.Group3$trait=="C3_BREAST")] <- paste0(sum(Group3[["C3_BREAST"]]$SEX[which(Group3[["C3_BREAST"]][,15]==1 & Group3[["C3_BREAST"]]$Occupation=="Manual worker")]==1), " (100%)")
-desc.table.comb.Group3$Ncontrols_females_Lowerlevel[which(desc.table.comb.Group3$trait=="C3_BREAST")] <- paste0(sum(Group3[["C3_BREAST"]]$SEX[which(Group3[["C3_BREAST"]][,15]==0 & Group3[["C3_BREAST"]]$Occupation=="Lower-level")]==1)," (100%)")
-desc.table.comb.Group3$Ncases_females_Lowerlevel[which(desc.table.comb.Group3$trait=="C3_BREAST")] <- paste0(sum(Group3[["C3_BREAST"]]$SEX[which(Group3[["C3_BREAST"]][,15]==1 & Group3[["C3_BREAST"]]$Occupation=="Lower-level")]==1), " (100%)")
-desc.table.comb.Group3$Ncontrols_females_Upperlevel[which(desc.table.comb.Group3$trait=="C3_BREAST")] <- paste0(sum(Group3[["C3_BREAST"]]$SEX[which(Group3[["C3_BREAST"]][,15]==0 & Group3[["C3_BREAST"]]$Occupation=="Upper-level")]==1)," (100%)")
-desc.table.comb.Group3$Ncases_females_Upperlevel[which(desc.table.comb.Group3$trait=="C3_BREAST")] <- paste0(sum(Group3[["C3_BREAST"]]$SEX[which(Group3[["C3_BREAST"]][,15]==1 & Group3[["C3_BREAST"]]$Occupation=="Upper-level")]==1), " (100%)")
-
-# adjust names of descriptive table
-names(desc.table.comb.Group3)[2:length(desc.table.comb.Group3)] <- gsub(".*^","Group3_",names(desc.table.comb.Group3)[2:length(desc.table.comb.Group3)])
-
-# combine into 1 dataset 
-desc.table.comb.all <- cbind(desc.table.comb.Group1,desc.table.comb.Group2,desc.table.comb.Group3)
-
-# write table with descriptives to output as tab-delimited text file
-write.table(desc.table.comb.all, file=paste0("[PathToOutputFolder/]",as.character(Sys.Date()),
-                                            "_",Biobank,"_INTERVENE_Occupation_SampleDescriptives_byPGS3group.txt"),
             row.names=F, col.names = T, sep="\t",quote = F)
