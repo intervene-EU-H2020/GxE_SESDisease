@@ -16,8 +16,7 @@ rm(list=ls())
 # Required input data: biobank-specific INTERVENE phenotype file and
 # biobank-specific INTERVENE PGS files
 #
-# Last edits: 18/04/2024 (FAH, edits: globalize script for use in other
-# INTERVENE biobanks and upload to GitHub)
+# Last edits: 19/06/2025 (FAH, edits: remove making the per PGS group data files)
 #
 ################################################################################
 
@@ -327,31 +326,9 @@ for (i in 1:length(INTERVENE.list)) {
   }
 }
 
-# Calculate PGS tertiles and create groups for each
-INTERVENE.tert <- foreach(i=1:length(INTERVENE.list)) %dopar% {
-  cut(x = INTERVENE.list[[i]][,20], breaks = quantile(INTERVENE.list[[i]][,20], probs = c(c(0,0.25),rev(1-c(0,0.25)))), include.lowest = T,
-      labels = paste("Group",1:(2*length(c(0,0.25))-1)))
-}
-
-# append the new tertile vector to the data frames for each trait
-INTERVENE.list <- foreach(i=1:length(INTERVENE.list)) %dopar% {
-  cbind(INTERVENE.list[[i]],PGS_group=INTERVENE.tert[[i]])
-}
-
 # scale PGS
 for (i in 1:length(INTERVENE.list)) {
   INTERVENE.list[[i]][,20] <- scale(INTERVENE.list[[i]][,20])
-}
-
-# split data by PGS strata
-Group1 <- foreach(i=1:length(INTERVENE.list)) %dopar% {
-  subset(INTERVENE.list[[i]],PGS_group=="Group 1")
-}
-Group2 <- foreach(i=1:length(INTERVENE.list)) %dopar% {
-  subset(INTERVENE.list[[i]],PGS_group=="Group 2")
-}
-Group3 <- foreach(i=1:length(INTERVENE.list)) %dopar% {
-  subset(INTERVENE.list[[i]],PGS_group=="Group 3")
 }
 
 # function to create birth decade variable, input is data frame per trait, use
@@ -409,42 +386,15 @@ calc.birthdecade <- function(dat) {
 INTERVENE.BIRTH <- foreach(i=1:length(INTERVENE.list)) %dopar% {
   calc.birthdecade(dat = INTERVENE.list[[i]]$DATE_OF_BIRTH)
 }
-Group1.BIRTH <- foreach(i=1:length(Group1)) %dopar% {
-  calc.birthdecade(dat = Group1[[i]]$DATE_OF_BIRTH)
-}
-Group2.BIRTH <- foreach(i=1:length(Group2)) %dopar% {
-  calc.birthdecade(dat = Group2[[i]]$DATE_OF_BIRTH)
-}
-Group3.BIRTH <- foreach(i=1:length(Group3)) %dopar% {
-  calc.birthdecade(dat = Group3[[i]]$DATE_OF_BIRTH)
-}
 
 # append the new birth decade vector to the data frames of each trait
 INTERVENE.list <- foreach(i=1:length(INTERVENE.list)) %dopar% {
   cbind(INTERVENE.list[[i]],birthdecade=INTERVENE.BIRTH[[i]])
 }
-Group1 <- foreach(i=1:length(Group1)) %dopar% {
-  cbind(Group1[[i]],birthdecade=Group1.BIRTH[[i]])
-}
-Group2 <- foreach(i=1:length(Group2)) %dopar% {
-  cbind(Group2[[i]],birthdecade=Group2.BIRTH[[i]])
-}
-Group3 <- foreach(i=1:length(Group3)) %dopar% {
-  cbind(Group3[[i]],birthdecade=Group3.BIRTH[[i]])
-}
 
 # add trait names to list items 
 names(INTERVENE.list) <- c(unlist(lapply(INTERVENE.list, function(x) { names(x)[15] })))
-names(Group1) <- c(unlist(lapply(Group1, function(x) { names(x)[15] })))
-names(Group2) <- c(unlist(lapply(Group2, function(x) { names(x)[15] })))
-names(Group3) <- c(unlist(lapply(Group3, function(x) { names(x)[15] })))
 
 # write datasets to file 
 save(INTERVENE.list, file = paste("[PathToOutputFolder/]", as.character(Sys.Date()),
                                   "_",Biobank,"_INTERVENE_EducationalAttainment_dat.RData",sep = ""))
-save(Group1, file = paste("[PathToOutputFolder/]", as.character(Sys.Date()),
-                          "_",Biobank,"_INTERVENE_PGSgroup1_EducationalAttainment_dat.RData",sep = ""))
-save(Group2, file = paste("[PathToOutputFolder/]", as.character(Sys.Date()),
-                          "_",Biobank,"_INTERVENE_PGSgroup2_EducationalAttainment_dat.RData",sep = ""))
-save(Group3, file = paste("[PathToOutputFolder/]", as.character(Sys.Date()),
-                          "_",Biobank,"_INTERVENE_PGSgroup3_EducationalAttainment_dat.RData",sep = ""))
