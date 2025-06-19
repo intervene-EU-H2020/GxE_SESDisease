@@ -17,8 +17,7 @@ rm(list=ls())
 # Required input data: biobank-specific INTERVENE combined phenotype and PGS
 # file
 #
-# Last edits: 19/04/2024 (FAH, edits: globalize script for use in other
-# INTERVENE biobanks and upload to GitHub)
+# Last edits: 19/06/2025 (FAH, edits: replace with traditional stratification)
 #
 ################################################################################
 
@@ -63,48 +62,33 @@ load("[PathToPhenotypeFile/PhenotypeFile.RData]")
 
 ###############################################################################
 #
-# Create new variables to assess the PGS per EA level (dummy variable per
-# Occupation level * PGS)
+# split data by occupation group to run stratified analyses
 #
 ################################################################################
 
-# function to code to create new variables to assess the PGS per Occupation level 
-# (dummy variable per Occupation level * PGS)
-calc.GxOcc <- function(filelist) {
-  # create dummy variables of the EA levels
-  Manualworker <- ifelse(filelist$Occupation=="Manual worker", 1, 0)
-  Lowerlevel <- ifelse(filelist$Occupation=="Lower-level", 1, 0)
-  Upperlevel <- ifelse(filelist$Occupation=="Upper-level", 1, 0)
-  
-  # create GxE variables, where the PGS is always the 19th column in FinnGen
-  GxManualworker <- filelist[,19] * Manualworker
-  GxLowerlevel <- filelist[,19] * Lowerlevel
-  GxUpperlevel <- filelist[,19] * Upperlevel
-  
-  # combine the new variables into a single data frame
-  out = cbind(GxManualworker,GxLowerlevel,GxUpperlevel)
-  
-  # function outputs the newly created variables in a data frame
-  return(out)
+# create list of dataframes containing the lower-level occupation data
+lowOCC <- foreach(i=1:length(INTERVENE.list)) %dopar% {
+  subset(INTERVENE.list[[i]], Occupation == "Lower-level")
 }
 
-# run function to create the GxE variables (from source file) in parallel foreach
-# loop for each of the 19 traits. 
-INTERVENE.GxOcc <- foreach(i=1:length(INTERVENE.list)) %dopar% {
-  calc.GxOcc(filelist = INTERVENE.list[[i]])
+# create list of dataframes containing the high educational attainment data
+highOCC <- foreach(i=1:length(INTERVENE.list)) %dopar% {
+  subset(INTERVENE.list[[i]], Occupation == "Upper-level")
 }
 
-# append the new GxE data frame to the data frame of each trait
-INTERVENE.list <- foreach(i=1:length(INTERVENE.list)) %dopar% {
-  cbind(INTERVENE.list[[i]],INTERVENE.GxOcc[[i]])
+# resulting dataframe may have empty birth decade levels. Remove these. 
+# function to drop empty levels
+clean_birthdecade <- function(df) {
+  df$birthdecade <- droplevels(df$birthdecade)
+  return(df)
 }
+# apply to both lists of dataframes
+lowOCC <- lapply(lowOCC, clean_birthdecade)
+highOCC <- lapply(highOCC, clean_birthdecade)
 
-# for some reason it does not automatically name the new variables this time, so
-# add new names manually (always check if necessary if rerunning script)
-for (i in 1:length(INTERVENE.list)) {
-  names(INTERVENE.list[[i]]) <- c(names(INTERVENE.list[[i]][1:21]),
-                                  "GxManualworker","GxLowerlevel","GxUpperlevel")
-}
+# add trait names to list items
+names(lowOCC) <- c(unlist(lapply(INTERVENE.list, function(x) { names(x)[15] })))
+names(highOCC) <- c(unlist(lapply(INTERVENE.list, function(x) { names(x)[15] })))
 
 
 ###############################################################################
@@ -116,34 +100,39 @@ for (i in 1:length(INTERVENE.list)) {
 ################################################################################
 
 # function to run Cox Proportional Hazards Models with multiple covariates
-cox.model <- function(filelist,covformula) {
-  fit <- coxph(as.formula(paste0("Surv(AGE,",names(filelist[15]),") ~ ",covformula)), 
+cox.model.PGS <- function(filelist,covformula) {
+  fit <- coxph(as.formula(paste0("Surv(AGE,",names(filelist[15]),") ~ ",
+                                 names(filelist[20])," + ",covformula)), 
                data =  filelist, na.action = na.exclude)
   return(fit)
 }
 
-# create the formula with the scaled GxE variables, the first 10 genetic PCs,
-# and sex as covariates, and one with the scaled GxE variable, and the first 10
-# genetic PCs as covariates (for running the analyses for prostate and breast
-# cancer)
-mod3sex.formula <- paste0("GxManualworker + GxLowerlevel + GxUpperlevel + 
-                          SEX + PC1 + PC2 + PC3 + PC4 + PC5 + 
-                          PC6 + PC7 + PC8 + PC9 + PC10")
-mod3nosex.formula <- paste0("GxManualworker + GxLowerlevel + GxUpperlevel + 
-                          PC1 + PC2 + PC3 + PC4 + PC5 + 
-                          PC6 + PC7 + PC8 + PC9 + PC10")
+# create the formula with the first 10 genetic PCs, birth decade, and sex as
+# covariates, and one with birth decade, and the first 10 genetic PCs as
+# covariates (for running the analyses for prostate and breast cancer)
+mod3sex.formula <- paste0("SEX + PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + PC7 + PC8 + PC9 + PC10 + birthdecade")
+mod3nosex.formula <- paste0("PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + PC7 + PC8 + PC9 + PC10  + birthdecade")
 
-# run Cox-PH model 3 in loop with foreach  in parallel for each of the 19 diseases.
-res.cox.model3 <- foreach(i=1:length(INTERVENE.list)) %dopar% {
-  if(names(INTERVENE.list[[i]][15])=="C3_PROSTATE" | names(INTERVENE.list[[i]][15])=="C3_BREAST") {
-    cox.model(filelist = INTERVENE.list[[i]],covformula = mod3nosex.formula)
+# run Cox-PH model 3 in loop with foreach  in parallel for each of the 19
+# diseases and both education groups.
+res.cox.model3.low <- foreach(i=1:length(lowOCC)) %do% {
+  if(names(lowOCC[[i]][15])=="C3_PROSTATE" | names(lowOCC[[i]][15])=="C3_BREAST") {
+    cox.model.PGS(filelist = lowOCC[[i]],covformula = mod3nosex.formula) 
   } else {
-    cox.model(filelist = INTERVENE.list[[i]],covformula = mod3sex.formula)
+    cox.model.PGS(filelist = lowOCC[[i]],covformula = mod3sex.formula)
+  }
+}
+res.cox.model3.high <- foreach(i=1:length(highOCC)) %do% {
+  if(names(highOCC[[i]][15])=="C3_PROSTATE" | names(highOCC[[i]][15])=="C3_BREAST") {
+    cox.model.PGS(filelist = highOCC[[i]],covformula = mod3nosex.formula) 
+  } else {
+    cox.model.PGS(filelist = highOCC[[i]],covformula = mod3sex.formula)
   }
 }
 
-# add trait names to list items 
-names(res.cox.model3) <- c(unlist(lapply(INTERVENE.list, function(x) { names(x)[15] })))
+# add trait names to list items for both lists
+names(res.cox.model3.low) <- c(unlist(lapply(lowOCC, function(x) { names(x)[15] })))
+names(res.cox.model3.high) <- c(unlist(lapply(highOCC, function(x) { names(x)[15] })))
 
 # function to extract coefficients from model output stored in a list and output
 # the coefficients as a data frame
@@ -225,14 +214,26 @@ extract.coeffs <- function(model.output,filelist) {
   return(out)
 }
 
-# extract model coefficients for each trait with sex as covariate
-modcoeffs.cox.model3.sex <- extract.coeffs(model.output = res.cox.model3[!names(res.cox.model3) %in% c("C3_PROSTATE","C3_BREAST")],
-                                           filelist = INTERVENE.list[!names(INTERVENE.list) %in% c("C3_PROSTATE","C3_BREAST")])
-# extract model coefficients for each trait without sex as covariate
-modcoeffs.cox.model3.nosex <- extract.coeffs(model.output = res.cox.model3[c("C3_PROSTATE","C3_BREAST")],
-                                             filelist = INTERVENE.list[c("C3_PROSTATE","C3_BREAST")])
+# extract model coefficients for each trait with sex as covariate for both lists
+modcoeffs.cox.model3.sex.low <- extract.coeffs(model.output = res.cox.model3.low[!names(res.cox.model3.low) %in% c("C3_PROSTATE","C3_BREAST")],
+                                           filelist = lowOCC[!names(lowOCC) %in% c("C3_PROSTATE","C3_BREAST")])
+modcoeffs.cox.model3.sex.high <- extract.coeffs(model.output = res.cox.model3.high[!names(res.cox.model3.high) %in% c("C3_PROSTATE","C3_BREAST")],
+                                               filelist = highOCC[!names(highOCC) %in% c("C3_PROSTATE","C3_BREAST")])
+# extract model coefficients for each trait without sex as covariate for both lists
+modcoeffs.cox.model3.nosex.low <- extract.coeffs(model.output = res.cox.model3.low[c("C3_PROSTATE","C3_BREAST")],
+                                             filelist = lowOCC[c("C3_PROSTATE","C3_BREAST")])
+modcoeffs.cox.model3.nosex.high <- extract.coeffs(model.output = res.cox.model3.high[c("C3_PROSTATE","C3_BREAST")],
+                                                 filelist = highOCC[c("C3_PROSTATE","C3_BROCCST")])
+
 #combine into single result data frame
-modcoeffs.cox.model3 <- rbind.fill(modcoeffs.cox.model3.sex,modcoeffs.cox.model3.nosex)
+names(modcoeffs.cox.model3.sex.low) <- gsub("^.*\\prs","PRS", names(modcoeffs.cox.model3.sex.low)) #rename prs variables columns
+names(modcoeffs.cox.model3.sex.high) <- gsub("^.*\\prs","PRS", names(modcoeffs.cox.model3.sex.high)) #rename prs variables columns
+names(modcoeffs.cox.model3.nosex.low) <- gsub("^.*\\prs","PRS", names(modcoeffs.cox.model3.nosex.low)) #rename prs variables columns
+names(modcoeffs.cox.model3.nosex.high) <- gsub("^.*\\prs","PRS", names(modcoeffs.cox.model3.nosex.high)) #rename prs variables columns
+modcoeffs.cox.model3 <- rbind.fill(modcoeffs.cox.model3.sex.low,modcoeffs.cox.model3.nosex.low,modcoeffs.cox.model3.sex.high,modcoeffs.cox.model3.nosex.high)
+
+# add column indicating from which model the results hail
+modcoeffs.cox.model3$Test <- c(rep("Lower-level",.5*nrow(modcoeffs.cox.model3)),rep("Upper-level",.5*nrow(modcoeffs.cox.model3)))
 
 # write table with model coefficients to output as tab-delimited text files
 write.table(modcoeffs.cox.model3, file=paste0("[PathToOutputFolder/]",as.character(Sys.Date()),
