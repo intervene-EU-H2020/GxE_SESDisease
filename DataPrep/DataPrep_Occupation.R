@@ -311,11 +311,6 @@ for (i in 1:length(INTERVENE.list)) {
 # remove unneeded files
 rm(glm.PGS.res.tab,glm.PGS.res)
 
-# append the new tertile vector to the data frames for each trait
-INTERVENE.list <- foreach(i=1:length(INTERVENE.list)) %dopar% {
-  cbind(INTERVENE.list[[i]],PGS_group=INTERVENE.tert[[i]])
-}
-
 # scale PGS
 for (i in 1:length(INTERVENE.list)) {
   INTERVENE.list[[i]][,19] <- scale(INTERVENE.list[[i]][,19])
