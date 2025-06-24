@@ -96,24 +96,11 @@ if (run_googledrive==TRUE) {
 FGR11.4 <- fread("output/GoogleDrive/FGR11/2024-03-13_FinnGenR11_INTERVENE_EducationalAttainment_CoxPH_model4_Coeffs.txt", data.table=FALSE)
 FGR11.4$Biobank <- "FinnGen"
 #
-UKB.4 <- fread("output/GoogleDrive/UKB/2024-04-04_UKB_INTERVENE_EducationalAttainment_CoxPH_model4_Coeffs.txt",data.table=FALSE)
+UKB.4 <- fread("output/GoogleDrive/UKB/2025-05-22_UKBiobank_EUR_INTERVENE_EducationalAttainment_CoxPH_model4_Coeffs.txt",data.table=FALSE)
 UKB.4$Biobank <- "UK Biobank"
 #
 GS.4 <- fread("output/GoogleDrive/GS/2024-07-04_GS_INTERVENE_EducationalAttainment_CoxPH_model4_Coeffs.txt",data.table=FALSE)
 GS.4$Biobank <- "Generation Scotland"
-
-
-################################################################################
-#
-# As current version of UKB results also includes the traits
-# where UKB was in the discovery GWAS, subset those data frames to only include
-# the traits where UKB was not in the discovery GWAS: "Type 1
-# Diabetes","Prostate Cancer","Gout","Rheumatoid Arthritis","Breast
-# Cancer","Epilepsy","Alcohol Use Disorder"
-#
-################################################################################
-
-UKB.4 <- UKB.4[which(UKB.4$trait %in% c("T1D","C3_PROSTATE","GOUT","RHEUMA_SEROPOS_OTH","C3_BREAST","G6_EPLEPSY","AUD_SWEDISH")),]
 
 
 ################################################################################
@@ -188,7 +175,7 @@ fwrite(metaresults.4, paste("output/2classEA/MetaAnalysis/FGR11_UKB_GS/model4/",
 ################################################################################
 
 # model 4
-drive_upload(media = "output/2classEA/MetaAnalysis/FGR11_UKB_GS/model4/2024-07-08_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model4_anyN.csv",
+drive_upload(media = "output/2classEA/MetaAnalysis/FGR11_UKB_GS/model4/2025-05-22_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model4_anyN.csv",
              path = as_id("1Wi0KDwGtnZoUclUgZwu7F_Dwj-6uvJYH"),
-             name = "2024-07-08_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model4_anyN.csv",
+             name = "2025-05-22_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model4.csv",
              type = "spreadsheet")
