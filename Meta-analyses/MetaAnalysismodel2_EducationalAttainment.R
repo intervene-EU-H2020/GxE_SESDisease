@@ -96,7 +96,7 @@ if (run_googledrive==TRUE) {
 FGR11.2 <- fread("output/GoogleDrive/FGR11/2024-03-13_FinnGenR11_INTERVENE_EducationalAttainment_CoxPH_model2_Coeffs.txt", data.table=FALSE)
 FGR11.2$Biobank <- "FinnGen"
 #
-UKB.2 <- fread("output/GoogleDrive/UKB/2024-04-04_UKB_INTERVENE_EducationalAttainment_CoxPH_model2_Coeffs.txt",data.table=FALSE)
+UKB.2 <- fread("output/GoogleDrive/UKB/2025-05-22_UKBiobank_EUR_INTERVENE_EducationalAttainment_CoxPH_model2_Coeffs.txt",data.table=FALSE)
 UKB.2$Biobank <- "UK Biobank"
 #
 GS.2 <- fread("output/GoogleDrive/GS/2024-07-04_GS_INTERVENE_EducationalAttainment_CoxPH_model2_Coeffs.txt",data.table=FALSE)
@@ -187,7 +187,7 @@ fwrite(metaresults.2, paste("output/2classEA/MetaAnalysis/FGR11_UKB_GS/model2/",
 #
 ################################################################################
 
-drive_upload(media = "output/2classEA/MetaAnalysis/FGR11_UKB_GS/model2/2024-07-08_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model2_anyN.csv",
+drive_upload(media = "output/2classEA/MetaAnalysis/FGR11_UKB_GS/model2/2025-05-22_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model2_anyN.csv",
              path = as_id("1Wi0KDwGtnZoUclUgZwu7F_Dwj-6uvJYH"),
-             name = "2024-07-08_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model2_anyN.csv",
+             name = "2025-05-22_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model2.csv",
              type = "spreadsheet")
