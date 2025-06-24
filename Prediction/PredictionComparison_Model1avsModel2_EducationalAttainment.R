@@ -20,11 +20,11 @@ rm(list=ls())
 #   1) biobank-specific INTERVENE combined phenotype file as created in the
 #   educational attainment DataPrep script
 #   (https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/DataPrep_EducationalAttainment.R)
-#   2) When predicting in 20% of the FinnGen study, the UK Biobank or Generation 
-#   Scotland: the output of the Cox Proportional Hazard models 2 and 4 based 80%
-#   of the FinnGen study (download output files with suffix 
-#   "*_INTERVENE_SESDiffDiseases_Coeffs_CoxPH_model*_FinnGenR11_80percent.txt"
-#   from: https://drive.google.com/drive/folders/1nmUJUz0vupaEiWCNk4gBM5U6G3VyNmbB?usp=sharing)
+#   2) When predicting in 20% of the FinnGen study or the UK Biobank: 
+#   the output of the logistic regression models 1a and 2 based 80% of the 
+#   FinnGen study (download output files with suffix 
+#   "*_INTERVENE_SESDiffDiseases_Coeffs_glm_by_model*_FinnGenR11_80percent"
+#   from: https://drive.google.com/drive/folders/1pxDlg6Mt610pdBChhRt8Tx2A7DgUtIdw?usp=sharing)
 #
 # Last edits: 10/04/2025 (edits, FAH: final checks and minor tweaks prior to
 # upload to GitHub)
@@ -74,7 +74,7 @@ load("[PathToPhenotypeFile/PhenotypeFile]")
 
 ## Read model results ##
 
-# read in model 1
+# read in model 1a
 FGR11.1a <- fread("[PathToCoxOutputModel1a/CoxOutputModel1aFile]", data.table=FALSE)
 
 # read in model 2
@@ -87,62 +87,95 @@ FGR11.2 <- fread("[PathToCoxOutputModel2/CoxOutputModel2File]", data.table=FALSE
 #
 ################################################################################
 
-# vector with traits in Biobank
-trait <- unique(c(unlist(lapply(INTERVENE.list, function(x) { names(x)[15] }))))
-
-# from model results only retain overlapping traits
-FGR11.1a <- FGR11.1a[which(FGR11.1a$trait %in% trait),]
-FGR11.2 <- FGR11.2[which(FGR11.2$trait %in% trait),]
-
 # reorganize into long format
-FGR11.1along <- data.frame(trait = c(FGR11.1a$trait),
-                           beta = c(FGR11.1a$EAhigh_beta),
-                           se = c(FGR11.1a$EAhigh_se))
-FGR11.2long <- data.frame(trait = c(rep(FGR11.2$trait,2)),
-                          beta = c(FGR11.2$EAhigh_beta,FGR11.2$PRS_beta),
-                          se = c(FGR11.2$EAhigh_se,FGR11.2$PRS_se),
-                          Test = c(rep(c("EA","PRS"),each=nrow(FGR11.2))))
+FGR11.1a.bylong <- data.frame(trait = c(rep(FGR11.1a.by$trait,3)),
+                             beta = c(FGR11.1a.by$EAhigh_beta,FGR11.1a.by$SEX_beta,FGR11.1a.by$birth_year_beta),
+                             se = c(FGR11.1a.by$EAhigh_se,FGR11.1a.by$SEX_se,FGR11.1a.by$birth_year_se),
+                             Test = c(rep("Education",nrow(FGR11.1a.by)),rep("SEX",nrow(FGR11.1a.by)),
+                                      rep("birth_year",nrow(FGR11.1a.by))))
+FGR11.2.bylong <- data.frame(trait = c(rep(FGR11.2.by$trait,4)),
+                            beta = c(FGR11.2.by$EAhigh_beta,FGR11.2.by$PRS_beta,FGR11.2.by$SEX_beta,
+                                     FGR11.2.by$birth_year_beta),
+                            se = c(FGR11.2.by$EAhigh_se,FGR11.2.by$PRS_se,FGR11.2.by$SEX_se,
+                                   FGR11.2.by$birth_year_se),
+                            Test = c(rep("Education",nrow(FGR11.2.by)),rep("PGS",nrow(FGR11.2.by)),
+                                     rep("SEX",nrow(FGR11.2.by)),
+                                     rep("birth_year",nrow(FGR11.2.by))))
 
 # split long format model by trait into lists
 FGR11.1a.list <- split(FGR11.1along,FGR11.1along$trait)
 FGR11.2.list <- split(FGR11.2long,FGR11.2long$trait)
 
-# Compute risk scores from betas of Cox model from 80% FinnGen
-INTERVENE.list_score_1a <- foreach(i=trait) %dopar% {
-  exp(FGR11.1a.list[[i]]$beta * (as.numeric(INTERVENE.list[[i]]$EA)-1))
+# add trait names to list items
+names(FGR11.1a.by.list) <- c(unlist(lapply(FGR11.1a.by.list, function(x) { x$trait[1] })))
+names(FGR11.2.by.list) <- c(unlist(lapply(FGR11.2.by.list, function(x) { x$trait[1] })))
+
+# reorder individual level data list to match trait order in results
+INTERVENE.list <- INTERVENE.list[c("AUD_SWEDISH","C3_BREAST","C3_BRONCHUS_LUNG","C3_CANCER","C3_COLORECTAL",
+                                   "C3_MELANOMA_SKIN","C3_PROSTATE","COX_ARTHROSIS","F5_DEPRESSIO","G6_EPLEPSY",
+                                   "GOUT","I9_AF","I9_CHD","J10_ASTHMA","K11_APPENDACUT","KNEE_ARTHROSIS",
+                                   "RHEUMA_SEROPOS_OTH","T1D","T2D")]
+
+# function to extract birth year
+extract_birth_year <- function(filelist, date_col = "DATE_OF_BIRTH") {
+  lapply(filelist, function(df) {
+    df$birth_year <- as.numeric(format(as.Date(df[[date_col]]), "%Y"))
+    return(df)
+  })
 }
-INTERVENE.list_score_2 <- foreach(i=trait) %dopar% {
-  exp(FGR11.2.list[[i]]$beta[1] * (as.numeric(INTERVENE.list[[i]]$EA)-1) + 
-        FGR11.2.list[[i]]$beta[2] * INTERVENE.list[[i]][20])
+
+#run function to extract birth year
+INTERVENE.list <- extract_birth_year(INTERVENE.list)
+
+# add trait names to list items 
+names(INTERVENE.list) <- c(unlist(lapply(INTERVENE.list, function(x) { names(x)[15] })))
+
+# vector with traits in Biobanks
+trait <- unique(c(unlist(lapply(INTERVENE.list, function(x) { names(x)[15] }))))
+
+# Compute risk scores from betas of Cox model from 80% FinnGen
+INTERVENE.list_score_1a_by <- foreach(i=trait) %dopar% {
+  exp(FGR11.1a.by.list[[i]]$beta[which(FGR11.1a.by.list[[i]]$Test=="Education")] * (as.numeric(INTERVENE.list[[i]]$EA)-1) + 
+        if (!is.na(FGR11.1a.by.list[[i]]$beta[which(FGR11.1a.by.list[[i]]$Test=="SEX")])) FGR11.1a.by.list[[i]]$beta[which(FGR11.1a.by.list[[i]]$Test=="SEX")] * (as.numeric(INTERVENE.list[[i]]$SEX)) else 0 + 
+        FGR11.1a.by.list[[i]]$beta[which(FGR11.1a.by.list[[i]]$Test=="birth_year")] * INTERVENE.list[[i]]$birth_year)
+}
+INTERVENE.list_score_2_by <- foreach(i=trait) %dopar% {
+  exp(FGR11.2.by.list[[i]]$beta[which(FGR11.2.by.list[[i]]$Test=="Education")] * (as.numeric(INTERVENE.list[[i]]$EA)-1) +
+        FGR11.2.by.list[[i]]$beta[which(FGR11.2.by.list[[i]]$Test=="PGS")] * INTERVENE.list[[i]][20] + 
+        if (!is.na(FGR11.2.by.list[[i]]$beta[which(FGR11.2.by.list[[i]]$Test=="SEX")])) FGR11.2.by.list[[i]]$beta[which(FGR11.2.by.list[[i]]$Test=="SEX")] * (as.numeric(INTERVENE.list[[i]]$SEX)) else 0 + 
+        FGR11.2.by.list[[i]]$beta[which(FGR11.2.by.list[[i]]$Test=="birth_year")] * INTERVENE.list[[i]]$birth_year)
 }
 
 # add trait names to list items 
-names(FGR11.1a.list) <- trait
-names(INTERVENE.list_score_2) <- trait
+names(INTERVENE.list_score_1a_by) <- trait
+names(INTERVENE.list_score_2_by) <- trait
 
 # Normalize risk scores to range [0,1] (needed for NRI/IDI)
-INTERVENE.list_score_1an <- foreach(i=trait) %dopar% {
-  (INTERVENE.list_score_1a[[i]] - min(INTERVENE.list_score_1a[[i]])) / (max(INTERVENE.list_score_1a[[i]]) - min(INTERVENE.list_score_1a[[i]]))
+INTERVENE.list_score_1an_by <- foreach(i=trait) %dopar% {
+  (INTERVENE.list_score_1a_by[[i]] - min(INTERVENE.list_score_1a_by[[i]])) / (max(INTERVENE.list_score_1a_by[[i]]) - min(INTERVENE.list_score_1a_by[[i]]))
 }
-INTERVENE.list_score_2n <- foreach(i=trait) %dopar% {
-  (INTERVENE.list_score_2[[i]] - min(INTERVENE.list_score_2[[i]])) / (max(INTERVENE.list_score_2[[i]]) - min(INTERVENE.list_score_2[[i]]))
+INTERVENE.list_score_2n_by <- foreach(i=trait) %dopar% {
+  (INTERVENE.list_score_2_by[[i]] - min(INTERVENE.list_score_2_by[[i]])) / (max(INTERVENE.list_score_2_by[[i]]) - min(INTERVENE.list_score_2_by[[i]]))
 }
 
 # the column is now named after the PRS change that to reflect the score
-for (i in 1:length(INTERVENE.list_score_1an)) {
-  names(INTERVENE.list_score_1an[[i]]) <- "score_1a"
+for (i in 1:length(INTERVENE.list_score_1an_by)) {
+  names(INTERVENE.list_score_1an_by[[i]]) <- "score_1a_by"
 }
-for (i in 1:length(INTERVENE.list_score_2n)) {
-  names(INTERVENE.list_score_2n[[i]]) <- "score_2"
+for (i in 1:length(INTERVENE.list_score_2n_by)) {
+  names(INTERVENE.list_score_2n_by[[i]]) <- "score_2_by"
 }
 
 # add scores to biobank data
 INTERVENE.list <- foreach(i=1:length(INTERVENE.list)) %dopar% {
-  cbind(INTERVENE.list[[i]],score_1a=INTERVENE.list_score_1an[[i]])
+  cbind(INTERVENE.list[[i]],score_1a_by=INTERVENE.list_score_1an_by[[i]])
 }
 INTERVENE.list <- foreach(i=1:length(INTERVENE.list)) %dopar% {
-  cbind(INTERVENE.list[[i]],score_2=INTERVENE.list_score_2n[[i]])
+  cbind(INTERVENE.list[[i]],score_2_by=INTERVENE.list_score_2n_by[[i]])
 }
+
+# add trait names to list items 
+names(INTERVENE.list) <- c(unlist(lapply(INTERVENE.list, function(x) { names(x)[15] })))
 
 
 ################################################################################
@@ -152,16 +185,20 @@ INTERVENE.list <- foreach(i=1:length(INTERVENE.list)) %dopar% {
 ################################################################################
 
 # Compute AUC for both models
-auc_1a <- foreach(i=1:length(INTERVENE.list)) %dopar% {
-  roc(INTERVENE.list[[i]][,15], INTERVENE.list[[i]]$score_1a, ci = TRUE)
+auc_1a_by <- foreach(i=1:length(INTERVENE.list)) %dopar% {
+  if(names(INTERVENE.list[i]) %in% c("C3_CANCER")) {
+    roc(INTERVENE.list[[i]][,15], INTERVENE.list[[i]]$score_1a_by, ci = TRUE, direction=">")
+  } else {
+    roc(INTERVENE.list[[i]][,15], INTERVENE.list[[i]]$score_1a_by, ci = TRUE)
+  }
 }
-auc_2 <- foreach(i=1:length(INTERVENE.list)) %dopar% {
-  roc(INTERVENE.list[[i]][,15], INTERVENE.list[[i]]$score_2, ci = TRUE)
+auc_2_by <- foreach(i=1:length(INTERVENE.list)) %dopar% {
+  roc(INTERVENE.list[[i]][,15], INTERVENE.list[[i]]$score_2_by, ci = TRUE)
 }
 
 # Compare AUCs using DeLong test
-auc_test <- foreach(i=1:length(INTERVENE.list)) %dopar% {
-  roc.test(auc_1a[[i]], auc_2[[i]])
+auc_test1a2_by <- foreach(i=1:length(INTERVENE.list)) %dopar% {
+  roc.test(auc_1a_by[[i]], auc_2_by[[i]])
 }
 
 # function to extract AUCs
@@ -206,10 +243,10 @@ extract_auc_comparison <- function(roc_list, trait_vector) {
 
 
 # extract AUCs
-auc_comparison_table <- extract_auc_comparison(roc_list = auc_test, trait_vector = trait)
+auc1a2_by_comparison_table <- extract_auc_comparison(roc_list = auc_test1a2_by, trait_vector = trait)
 
 # write table with model AUC to output as tab-delimited text files
-write.table(auc_comparison_table, file=paste0("[PathToOutputFolder/]",as.character(Sys.Date()),
+write.table(auc1a2_by_comparison_table, file=paste0("[PathToOutputFolder/]",as.character(Sys.Date()),
                                                   "_",Biobank,"_INTERVENE_EducationalAttainment_AUCcomparison_Model1a-2.txt"),
             row.names=F, col.names = T, sep="\t",quote = F)
 
@@ -222,8 +259,8 @@ write.table(auc_comparison_table, file=paste0("[PathToOutputFolder/]",as.charact
 # Compute percentile ranks for risk scores (required for continuous NRI)
 INTERVENE.list <- lapply(INTERVENE.list, function(df) {
   df %>%
-  mutate(score_1a_rank = percent_rank(score_1a),
-         score_2_rank = percent_rank(score_2))
+  mutate(score_1a_by_rank = percent_rank(score_1a_by),
+         score_2_by_rank = percent_rank(score_2_by))
 })
   
 
@@ -235,8 +272,8 @@ compute_nri_idi <- function(data_list, trait_names) {
     trait_name <- trait_names[i]  # Extract trait name
     
     # Convert ranked probabilities to numeric
-    x <- as.numeric(data$score_1a_rank)  # Reference model
-    y <- as.numeric(data$score_2_rank)  # New model
+    x <- as.numeric(data$score_1a_by_rank)  # Reference model
+    y <- as.numeric(data$score_2_by_rank)  # New model
     
     # Compute NRI and IDI
     nri_results <- improveProb(x, y, data[,15])
