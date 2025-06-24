@@ -105,19 +105,6 @@ GS.1b$Biobank <- "Generation Scotland"
 
 ################################################################################
 #
-# As current version of UKB results also includes the traits
-# where UKB was in the discovery GWAS, subset those data frames to only include
-# the traits where UKB was not in the discovery GWAS: "Type 1
-# Diabetes","Prostate Cancer","Gout","Rheumatoid Arthritis","Breast
-# Cancer","Epilepsy","Alcohol Use Disorder"
-#
-################################################################################
-
-UKB.1b <- UKB.1b[which(UKB.1b$trait %in% c("T1D","C3_PROSTATE","GOUT","RHEUMA_SEROPOS_OTH","C3_BREAST","G6_EPLEPSY","AUD_SWEDISH")),]
-
-
-################################################################################
-#
 # Combine FGR11 & UKB results
 #
 ################################################################################
