@@ -423,7 +423,7 @@ Run [SupplementaryTables.R](https://github.com/intervene-EU-H2020/GxE_SESDisease
 ## (Supplemental) Figures: Scripts that create the Main Figures 1 and 2 and the supplemental figures depicting the results from this project. 
 Please note that Main Figures 1 and 2 are completed in InkScape after creating the base figures in R.
 
-Run [MainFigure1.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/MainFigure1.R) to create the base for Main Figure 1 in the manuscript, which contains 4 panels: A: meta-analyzed results model 1a; B: comparison meta-analyzed education results model 1a vs. model 2; C: meta-analyzed PGS results model 1b; D: comparison meta-analyzed PGS results model 1b vs. model 2.
+Run [MainFigure1.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/MainFigure1.R) to create the base for Main Figure 1 in the manuscript, which contains 2 panels: A: meta-analyzed results model 1b; B: meta-analyzed PGS results model 1a.
 - Output file is "&#42;_INTERVENE_SESDiffDiseases_MainFigure1.png"
 
 Run [MainFigure2.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/MainFigure2.R) to create the base for Main Figure 2 in the manuscript, which contains the meta-analyzed results of model 3, including the comparison of the PGS estimates between the education groups.
