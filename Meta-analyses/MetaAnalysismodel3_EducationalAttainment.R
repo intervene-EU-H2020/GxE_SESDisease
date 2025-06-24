@@ -94,28 +94,26 @@ if (run_googledrive==TRUE) {
 
 
 # read in model 3
-FGR11.3 <- fread("output/GoogleDrive/FGR11/2024-03-13_FinnGenR11_INTERVENE_EducationalAttainment_CoxPH_model3_Coeffs.txt", data.table=FALSE)
+FGR11.3 <- fread("output/GoogleDrive/FGR11/2025-02-07_FinnGenR11_INTERVENE_EducationalAttainment_CoxPH_model3_Coeffs.txt", data.table=FALSE)
 FGR11.3$Biobank <- "FinnGen"
 #
-UKB.3 <- fread("output/GoogleDrive/UKB/2024-04-04_UKB_INTERVENE_EducationalAttainment_CoxPH_model3_Coeffs.txt",data.table=FALSE)
+UKB.3 <- fread("output/GoogleDrive/UKB/2025-05-22_UKBiobank_EUR_INTERVENE_EducationalAttainment_CoxPH_model3_Coeffs.txt",data.table=FALSE)
 UKB.3$Biobank <- "UK Biobank"
 #
-GS.3 <- fread("output/GoogleDrive/GS/2024-07-04_GS_INTERVENE_EducationalAttainment_CoxPH_model3_Coeffs.txt",data.table=FALSE)
+GS.3 <- fread("output/GoogleDrive/GS/2025-02-24_GS_INTERVENE_EducationalAttainment_CoxPH_model3_Coeffs.txt",data.table=FALSE)
+GS.3$Test <- c(rep("LowEA",length(unique(GS.3$trait))),rep("HighEA",length(unique(GS.3$trait)))) # in initial script shared with GS forgot a line of code to add this, so now add it manually.
 GS.3$Biobank <- "Generation Scotland"
 
 
 ################################################################################
 #
-# As current version of UKB results also includes the traits
-# where UKB was in the discovery GWAS, subset those data frames to only include
-# the traits where UKB was not in the discovery GWAS: "Type 1
-# Diabetes","Prostate Cancer","Gout","Rheumatoid Arthritis","Breast
-# Cancer","Epilepsy","Alcohol Use Disorder"
+# Updated results for model 3 in Generation Scotland included "Rheumatoid
+# arthritis" which we previously determined the sample size was too small to
+# perform the analyses in. Remove this trait prior to the meta-analysis
 #
 ################################################################################
 
-UKB.3 <- UKB.3[which(UKB.3$trait %in% c("T1D","C3_PROSTATE","GOUT","RHEUMA_SEROPOS_OTH","C3_BREAST","G6_EPLEPSY","AUD_SWEDISH")),]
-
+GS.3 <- GS.3[-which(GS.3$trait %in% c("RHEUMA_SEROPOS_OTH")),]
 
 ################################################################################
 #
@@ -124,21 +122,21 @@ UKB.3 <- UKB.3[which(UKB.3$trait %in% c("T1D","C3_PROSTATE","GOUT","RHEUMA_SEROP
 ################################################################################
 
 # create long format to include both EA and PRS effect
-FGR11.3long <- data.frame(trait = c(rep(FGR11.3$trait,2)),
-                          beta = c(FGR11.3$GxlowEA_beta,FGR11.3$GxhighEA_beta),
-                          se = c(FGR11.3$GxlowEA_se,FGR11.3$GxhighEA_se),
-                          Test = c(rep(c("lowEA","highEA"),each=nrow(FGR11.3))),
-                          Biobank = c(rep(FGR11.3$Biobank,2)))
-UKB.3long <- data.frame(trait = c(rep(UKB.3$trait,2)),
-                        beta = c(UKB.3$GxlowEA_beta,UKB.3$GxhighEA_beta),
-                        se = c(UKB.3$GxlowEA_se,UKB.3$GxhighEA_beta),
-                        Test = c(rep(c("lowEA","highEA"),each=nrow(UKB.3))),
-                        Biobank = c(rep(UKB.3$Biobank,2)))
-GS.3long <- data.frame(trait = c(rep(GS.3$trait,2)),
-                        beta = c(GS.3$GxlowEA_beta,GS.3$GxhighEA_beta),
-                        se = c(GS.3$GxlowEA_se,GS.3$GxhighEA_beta),
-                        Test = c(rep(c("lowEA","highEA"),each=nrow(GS.3))),
-                        Biobank = c(rep(GS.3$Biobank,2)))
+FGR11.3long <- data.frame(trait = c(FGR11.3$trait),
+                          beta = c(FGR11.3$PRS_beta),
+                          se = c(FGR11.3$PRS_se),
+                          Test = c(FGR11.3$Test),
+                          Biobank = c(FGR11.3$Biobank))
+UKB.3long <- data.frame(trait = c(UKB.3$trait),
+                        beta = c(UKB.3$PRS_beta),
+                        se = c(UKB.3$PRS_se),
+                        Test = c(UKB.3$Test),
+                        Biobank = c(UKB.3$Bioban))
+GS.3long <- data.frame(trait = c(GS.3$trait),
+                        beta = c(GS.3$PRS_beta),
+                        se = c(GS.3$PRS_se),
+                        Test = c(GS.3$Test),
+                        Biobank = c(GS.3$Biobank))
 #combine datasets
 all.3 <- rbind(FGR11.3long,UKB.3long,GS.3long)
 
@@ -188,8 +186,8 @@ fwrite(metaresults.3, paste("output/2classEA/MetaAnalysis/FGR11_UKB_GS/model3/",
 #
 ################################################################################
 
-drive_upload(media = "output/2classEA/MetaAnalysis/FGR11_UKB_GS/model3/2024-07-08_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model3_anyN.csv",
+drive_upload(media = "output/2classEA/MetaAnalysis/FGR11_UKB_GS/model3/2025-05-22_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model3_anyN.csv",
              path = as_id("1Wi0KDwGtnZoUclUgZwu7F_Dwj-6uvJYH"),
-             name = "2024-07-08_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model3_anyN.csv",
+             name = "2025-05-22_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model3.csv",
              type = "spreadsheet")
 
