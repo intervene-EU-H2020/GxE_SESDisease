@@ -21,7 +21,7 @@ rm(list=ls())
 #   educational attainment DataPrep script
 #   (https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/DataPrep_EducationalAttainment.R)
 #   2) When predicting in 20% of the FinnGen study or the UK Biobank: 
-#   the output of the logistic regression models 1a and 2 based 80% of the 
+#   the output of the logistic regression models 1b and 2 based 80% of the 
 #   FinnGen study (download output files with suffix 
 #   "*_INTERVENE_SESDiffDiseases_Coeffs_glm_by_model*_FinnGenR11_80percent"
 #   from: https://drive.google.com/drive/folders/1pxDlg6Mt610pdBChhRt8Tx2A7DgUtIdw?usp=sharing)
