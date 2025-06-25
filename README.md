@@ -193,6 +193,7 @@ pheno <- subset(pheno, ANCESTRY=='EUR')
 17. Line 192 - specify the location you want to save the plots.  
 - Output file is "&#42;_INTERVENE_FIG_CompareScaledPGSDistribution_ByEducationalAttainment.pdf".
 
+
 # Part 2: Biobank-specific analyses
 ## Model 1: Determine the individual effect of the socioeconomic indices or trait-specific polygenic score (PGS) on disease risk
 ### Model 1a SES effect, with Educational Attainment as the socioeconomic index
@@ -368,6 +369,7 @@ Run [MetaAnalysismodel2and4_EducationalAttainment_UKB_GenScot_only.R](https://gi
 Run [MetaAnalysismodel5_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Meta-analyses/MetaAnalysismodel5_EducationalAttainment.R) to run the fixed-effect meta-analysis across biobank studies using the beta coefficients from the Cox proportional hazard models with age at disease onset as timescale, where EA is dichotomized into low vs high EA (reference = low EA), and including sex (except for prostate and breast cancer), birth decade, and the first 5 genetic PCs as covariates in each of the groups stratified by PGS ("<25%", "25-75%", and ">75%"). This script downloads the summary statistics per biobank study from Google Drive and also uploads the resulting meta-analysis to Google Drive.   
 **Please note that these analyses have been discontinued.**
 
+
 # Part 4: Absolute Risk Estimation
 Absolute risk estimation is only performed in the FinnGen study.
 ## Step 1: Extract mortality, prevalence, and incidence of the 19 complex diseases from the 2019 Global Burden of Disease (GBD) Study 
@@ -386,16 +388,93 @@ Run [AbsoluteRiskEstimation_Bootstrap_EducationalAttainment.R](https://github.co
 ### Occupation
 Run [AbsoluteRiskEstimation_Bootstrap_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/AbsoluteRiskEstimation/AbsoluteRiskEstimation_Bootstrap_Occupation.R) to calculate confidence intervals for the cumulative risk incidences obtained in step 2. Aside from the mortality, prevalence, and incidence of the complex diseases from the 2019 GBD study as obtained in step 1and cumulative incidences as obtained in step 2, this script also requires the results of the PGS-stratified Cox Proportional Hazard models in FinnGen (see ADD REF).
 
+
 # Part 5: Prediction comparison in each biobank study
-## Compare prediction model 0a vs model 1a
+## Step 1: Logistic regression models in 80% training data
+In the current project, the logistic regression models were trained on 80% of the FinnGen study. 
+### Model 0: Determine the effect of basic covariates on disease risk
+#### Model 0a: basic covariates as included in educational attainment only models
+Run [LogRegmodel0a_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/LogisticRegression/LogRegmodel0a_EducationalAttainment.R) to run the logistic regression models with sex (except for prostate and breast cancer), birth year, and the first 5 genetic principal components (PCs) as covariates. Please make the following adjustments: 
+1. Line 49 - If you're running this on a single core or a RStudio session with automatic multi-threading, you can choose to out-command this line
+2. Line 52 - replace with the name of your biobank (don't include spaces in the biobank name)
+3. Line 62 - specify file location + filename
+4. Lines 73, 96, 106 + 116 - if running on a single core or a RStudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
+5. Lines 132 - if you cannot run the analyses for prostate and breast cancer, rename _"modcoefffs.glm.model0a.by.sex"_ to _"modcoeffs.glm.model0a.by"_
+6. Lines 134-139 - if you cannot run the analyses for prostate and breast cancer, out-comment or remove these lines
+7. Line 142 - specify the location you want to save the model 0a output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 143.* 
+- Output file is "&#42;_INTERVENE_EducationalAttainment_LogReg_model0a_Coeffs.txt"
+
+#### Model 0b: basic covariates as included in models with polygenic scores
+Run [LogRegmodel0b_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/LogisticRegression/LogRegmodel0b_EducationalAttainment.R) to run the logistic regression models with sex (except for prostate and breast cancer), the first 10 genetic PCs, and birth year as covariates. Please make the following adjustments: 
+1. Line 49 - If you're running this on a single core or a RStudio session with automatic multi-threading, you can choose to out-command this line
+2. Line 52 - replace with the name of your biobank (don't include spaces in the biobank name)
+3. Line 62 - specify file location + filename
+4. Lines 73-83 - add biobank-specific technical covariates if required
+5. Lines 73, 96, 106 + 116 - if running on a single core or a RStudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
+6. Lines 132 - if you cannot run the analyses for prostate and breast cancer, rename _"modcoefffs.glm.model0b.by.sex"_ to _"modcoeffs.glm.model0b.by"_
+7. Lines 134-138 - if you cannot run the analyses for prostate and breast cancer, out-comment or remove these lines
+8. Line 141 - specify the location you want to save the model 1b output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 142.*  
+- Output file is "&#42;_INTERVENE_EducationalAttainment_LogReg_model0b_Coeffs.txt"
+
+### Model 1: Determine the individual effect of educational attainment (EA) or trait-specific polygenic score (PGS) on disease risk
+#### Model 1a: EA effect
+Run [LogRegmodel1a_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/LogisticRegression/LogRegmodel1a_EducationalAttainment.R) to run the logistic regression models, where EA is dichotomized into low vs high EA (reference = low EA), and include EA, sex (except for prostate and breast cancer), birth year, and the first 5 genetic principal components (PCs) as covariates. Please make the following adjustments: 
+1. Line 50 - if you're running this on a single core or a RStudio session with automatic multi-threading, you can choose to out-command this line
+2. Line 53 - replace with the name of your biobank (don't include spaces in the biobank name)
+3. Line 63 - specify file location + filename
+4. Lines 75, 98, 108 + 118 - if running on a single core or a RStudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
+5. Lines 134 - if you cannot run the analyses for prostate and breast cancer, rename _"modcoefffs.glm.model1a.by.sex"_ to _"modcoeffs.glm.model1a.by"_
+6. Lines 136-140 - if you cannot run the analyses for prostate and breast cancer, out-comment or remove these lines
+7. Line 143 - specify the location you want to save the model 1a output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 144.* 
+- Output file is "&#42;_INTERVENE_EducationalAttainment_LogReg_model1a_Coeffs.txt"
+
+#### Model 1b: PGS effect
+Run [LogRegmodel1b_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/LogisticRegression/LogRegmodel1b_EducationalAttainment.R) to run the logistic regression models with the trait-specific PGS, sex (except for prostate and breast cancer), the first 10 genetic PCs, and birth year as covariates. Please make the following adjustments: 
+1. Line 51 - if you're running this on a single core or a RStudio session with automatic multi-threading, you can choose to out-command this line
+2. Line 53 - replace with the name of your biobank (don't include spaces in the biobank name)
+3. Line 63 - specify file location + filename
+4. Lines 85-86 - add biobank-specific technical covariates if required
+5. Lines 74, 99, 109 + 199 - if running on a single core or a RStudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
+6. Lines 135 + 141 - if you cannot run the analyses for prostate and breast cancer, rename _"modcoefffs.glm.model1b.by.sex"_ to _"modcoeffs.glm.model1b.by"_
+7. Lines 137-139 + 142-143 - if you cannot run the analyses for prostate and breast cancer, out-comment or remove these lines
+8. Line 146 - specify the location you want to save the model 1b output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 147.*  
+- Output file is "&#42;_INTERVENE_EducationalAttainment_LogReg_model1b_Coeffs.txt"
+
+### Model 2: Determine the effect of educational attainment (EA) and the trait-specific polygenic score (PGS) together on disease risk 
+Run [LogRegmodel2_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/LogisticRegression/LogRegmodel2_EducationalAttainment.R) to run the logistic regression models, where EA is dichotomized into low vs high EA (reference = low EA), and include EA, the trait-specific PGS, sex (except for prostate and breast cancer), birth year and the first 10 genetic PCs as covariates. Please make the following adjustments: 
+1. Line 51 - If you're running this on a single core or a RStudio session with automatic multi-threading, you can choose to out-command this line
+2. Line 54 - replace with the name of your biobank (don't include spaces in the biobank name)
+3. Line 64 - specify file location + filename
+4. Lines 76-88 - add biobank-specific technical covariates if required
+5. Lines 76, 101, 111 + 121 - if running on a single core or a RStudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
+6. Lines 137 + 143 - if you cannot run the analyses for prostate and breast cancer, rename _"modcoefffs.glm.model2.by.sex"_ to _"modcoeffs.glm.model2.by"_
+7. Lines 139-141 + 144-145 - if you cannot run the analyses for prostate and breast cancer, out-comment or remove these lines
+8. Line 148 - specify the location you want to save the model 2 output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 149.*  
+- Output file is "&#42;_INTERVENE_EducationalAttainment_LogReg_model2_Coeffs.txt"
+
+### Model 4: Determine the effect of educational attainment (EA), the trait-specific polygenic score (PGS), and their interaction on disease risk
+Run [LogRegmodel4_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/LogisticRegression/LogRegmodel4_EducationalAttainment.R) to run the logistic regression models, where EA is dichotomized into low vs high EA (reference = low EA), and include EA, the trait-specific PGS, the EA * trait-specific PGS interaction, sex (except for prostate and breast cancer), the first 10 genetics PCs, and birth year as covariates. Please make the following adjustments: 
+1. Line 50 - If you're running this on a single core or a RStudio session with automatic multi-threading, you can choose to out-command this line
+2. Line 53 - replace with the name of your biobank (don't include spaces in the biobank name)
+3. Line 63 - specify file location + filename
+4. Lines 76-90 - add biobank-specific technical covariates if required
+5. Lines 76, 103, 113 + 123 - if running on a single core or a RStudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
+6. Lines 139 + 145 - if you cannot run the analyses for prostate and breast cancer, rename _"modcoefffs.glm.model4.by.sex"_ to _"modcoeffs.glm.model4.by"_
+7. Lines 141-143 + 146-147 - if you cannot run the analyses for prostate and breast cancer, out-comment or remove these lines
+8. Line 150 - specify the location you want to save the model 4 output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 151.*  
+- Output file is "&#42;_INTERVENE_EducationalAttainment_LogReg_model4_Coeffs.txt"
+
+## Step 2: Compare prediction in 20% test data + independent dataset
+In the current project, the prediction was tested in 20% of the FinnGen study and the UK Biobank.
+### Compare prediction model 0a vs model 1a
 Run [PredictionComparison_Model0avsModel1a_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Prediction/PredictionComparison_Model0avsModel1a_EducationalAttainment.R) to compare the prediction accuracy of model 0a (covariates only [sex if relevant, birth year, first 5 genetic principal components]) with model 1a (main effect of education) by comparing the models Receiver Operating Characteristic (ROC) Area Under the Curve(AUC), continuous Net Reclassification Index (NRI), and Integrated Discrimination Index (IDI). When predicting in 20% of the FinnGen study and the UK Biobank: the output of the logistic regression models 0a and 1a from 80% of the FinnGen study (download output files from [here](https://drive.google.com/drive/folders/1pxDlg6Mt610pdBChhRt8Tx2A7DgUtIdw?usp=sharing). Please make the following adjustments:
-1. Line 61 - if you're running this on a single core or an Rstudio session with automatic multi-threading, you can choose to out-command this line
+1. Line 61 - If you're running this on a single core or an RStudio session with automatic multi-threading, you can choose to out-command this line
 2. Line 64 - replace with the name of your biobank (don't include spaces in the biobank name)
 3. Lines 73, 78, and 81 - specify file location + filename
-4. Lines 249 and 310 - specify location output folder
+4. Lines 249 and 310 - specify the location of the output folder
 - Output files are "&#42;_INTERVENE_EducationalAttainment_AUCcomparison_Model0a-1a.txt" and "&#42;_INTERVENE_EducationalAttainment_NRI_IDI_Model0a-1a.txt"
 
-## Compare prediction model 0b vs model 1b
+### Compare prediction model 0b vs model 1b
 Run [PredictionComparison_Model0bvsModel1b_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Prediction/PredictionComparison_Model0bvsModel1b_EducationalAttainment.R) to compare the prediction accuracy of model 0b (covariates only [sex if relevant, birth year, first 10 genetic principal components]) with model 1b (main effect of disease-specific PGS) by comparing the models Receiver Operating Characteristic (ROC) Area Under the Curve(AUC), continuous Net Reclassification Index (NRI), and Integrated Discrimination Index (IDI). When predicting in 20% of the FinnGen study and the UK Biobank: the output of the logistic regression models 0b and 1b from 80% of the FinnGen study (download output files from [here](https://drive.google.com/drive/folders/1pxDlg6Mt610pdBChhRt8Tx2A7DgUtIdw?usp=sharing). Please make the following adjustments:
 1. Line 61 - if you're running this on a single core or an Rstudio session with automatic multi-threading, you can choose to out-command this line
 2. Line 64 - replace with the name of your biobank (don't include spaces in the biobank name)
@@ -403,7 +482,7 @@ Run [PredictionComparison_Model0bvsModel1b_EducationalAttainment.R](https://gith
 4. Lines 247 and 308 - specify location output folder
 - Output files are "&#42;_INTERVENE_EducationalAttainment_AUCcomparison_Model0b-1b.txt" and "&#42;_INTERVENE_EducationalAttainment_NRI_IDI_Model0b-1b.txt"
 
-## Compare prediction model 1a vs model 2
+### Compare prediction model 1a vs model 2
 Run [PredictionComparison_Model1avsModel2_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Prediction/PredictionComparison_Model1avsModel2_EducationalAttainment.R) to compare the prediction accuracy of model 1a (main effect of education) with model 2 (main effects of education and disease-specific PGS) by comparing the models Receiver Operating Characteristic (ROC) Area Under the Curve(AUC), continuous Net Reclassification Index (NRI), and Integrated Discrimination Index (IDI). When predicting in 20% of the FinnGen study and the UK Biobank: the output of the logistic regression models 1a and 2 from 80% of the FinnGen study (download output files from [here](https://drive.google.com/drive/folders/1pxDlg6Mt610pdBChhRt8Tx2A7DgUtIdw?usp=sharing). Please make the following adjustments:
 1. Line 61 - if you're running this on a single core or an Rstudio session with automatic multi-threading, you can choose to out-command this line
 2. Line 64 - replace with the name of your biobank (don't include spaces in the biobank name)
@@ -411,7 +490,7 @@ Run [PredictionComparison_Model1avsModel2_EducationalAttainment.R](https://githu
 4. Lines 212 and 272 - specify location output folder
 - Output files are "&#42;_INTERVENE_EducationalAttainment_AUCcomparison_Model1a-2.txt" and "&#42;_INTERVENE_EducationalAttainment_NRI_IDI_Model1a-2.txt"
 
-## Compare prediction model 1b vs model 2
+### Compare prediction model 1b vs model 2
 Run [PredictionComparison_Model1bvsModel2_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Prediction/PredictionComparison_Model1bvsModel2_EducationalAttainment.R) to compare the prediction accuracy of model 1b (main effect of disease-specific PGS) with model 2 (main effects of education and disease-specific PGS) by comparing the models Receiver Operating Characteristic (ROC) Area Under the Curve(AUC), continuous Net Reclassification Index (NRI), and Integrated Discrimination Index (IDI). When predicting in 20% of the FinnGen study and the UK Biobank: the output of the logistic regression models 1b and 2 from 80% of the FinnGen study (download output files from [here](https://drive.google.com/drive/folders/1pxDlg6Mt610pdBChhRt8Tx2A7DgUtIdw?usp=sharing). Please make the following adjustments:
 1. Line 61 - if you're running this on a single core or an Rstudio session with automatic multi-threading, you can choose to out-command this line
 2. Line 64 - replace with the name of your biobank (don't include spaces in the biobank name)
@@ -419,13 +498,14 @@ Run [PredictionComparison_Model1bvsModel2_EducationalAttainment.R](https://githu
 4. Lines 249 and 305 - specify location output folder
 - Output files are "&#42;_INTERVENE_EducationalAttainment_AUCcomparison_Model1b-2.txt" and "&#42;_INTERVENE_EducationalAttainment_NRI_IDI_Model1b-2.txt"
 
-## Compare prediction model 2 vs model 4
+### Compare prediction model 2 vs model 4
 Run [PredictionComparison_Model2vsModel4_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Prediction/PredictionComparison_Model2vsModel4_EducationalAttainment.R) to compare the prediction accuracy of model 2 (main effects of education and disease-specific PGS) with model 4 (main effects of education and disease-specific PGS + their interaction) by comparing the models Receiver Operating Characteristic (ROC) Area Under the Curve(AUC), continuous Net Reclassification Index (NRI), and Integrated Discrimination Index (IDI). When predicting in 20% of the FinnGen study and the UK Biobank: the output of the logistic regression models 2 and 4 from 80% of the FinnGen study (download output files from [here](https://drive.google.com/drive/folders/1pxDlg6Mt610pdBChhRt8Tx2A7DgUtIdw?usp=sharing). Please make the following adjustments:
 1. Line 61 - if you're running this on a single core or an Rstudio session with automatic multi-threading, you can choose to out-command this line
 2. Line 64 - replace with the name of your biobank (don't include spaces in the biobank name)
 3. Lines 73, 78, and 81 - specify file location + filename
 4. Lines 252 and 311 - specify location output folder
 - Output files are "&#42;_INTERVENE_EducationalAttainment_AUCcomparison_Model2-4.txt" and "&#42;_INTERVENE_EducationalAttainment_NRI_IDI_Model2-4.txt"
+
 
 # Part 6: Create (supplemental) tables and figures as included in the manuscript for this project. 
 Please note that the manuscript only includes the results for Educational Attainment. 
