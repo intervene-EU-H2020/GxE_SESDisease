@@ -308,7 +308,7 @@ compute_nri_idi <- function(data_list, trait_names) {
 nri_idi_results <- compute_nri_idi(data_list = INTERVENE.list, trait_names = trait)
 
 # write table with NRI & IDI to output as tab-delimited text files
-write.table(nri_idi_results, file=paste0("[PathToOutputFolder/]/",as.character(Sys.Date()),
+write.table(nri_idi_results, file=paste0("[PathToOutputFolder/]",as.character(Sys.Date()),
                                               "_",Biobank,"_INTERVENE_EducationalAttainment_NRI_IDI_Model2-4.txt"),
             row.names=F, col.names = T, sep="\t",quote = F)
 
