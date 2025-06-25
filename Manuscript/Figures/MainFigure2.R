@@ -12,7 +12,8 @@ rm(list=ls())
 #
 # Script: Create manuscript figures - Main Figure 2: model 3 (EA)
 #
-# required input data: FinnGen data release 11 (FGR11) + UK Biobank (UKB) + Generation Scotland (GS) + meta-analysis model 3 (EA models)
+# required input data: FinnGen data release 11 (FGR11) + UK Biobank (UKB) + 
+# Generation Scotland (GS) + meta-analysis model 3 (EA models)
 #
 # Last edits: 07/11/2024 (edits, FAH: final checks and minor tweaks prior to
 # upload to GitHub)
@@ -43,9 +44,15 @@ packages<-function(...) {
 # packages function as specified in the source file): data.table = package for
 # efficiently reading in large data sets; ggplot2 = versatile visualizations;
 # viridis = color-blind friendly colors; dplyr, forcats, stringr & tidyr = data
-# wrangling; cowplot + grid + gridExtra = combining plots.
+# wrangling; cowplot + grid + gridExtra = combining plots; googledrive +
+# googlesheets4 = read/write to/from GoogleDrive; readxl = read excel files
+# (upload to googledrive converts csv to xlsx).
 packages("data.table","ggplot2","viridis","dplyr","forcats","stringr","tidyr",
-         "cowplot","grid","gridExtra", "RColorBrewer")
+         "cowplot","grid","gridExtra", "RColorBrewer","googledrive",
+         "googlesheets4","readxl")
+
+# run GoogleDrive - set to FALSE if latest results have already been downloaded!
+run_googledrive<-FALSE
 
 # plot set-up
 line_size=1.9
@@ -142,31 +149,98 @@ color_list <- c("#841C26","#B53389","#C6878F","#A81C07","#D5694F","#FDBF6F",
 #
 ################################################################################
 
-# read in model 3
-FGR11.3 <- fread("output/GoogleDrive/FGR11/2024-03-13_FinnGenR11_INTERVENE_EducationalAttainment_CoxPH_model3_Coeffs.txt", data.table=FALSE)
+# download latest version of files to local machine
+if (run_googledrive==TRUE) {
+  #identify folder
+  folder_id = drive_get(as_id("18iI9QxxJ7WXrXO6hcNal_amvGmR1F_jv")) # this ID links to the "INTERVENE flagship/GxE_SESDisease/Output_CoxPHmodels_perBB" folder. ID obtained with drive_find(pattern = "Output_Cox")
+  
+  #find files in folder
+  files = drive_ls(folder_id)
+  
+  #loop dirs and download files inside them
+  for (i in seq_along(files$name)) {
+    #list files
+    i_dir = drive_ls(files[i, ])
+    
+    #mkdir
+    try({dir.create(paste0("output/GoogleDrive/",files$name[i]))})
+    
+    #download files
+    for (file_i in seq_along(i_dir$name)) {
+      #fails if already exists
+      try({
+        drive_download(
+          as_id(i_dir$id[file_i]),
+          path = paste0("output/GoogleDrive/",files$name[i], "/",i_dir$name[file_i])
+        )
+      })
+    }
+  }
+}
+
+# read in model 1b - PRS only
+FGR11.1b <- fread("output/GoogleDrive/FGR11/2024-03-13_FinnGenR11_INTERVENE_EducationalAttainment_CoxPH_model1b_Coeffs.txt", data.table=FALSE)
+FGR11.1b$Biobank <- "FinnGen"
+#
+UKB.1b <- fread("output/GoogleDrive/UKB/2025-05-22_UKBiobank_EUR_INTERVENE_EducationalAttainment_CoxPH_model1b_Coeffs.txt",data.table=FALSE)
+UKB.1b$Biobank <- "UK Biobank"
+#
+GS.1b <- fread("output/GoogleDrive/GS/2024-07-04_GS_INTERVENE_EducationalAttainment_CoxPH_model1b_Coeffs.txt",data.table=FALSE)
+GS.1b$Biobank <- "Generation Scotland"
+
+# read in model 3 - per biobank
+FGR11.3 <- fread("output/GoogleDrive/FGR11/2025-02-07_FinnGenR11_INTERVENE_EducationalAttainment_CoxPH_model3_Coeffs.txt", data.table=FALSE)
 FGR11.3$Biobank <- "FinnGen"
 #
-UKB.3 <- fread("output/GoogleDrive/UKB/2024-04-04_UKB_INTERVENE_EducationalAttainment_CoxPH_model3_Coeffs.txt",data.table=FALSE)
+UKB.3 <- fread("output/GoogleDrive/UKB/2025-05-22_UKBiobank_EUR_INTERVENE_EducationalAttainment_CoxPH_model3b_Coeffs.txt",data.table=FALSE)
 UKB.3$Biobank <- "UK Biobank"
 #
-GS.3 <- fread("output/GoogleDrive/GS/2024-07-04_GS_INTERVENE_EducationalAttainment_CoxPH_model3_Coeffs.txt",data.table=FALSE)
+GS.3 <- fread("output/GoogleDrive/GS/2025-02-24_GS_INTERVENE_EducationalAttainment_CoxPH_model3_Coeffs.txt",data.table=FALSE)
+GS.3$Test <- c(rep("LowEA",length(unique(GS.3$trait))),rep("HighEA",length(unique(GS.3$trait)))) # in initial script shared with GS forgot a line of code to add this, so now add it manually. 
 GS.3$Biobank <- "Generation Scotland"
-#
-FEMA.3 <- fread("output/2classEA/MetaAnalysis/FGR11_UKB_GS/model3/2024-07-08_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model3_anyN.csv",data.table=FALSE)
+
+# Extract meta-analysis results from Google Drive
+if (run_googledrive == TRUE) {
+  
+  # Identify folder
+  folder_id <- drive_get(as_id("1Wi0KDwGtnZoUclUgZwu7F_Dwj-6uvJYH")) # this ID links to the "INTERVENE flagship/GxE_SESDisease/Output_CoxPHmodels_meta-analysis" folder. ID obtained with drive_find(pattern = "Output_Cox")
+  
+  # List files in the folder (no subfolders expected)
+  files <- drive_ls(folder_id)
+  
+  # Create local directory for downloads if it doesn't exist
+  dir.create("output/GoogleDrive/MetaAnalysis", showWarnings = FALSE, recursive = TRUE)
+  
+  # Download each file in the folder
+  for (file_i in seq_along(files$name)) {
+    try({
+      drive_download(
+        as_id(files$id[file_i]),
+        path = paste0("output/GoogleDrive/MetaAnalysis/", files$name[file_i]),
+        overwrite = FALSE
+      )
+    }, silent = TRUE)
+  }
+}
+
+# read in model 3 - meta-analysis
+FEMA.3 <- as.data.frame(read_excel("output/GoogleDrive/MetaAnalysis/2025-05-22_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model3.xlsx"))
 FEMA.3$Biobank <- "FE meta-analysis"
 
+# read in model 1b - meta-analysis
+FEMA.1b <- as.data.frame(read_excel("output/GoogleDrive/MetaAnalysis/2025-05-22_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model1b.xlsx"))
+FEMA.1b$Biobank <- "FE meta-analysis"
+
 
 ################################################################################
 #
-# As current version of UKB results also includes the traits
-# where UKB was in the discovery GWAS, subset those data frames to only include
-# the traits where UKB was not in the discovery GWAS: "Type 1
-# Diabetes","Prostate Cancer","Gout","Rheumatoid Arthritis","Breast
-# Cancer","Epilepsy","Alcohol Use Disorder"
+# Updated results for model 3 in Generation Scotland included "Rheumatoid
+# arthritis" which we previously determined the sample size was too small to
+# perform the analyses in. Remove this trait prior to the meta-analysis
 #
 ################################################################################
 
-UKB.3 <- UKB.3[which(UKB.3$trait %in% c("T1D","C3_PROSTATE","GOUT","RHEUMA_SEROPOS_OTH","C3_BREAST","G6_EPLEPSY","AUD_SWEDISH")),]
+GS.3 <- GS.3[-which(GS.3$trait %in% c("RHEUMA_SEROPOS_OTH")),]
 
 
 ################################################################################
@@ -177,6 +251,7 @@ UKB.3 <- UKB.3[which(UKB.3$trait %in% c("T1D","C3_PROSTATE","GOUT","RHEUMA_SEROP
 ################################################################################
 
 FEMA.3 <- FEMA.3[-which(FEMA.3$Phenotype %in% c("C3_COLORECTAL","I9_AF")),]
+FEMA.1b <- FEMA.1b[-which(FEMA.1b$Phenotype %in% c("C3_COLORECTAL","I9_AF")),]
 
 
 ################################################################################
@@ -185,34 +260,54 @@ FEMA.3 <- FEMA.3[-which(FEMA.3$Phenotype %in% c("C3_COLORECTAL","I9_AF")),]
 #
 ################################################################################
 
+# model 1 
+model1 <- data.frame(trait = c(FGR11.1b$trait,UKB.1b$trait,GS.1b$trait,
+                               FEMA.1b$Phenotype),
+                     HR = c(FGR11.1b$PRS_HR,UKB.1b$PRS_HR,GS.1b$PRS_HR,FEMA.1b$HR),
+                     lb = c(FGR11.1b$PRS_HR_lower95,UKB.1b$PRS_HR_lower95,
+                            GS.1b$PRS_HR_lower95,FEMA.1b$Cineg),
+                     ub = c(FGR11.1b$PRS_HR_upper95,UKB.1b$PRS_HR_upper95,
+                            GS.1b$PRS_HR_upper95,FEMA.1b$Cipos),
+                     Biobanks = c(FGR11.1b$Biobank,UKB.1b$Biobank,GS.1b$Biobank,
+                                  FEMA.1b$Biobank))
+# traits as factor to rename them and plot them in the order they've been
+# plotted in the INTERVENE flagship figures
+model1$trait <- factor(model1$trait, levels = c("T1D","C3_PROSTATE","T2D","GOUT",
+                                                "RHEUMA_SEROPOS_OTH","C3_BREAST","I9_AF",
+                                                "C3_COLORECTAL","J10_ASTHMA","I9_CHD",
+                                                "COX_ARTHROSIS","KNEE_ARTHROSIS",
+                                                "C3_MELANOMA_SKIN","C3_BRONCHUS_LUNG",
+                                                "F5_DEPRESSIO","C3_CANCER","G6_EPLEPSY",
+                                                "K11_APPENDACUT","AUD_SWEDISH"),
+                       labels = c("Type 1 Diabetes","Prostate Cancer","Type 2 Diabetes",
+                                  "Gout","Rheumatoid Arthritis","Breast Cancer",
+                                  "* Atrial Fibrillation","* Colorectal Cancer","Asthma",
+                                  "Coronary Heart Disease","Hip Osteoarthritis",
+                                  "Knee Osteoarthritis","Skin Melanoma","Lung Cancer",
+                                  "Major Depression","Any Cancer","Epilepsy",
+                                  "Appendicitis","Alcohol Use Disorder"))
+#reverse factor order (otherwise it will be plotted in reverse order of the
+#flagship paper)
+model1$trait <- fct_rev(model1$trait)
+# Biobank as factor
+model1$Biobanks <- factor(model1$Biobanks, levels = c("FinnGen","UK Biobank","Generation Scotland","FE meta-analysis"), 
+                          labels = c("FinnGen","UK Biobank","Generation Scotland","FE meta-analysis"))
+
 # model 3 - also add beta and se (needed to determine significanc of difference
 # PGS effect between low/high education groups)
-model3 <- data.frame(trait = c(rep(FGR11.3$trait,2),rep(UKB.3$trait,2),
-                               rep(GS.3$trait,2),FEMA.3$Phenotype),
-                     HR = c(FGR11.3$GxlowEA_HR,FGR11.3$GxhighEA_HR,
-                            UKB.3$GxlowEA_HR,UKB.3$GxhighEA_HR,
-                            GS.3$GxlowEA_HR,GS.3$GxhighEA_HR,FEMA.3$HR),
-                     lb = c(FGR11.3$GxlowEA_HR_lower95,FGR11.3$GxhighEA_HR_lower95,
-                            UKB.3$GxlowEA_HR_lower95,UKB.3$GxhighEA_HR_lower95,
-                            GS.3$GxlowEA_HR_lower95,GS.3$GxhighEA_HR_lower95,
-                            FEMA.3$Cineg),
-                     ub = c(FGR11.3$GxlowEA_HR_upper95,FGR11.3$GxhighEA_HR_upper95,
-                            UKB.3$GxlowEA_HR_upper95,UKB.3$GxhighEA_HR_upper95,
-                            GS.3$GxlowEA_HR_upper95,GS.3$GxhighEA_HR_upper95,
-                            FEMA.3$Cipos),
-                     beta = c(FGR11.3$GxlowEA_beta,FGR11.3$GxhighEA_beta,
-                            UKB.3$GxlowEA_beta,UKB.3$GxhighEA_beta,
-                            GS.3$GxlowEA_beta,GS.3$GxhighEA_beta,FEMA.3$Beta),
-                     se = c(FGR11.3$GxlowEA_se,FGR11.3$GxhighEA_se,
-                            UKB.3$GxlowEA_se,UKB.3$GxhighEA_se,
-                            GS.3$GxlowEA_se,GS.3$GxhighEA_se,
-                            FEMA.3$SE),
-                     Test = c(rep("PRS in low EA",nrow(FGR11.3)), rep("PRS in high EA",nrow(FGR11.3)), 
-                              rep("PRS in low EA", nrow(UKB.3)), rep("PRS in high EA",nrow(UKB.3)), 
-                              rep("PRS in low EA",nrow(GS.3)), rep("PRS in high EA",nrow(GS.3)),
-                              rep("PRS in low EA",0.5*nrow(FEMA.3)), rep("PRS in high EA",0.5*nrow(FEMA.3))),
-                     Biobanks = c(rep(FGR11.3$Biobank,2),rep(UKB.3$Biobank,2),
-                                  rep(GS.3$Biobank,2),FEMA.3$Biobank))
+model3 <- data.frame(trait = c(FGR11.3$trait,UKB.3$trait,GS.3$trait,
+                               FEMA.3$Phenotype),
+                     HR = c(FGR11.3$PRS_HR,UKB.3$PRS_HR,GS.3$PRS_HR,FEMA.3$HR),
+                     lb = c(FGR11.3$PRS_HR_lower95,UKB.3$PRS_HR_lower95,
+                            GS.3$PRS_HR_lower95,FEMA.3$Cineg),
+                     ub = c(FGR11.3$PRS_HR_upper95,UKB.3$PRS_HR_upper95,
+                            GS.3$PRS_HR_upper95,FEMA.3$Cipos),
+                     beta = c(FGR11.3$PRS_beta,UKB.3$PRS_beta,GS.3$PRS_beta,
+                              FEMA.3$Beta),
+                     se = c(FGR11.3$PRS_se,UKB.3$PRS_se,GS.3$PRS_se,FEMA.3$SE),
+                     Test = c(FGR11.3$Test,UKB.3$Test,GS.3$Test,FEMA.3$EA),
+                     Biobanks = c(FGR11.3$Biobank,UKB.3$Biobank,
+                                  GS.3$Biobank,FEMA.3$Biobank))
 # traits as factor to rename them and plot them in the order they've been
 # plotted in the INTERVENE flagship figures
 model3$trait <- factor(model3$trait, levels = c("T1D","C3_PROSTATE","T2D","GOUT",
@@ -234,7 +329,7 @@ model3$trait <- factor(model3$trait, levels = c("T1D","C3_PROSTATE","T2D","GOUT"
 model3$trait <- fct_rev(model3$trait)
 # EA levels as factor to plot them in order of magnitude - adjust labels to
 # simple for further data wrangling down the line
-model3$Test <- factor(model3$Test, levels = c("PRS in low EA","PRS in high EA"), 
+model3$Test <- factor(model3$Test, levels = c("LowEA","HighEA"), 
                       labels = c("LowEA","HighEA"))
 # Biobank as factor
 model3$Biobanks <- factor(model3$Biobanks, levels = c("FinnGen","UK Biobank","Generation Scotland","FE meta-analysis"), 
@@ -249,6 +344,18 @@ model3$Biobanks <- factor(model3$Biobanks, levels = c("FinnGen","UK Biobank","Ge
 
 ## plot meta-analysis when available and plot FGR11 if meta-analysis not available ## 
 # remove UKB estimates
+plot1a.dat <- model1[-which(model1$Biobanks=="UK Biobank" | model1$Biobanks=="Generation Scotland"),]
+
+# remove FGR11 if trait was meta-analyzed 
+plot1a.dat <- plot1a.dat[-which(plot1a.dat$trait[which(plot1a.dat$Biobanks=="FinnGen")] %in% 
+                                  c("Type 1 Diabetes","Gout","Asthma","Coronary Heart Disease","Skin Melanoma",
+                                    "Lung Cancer","Major Depression","Any Cancer","Epilepsy","Appendicitis",
+                                    "Type 2 Diabetes","Rheumatoid Arthritis","Alcohol Use Disorder",
+                                    "Prostate Cancer","Breast Cancer","Hip Osteoarthritis",
+                                    "Knee Osteoarthritis")),]
+
+## plot meta-analysis when available and plot FGR11 if meta-analysis not available ## 
+# remove UKB and GS estimates
 plot3.dat <- model3[-which(model3$Biobanks=="UK Biobank" | model3$Biobanks=="Generation Scotland"),]
 
 # remove FGR11 if trait was meta-analyzed 
@@ -259,66 +366,28 @@ plot3.dat <- plot3.dat[-which(plot3.dat$trait[which(plot3.dat$Biobanks=="FinnGen
                                   "Prostate Cancer","Breast Cancer","Hip Osteoarthritis",
                                   "Knee Osteoarthritis")),]
 
-# calculate difference in the PGS effect between high and low EA group for each
-# trait to inform ordering of the traits in the plot (biggest differences with
-# higher PRS effects in low edu group on top, and diseases with biggest
-# differences + higher PRS effects in the high edu group at the bottom)
-# Load necessary libraries
-# arrange dataframe by trait and EA group
-plot3.df <- plot3.dat %>%
-  arrange(trait, Test)
+# create dataframe to plot the background rectangles for Fig1, adapted from Kira Detrois
+# [https://github.com/intervene-EU-H2020/onset_prediction/blob/main/analysis/scripts/utils.R]
+endpt_order <- filter(plot1a.dat) %>%
+  arrange(HR) %>% 
+  select(trait) %>%
+  distinct() %>% 
+  mutate(CRNT_ENDPT_ORDER=1:nrow(.)) %>%
+  mutate(stripe = ifelse(CRNT_ENDPT_ORDER %% 2 == 0, "even", "odd"))
 
-# Ensure each trait has only two rows (one for each group)
-plot3_grouped <- plot3.df %>%
-  group_by(trait) %>%
-  summarise(
-    LowEA = HR[Test == "LowEA"],
-    HighEA = HR[Test == "HighEA"],
-    lowEAb = beta[Test == "LowEA"],
-    highEAb = beta[Test == "HighEA"],
-    lowEAse = se[Test == "LowEA"],
-    highEAse = se [Test == "HighEA"]
-  )
+# reorder trait by endpoint order
+plot3.dat$trait <- factor(plot3.dat$trait, levels = endpt_order$trait)
 
-# Calculate the difference in effect size for each trait
-plot3_diff <- plot3_grouped %>%
-  mutate(difference = LowEA - HighEA,
-         Betadiff = lowEAb - highEAb,
-         SEDiff = sqrt(lowEAse**2 + highEAse**2))
+# create dataframe to plot the background rectangles for Fig2, adapted from Kira Detrois
+# [https://github.com/intervene-EU-H2020/onset_prediction/blob/main/analysis/scripts/utils.R]
+endpt_order <- filter(plot3.dat) %>%
+  select(trait) %>%
+  distinct() %>% 
+  mutate(CRNT_ENDPT_ORDER=1:nrow(.)) %>%
+  mutate(stripe = ifelse(CRNT_ENDPT_ORDER %% 2 == 0, "even", "odd"))
 
-# Determine whether difference between PGS effect (beta) low and high education
-# groups is significant. Code adapted from:
-# https://github.com/intervene-EU-H2020/flagship/blob/main/MetaAnalysis/AgeSpecific_MetaAnalysisandHetero.R
-# calculate z-value
-plot3_diff <- plot3_diff %>%
-  mutate(ZDiff = Betadiff/SEDiff)
-# calculate p-value
-plot3_diff <- plot3_diff %>%
-  mutate(PvalDiff = 2*pnorm(abs(ZDiff), lower.tail = FALSE))
-
-# Create a column to guide the order of plotting
-plot3_diff <- plot3_diff %>%
-  arrange(desc(difference)) %>%
-  mutate(order = rank(-difference, ties.method = "first"))
-
-# manually adjust the ranking to ensure only those who are significant after
-# Bonferonni correction remain on top/bottom
-# is p-value Bonferroni significant? 
-plot3_diff <- plot3_diff %>%
-  mutate(Bonf = ifelse(PvalDiff <= 0.05/19, 1, 0))
-# manually adjust the order 
-plot3_diff$order <- c(1:2,6,3:5,7:14,17,15:16,18:19)
-
-# Merge the order column back with the original dataframe
-plot3_ordered <- plot3.dat %>%
-  left_join(plot3_diff %>% select(trait, difference, order,PvalDiff), by = "trait")
-
-# add stripe information fo the background rectangles for Fig2 (which is ordered
-# by difference between PGS effect in high vs low EA groups), adapted from Kira
-# Detrois [https://github.com/intervene-EU-H2020/onset_prediction/blob/main/analysis/scripts/utils.R]
-plot3_ordered <- plot3_ordered %>%
-  mutate(stripe = ifelse(order %% 2 == 0, "even", "odd"))
-
+# merge to HRs
+plot3.dat <- merge(plot3.dat,endpt_order,by = "trait")
 
 
 ################################################################################
@@ -331,25 +400,28 @@ plot3_ordered <- plot3_ordered %>%
 # friendly colors for the different HR's. Get classic layout and add vertical
 # line on x=1 to represent HR=1 (i.e., if HR's cross 1 they're not significant).
 # Remove y axis and legend label, and rename x axis label.
-Fig2 <- ggplot(plot3_ordered, aes(x = HR, y = reorder(trait,-order), color = Test)) + 
+Fig2 <- ggplot(plot3.dat, aes(x = HR, y = trait, color = Test)) + 
+  # Extra Lines
+  geom_vline(xintercept=1, linetype=1, size=axis_line_size, color="grey") +  
   # Confidence intervals
   geom_linerange(aes(xmin = lb, xmax = ub), position=position_dodge(1), size=line_size) +
   # Scale manual
   scale_fill_manual(values = c("white", "grey75"), name="", guide="none") +
   scale_size_continuous(range = c(point_size/2, point_size), guide="none") +
-  scale_colour_manual(values= c("#F0E442",  "#CC79A7"), labels = c("PGS in low education group", "PGS in high education group")) +
+  scale_colour_manual(values= c("#3869AF",  "#BC65DB"), labels = c("PGS in low education group", "PGS in high education group")) +
   # Axis limits
-  scale_x_continuous(breaks = round(seq(min(plot3.dat$lb)-0.05, max(plot3.dat$ub)+0.05, by = 0.1),1)) +
+  scale_x_continuous(transform = scales::transform_log(),
+                     breaks = c(1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0,2.2,2.4,2.5),
+                     limits = c(1, 2.5),
+                     expand = c(0,0)) +
   # Stripes
-  geom_rect(aes(ymax = order+0.5,
-                ymin = order-0.5,
-                xmin = -Inf, xmax = Inf, fill=stripe), color=NA, alpha = 0.1) +
+  geom_rect(aes(ymax = CRNT_ENDPT_ORDER+0.5,
+                ymin = CRNT_ENDPT_ORDER-0.5,
+                xmin = 1, xmax = 2.5, fill=stripe), color=NA, alpha = 0.1) +
   # Data points
   geom_point(aes(size=18.5), shape=18, position=position_dodge(1)) +
-  # Extra Lines
-  geom_vline(xintercept=1, linetype=1, size=axis_line_size) +
   # Theme
-  labs(y="", x="Meta-analyzed Hazard Ratio (95% CI)", title="", fill=NULL, subtitle="") +
+  labs(y="", x="Meta-analyzed Hazard Ratio per Standard Deviation (95% CI)", title="", fill=NULL, subtitle="") +
   guides(colour=guide_legend(override.aes = list(shape=18, size=7))) +
   theme_hrs(base_size=base_size, plot_top_margin=-20) +
   ## Fonts
