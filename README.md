@@ -387,6 +387,22 @@ Run [AbsoluteRiskEstimation_Bootstrap_EducationalAttainment.R](https://github.co
 Run [AbsoluteRiskEstimation_Bootstrap_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/AbsoluteRiskEstimation/AbsoluteRiskEstimation_Bootstrap_Occupation.R) to calculate confidence intervals for the cumulative risk incidences obtained in step 2. Aside from the mortality, prevalence, and incidence of the complex diseases from the 2019 GBD study as obtained in step 1and cumulative incidences as obtained in step 2, this script also requires the results of the PGS-stratified Cox Proportional Hazard models in FinnGen (see ADD REF).
 
 # Part 5: Prediction comparison in each biobank study
+## Compare prediction model 0a vs model 1a
+Run [PredictionComparison_Model0avsModel1a_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Prediction/PredictionComparison_Model0avsModel1a_EducationalAttainment.R) to compare the prediction accuracy of model 0a (covariates only [sex if relevant, birth year, first 5 genetic principal components]) with model 1a (main effect of education) by comparing the models Receiver Operating Characteristic (ROC) Area Under the Curve(AUC), continuous Net Reclassification Index (NRI), and Integrated Discrimination Index (IDI). When predicting in 20% of the FinnGen study and the UK Biobank: the output of the logistic regression models 0a and 1a from 80% of the FinnGen study (download output files from [here](https://drive.google.com/drive/folders/1pxDlg6Mt610pdBChhRt8Tx2A7DgUtIdw?usp=sharing). Please make the following adjustments:
+1. Line 61 - if you're running this on a single core or an Rstudio session with automatic multi-threading, you can choose to out-command this line
+2. Line 64 - replace with the name of your biobank (don't include spaces in the biobank name)
+3. Lines 73, 78, and 81 - specify file location + filename
+4. Lines 249 and 310 - specify location output folder
+- Output files are "&#42;_INTERVENE_EducationalAttainment_AUCcomparison_Model0a-1a.txt" and "&#42;_INTERVENE_EducationalAttainment_NRI_IDI_Model0a-1a.txt"
+
+## Compare prediction model 0b vs model 1b
+Run [PredictionComparison_Model0bvsModel1b_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Prediction/PredictionComparison_Model0bvsModel1b_EducationalAttainment.R) to compare the prediction accuracy of model 0b (covariates only [sex if relevant, birth year, first 10 genetic principal components]) with model 1b (main effect of disease-specific PGS) by comparing the models Receiver Operating Characteristic (ROC) Area Under the Curve(AUC), continuous Net Reclassification Index (NRI), and Integrated Discrimination Index (IDI). When predicting in 20% of the FinnGen study and the UK Biobank: the output of the logistic regression models 0b and 1b from 80% of the FinnGen study (download output files from [here](https://drive.google.com/drive/folders/1pxDlg6Mt610pdBChhRt8Tx2A7DgUtIdw?usp=sharing). Please make the following adjustments:
+1. Line 61 - if you're running this on a single core or an Rstudio session with automatic multi-threading, you can choose to out-command this line
+2. Line 64 - replace with the name of your biobank (don't include spaces in the biobank name)
+3. Lines 73, 78, and 81 - specify file location + filename
+4. Lines 247 and 308 - specify location output folder
+- Output files are "&#42;_INTERVENE_EducationalAttainment_AUCcomparison_Model0b-1b.txt" and "&#42;_INTERVENE_EducationalAttainment_NRI_IDI_Model0b-1b.txt"
+
 ## Compare prediction model 1a vs model 2
 Run [PredictionComparison_Model1avsModel2_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Prediction/PredictionComparison_Model1avsModel2_EducationalAttainment.R) to compare the prediction accuracy of model 1a (main effect of education) with model 2 (main effects of education and disease-specific PGS) by comparing the models Receiver Operating Characteristic (ROC) Area Under the Curve(AUC), continuous Net Reclassification Index (NRI), and Integrated Discrimination Index (IDI). When predicting in 20% of the FinnGen study and the UK Biobank: the output of the logistic regression models 1a and 2 from 80% of the FinnGen study (download output files from [here](https://drive.google.com/drive/folders/1pxDlg6Mt610pdBChhRt8Tx2A7DgUtIdw?usp=sharing). Please make the following adjustments:
 1. Line 61 - if you're running this on a single core or an Rstudio session with automatic multi-threading, you can choose to out-command this line
@@ -400,7 +416,7 @@ Run [PredictionComparison_Model1bvsModel2_EducationalAttainment.R](https://githu
 1. Line 61 - if you're running this on a single core or an Rstudio session with automatic multi-threading, you can choose to out-command this line
 2. Line 64 - replace with the name of your biobank (don't include spaces in the biobank name)
 3. Lines 73, 78, and 81 - specify file location + filename
-4. Lines 212 and 277 - specify location output folder
+4. Lines 249 and 305 - specify location output folder
 - Output files are "&#42;_INTERVENE_EducationalAttainment_AUCcomparison_Model1b-2.txt" and "&#42;_INTERVENE_EducationalAttainment_NRI_IDI_Model1b-2.txt"
 
 ## Compare prediction model 2 vs model 4
@@ -408,7 +424,7 @@ Run [PredictionComparison_Model2vsModel4_EducationalAttainment.R](https://github
 1. Line 61 - if you're running this on a single core or an Rstudio session with automatic multi-threading, you can choose to out-command this line
 2. Line 64 - replace with the name of your biobank (don't include spaces in the biobank name)
 3. Lines 73, 78, and 81 - specify file location + filename
-4. Lines 217 and 277 - specify location output folder
+4. Lines 252 and 311 - specify location output folder
 - Output files are "&#42;_INTERVENE_EducationalAttainment_AUCcomparison_Model2-4.txt" and "&#42;_INTERVENE_EducationalAttainment_NRI_IDI_Model2-4.txt"
 
 # Part 6: Create (supplemental) tables and figures as included in the manuscript for this project. 
