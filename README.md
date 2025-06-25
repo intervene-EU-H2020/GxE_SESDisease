@@ -391,7 +391,7 @@ Run [AbsoluteRiskEstimation_Bootstrap_Occupation.R](https://github.com/intervene
 
 # Part 5: Prediction comparison in each biobank study
 ## Step 1: Logistic regression models in 80% training data
-In the current project, the logistic regression models were trained on 80% of the FinnGen study. 
+In the current project, the logistic regression models were trained on 80% of the FinnGen study. For instructions to create the 80-20% data split for training and prediction, see [here](https://github.com/intervene-EU-H2020/GxE_SESDisease/tree/main?tab=readme-ov-file#step-5b-educational-attainment---split-data-into-80-training-and-20-test-for-prediction-models)
 ### Model 0: Determine the effect of basic covariates on disease risk
 #### Model 0a: basic covariates as included in educational attainment only models
 Run [LogRegmodel0a_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/LogisticRegression/LogRegmodel0a_EducationalAttainment.R) to run the logistic regression models with sex (except for prostate and breast cancer), birth year, and the first 5 genetic principal components (PCs) as covariates. Please make the following adjustments: 
