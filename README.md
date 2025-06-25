@@ -522,8 +522,11 @@ Please note that Main Figures 1 and 2 are completed in InkScape after creating t
 Run [MainFigure1.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/MainFigure1.R) to create the base for Main Figure 1 in the manuscript, which contains 2 panels: A: meta-analyzed results model 1b; B: meta-analyzed PGS results model 1a.
 - Output file is "&#42;_INTERVENE_SESDiffDiseases_MainFigure1.png"
 
-Run [MainFigure2.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/MainFigure2.R) to create the base for Main Figure 2 in the manuscript, which contains the meta-analyzed results of model 3, including the comparison of the PGS estimates between the education groups.
+Run [MainFigure2.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/MainFigure2.R) to create the base for Main Figure 2 in the manuscript, which contains the meta-analyzed results of model 3.
 - Output file is "&#42;_INTERVENE_SESDiffDiseases_MainFigure2.png"
+
+Run [MainFigure3.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/MainFigure3.R) to create the base for Main Figure 3 in the manuscript, which contains 2 panels: A: Cumulative risk incidences for Atrial Fibrillation in FinnGen; B: Cumulative risk incidences for Type 2 Diabetes in FinnGen.
+- Output file is "&#42;_INTERVENE_SESDiffDiseases_MainFigure3.png"
 
 Run [SupplementaryFigures.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/SupplementaryFigures.R) to create the four supplemental figures for the manuscript, namely: Figure S1: comparison of the hazard ratios per biobank study and the fixed-effect meta-analysis of model 1a and 1b; Figure S2: comparison of the hazard ratios per biobank study and the fixed-effect meta-analysis of model 2; Figure S3: comparison of the hazard ratios per biobank study and the fixed-effect meta-analysis of model 3; and Figure S4: comparison of the hazard ratios per biobank study and the fixed-effect meta-analysis of model 5.
 - Output files are "&#42;_INTERVENE_EducationalAttainment_FigureS1.tiff", "&#42;_INTERVENE_EducationalAttainment_FigureS2.tiff", "&#42;_INTERVENE_EducationalAttainment_FigureS3.tiff", and "&#42;_INTERVENE_EducationalAttainment_FigureS4.tiff".
