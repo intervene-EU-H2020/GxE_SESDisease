@@ -439,7 +439,7 @@ Run [AbsoluteRiskEstimation_EducationalAttainment.R](https://github.com/interven
 ### Occupation
 Run [AbsoluteRiskEstimation_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/AbsoluteRiskEstimation/AbsoluteRiskEstimation_Occupation.R) to calculate the cumulative risk incidences by lower- and upper-level occupation and polygenic score (PGS) strata for the 7 complex diseases with significant interactions between disease-specific PGSs and educational attainment or occupation in the FinnGen study. Aside from the mortality, prevalence, and incidence of the complex diseases from the 2019 GBD study as obtained in step 2, this script also requires the results of the education-stratified Cox Proportional Hazard models for the effect of the PGS strata in FinnGen (step 1).
 
-## Step 3: Obtain confidence intervals for cumulative incidences
+## Step 4: Obtain confidence intervals for cumulative incidences
 ### Educational Attainment
 Run [AbsoluteRiskEstimation_Bootstrap_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/AbsoluteRiskEstimation/AbsoluteRiskEstimation_Bootstrap_EducationalAttainment.R) to calculate confidence intervals for the cumulative risk incidences obtained in step 2. Aside from the mortality, prevalence, and incidence of the complex diseases from the 2019 GBD study as obtained in step 1 and cumulative incidences as obtained in step 2, this script also requires the results of the PGS-stratified Cox Proportional Hazard models in FinnGen (see ADD REF).
 ### Occupation
