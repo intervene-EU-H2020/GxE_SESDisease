@@ -1,5 +1,5 @@
 # Scripts for the INTERVENE GxE SES and complex diseases project
-The analyses are broken up into [Part 1](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/README.md#part-1-biobank-specific-general-data-preparation), general data preparation for individual-level analyses in each Biobank, [Part 2](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/README.md#part-2-biobank-specific-analyses), individual-level analyses with Educational Attainment and Occupation in each Biobank, [Part 3](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/README.md#part-3-meta-analyses-across-biobank-studies), meta-analyses done on summary statistics to draw conclusions across biobank studies, [Part 4](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/README.md#part-4-absolute-risk-estimation), calculation of cummulative risk incidences (FinnGen only), [Part 5](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/README.md#part-5-prediction-comparison-in-each-biobank-study), prediction comparison in each biobank study (FinnGen and UK Biobank only), and [Part 6](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/README.md#part-6-create-supplemental-tables-and-figures-as-included-in-the-manuscript-for-this-project), scripts to creates the (supplemental) tables and figures as included in the manuscript describing this project.
+The analyses are broken up into [Part 1](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/README.md#part-1-biobank-specific-general-data-preparation), general data preparation for individual-level analyses in each Biobank, [Part 2](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/README.md#part-2-biobank-specific-analyses), individual-level analyses with Educational Attainment and Occupation in each Biobank, [Part 3](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/README.md#part-3-meta-analyses-across-biobank-studies), meta-analyses done on summary statistics to draw conclusions across biobank studies, [Part 4](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/README.md#part-4-absolute-risk-estimation), calculation of cummulative risk incidences (FinnGen only), [Part 5](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/README.md#part-5-prediction-comparison-in-each-biobank-study), prediction comparison in each biobank study (FinnGen and UK Biobank only), [Part 6](), calculate Fine-Gray competing risk models (FinnGen only), and [Part 7](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/README.md#part-7-create-supplemental-tables-and-figures-as-included-in-the-manuscript-for-this-project), scripts to creates the (supplemental) tables and figures as included in the manuscript describing this project.
 
 ### Dependencies  
 These scripts assume you have plink-1.9 and R v4.3.2 or higher installed on your biobank computing system. Required R libraries: data.table, foreach, doParallel, lubridate, tidyverse/tidyr, dplyr, plyr, forcats, stringr, survival, metafor, Hmisc, pROC, nricens, googledrive, googlesheets4, ggplot2, viridis, cowplot, grid, gridExtra, and RColorBrewer.
@@ -151,7 +151,21 @@ Listname[c(x,y,z)] <- NULL # where x, y, and z are the shorthand names for the p
 17. Lines 382 - specify the locations you want to save the .Rdata files.  
 - Output file is "&#42;_INTERVENE_EducationalAttainment_dat_PGSstrata.RData".
 
-### Step 5d: Occupation
+### Step 5d: Educational Attainment - data preparation for Fine Gray models
+Run [DataPrep_EducationalAttainment_FineGray.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/DataPrep_EducationalAttainment_FineGray.R) to create the EA-specific samples, including competing risk (all-cause mortality) for each trait in your Biobank. This script assumes you have generated the data input as created with [this script first](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/DataPrep_EducationalAttainment.R). Please make the following adjustments: 
+1. Line 61 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
+2. Line 64 - replace with the name of your biobank (don't include spaces in the biobank name)
+3. Lines 73 + 77 - specify phenotype file location + filename
+4. Lines 78 + 89 - please replace the identifier name with that used in your biobank.
+5. Lines 88, 103, 106, 112 + 115 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
+**6. Before writing the output to file, please check whether each subgroup for each trait has >=5 individuals!** Remove traits from the list if <5 individuals in a subgroup, e.g., with the following code: 
+```
+Listname[c(x,y,z)] <- NULL # where x, y, and z are the shorthand names for the phenotypes as in FinnGen
+```
+7. Lines 123 - specify the locations you want to save the .Rdata files.  
+- Output file is "&#42;_INTERVENE_EducationalAttainment_dat_FineGray.RData".
+
+### Step 5e: Occupation
 Run [DataPrep_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/DataPrep_Occupation.R) to create the occupation-specific sample for each trait in your Biobank. Please make the following adjustments: 
 1. Line 52 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line 
 2. Line 55 - replace with the name of your biobank (don't include spaces in the biobank name)
@@ -191,7 +205,7 @@ Run [Descriptives_EducationalAttainment.R](https://github.com/intervene-EU-H2020
 - Output files is  "&#42;_INTERVENE_EducationalAttainment_SampleDescriptives.txt"
 
 ### Step 6b: Educational Attainment - split polygenic scores into strata
-Run [Descriptives_EducationalAttainment_PGSstrata.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/Descriptives_EducationalAttainment_PGSstrata.R) to calculate the summary statistics on the phenotype files, including Educational Attainment and the strata for the disease-specific polygenic scores. Please make the following adjustments: 
+Run [Descriptives_EducationalAttainment_FineGray.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/Descriptives_EducationalAttainment_FineGray.R) to calculate the summary statistics on the phenotype files, including Educational Attainment, which contains information on all-cause mortality as competing risk. Please make the following adjustments: 
 1. Line 49 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
 2. Line 52 - replace with the name of your biobank (don't include spaces in the biobank name)
 3. Line 62 - specify file location + filename
@@ -200,7 +214,16 @@ Run [Descriptives_EducationalAttainment_PGSstrata.R](https://github.com/interven
 6. Line 415 - specify the location you want to save the descriptive file.
 - Output files is  "&#42;_INTERVENE_EducationalAttainment_PGSstrata_SampleDescriptives.txt"
 
-### Step 6c: Occupation
+### Step 6c: Educational Attainment - for FineGray models
+Run [Descriptives_EducationalAttainment_PGSstrata.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/Descriptives_EducationalAttainment_PGSstrata.R) to calculate the summary statistics on the phenotype files, including Educational Attainment and the strata for the disease-specific polygenic scores. Please make the following adjustments: 
+1. Line 49 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
+2. Line 52 - replace with the name of your biobank (don't include spaces in the biobank name)
+3. Line 62 - specify file location + filename
+4. Line 145 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
+5. Line 153 - specify the location you want to save the descriptive file.
+- Output files is  "&#42;_INTERVENE_EducationalAttainment_FineGray_SampleDescriptives.txt"
+
+### Step 6d: Occupation
 Run [Descriptives_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/Descriptives_Occupation.R) to calculate the summary statistics on the phenotype files including Occupation. Please make the following adjustments: 
 1. Line 50 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
 2. Line 53 - replace with the name of your biobank (don't include spaces in the biobank name)
@@ -564,7 +587,21 @@ Run [PredictionComparison_Model2vsModel4_EducationalAttainment.R](https://github
 - Output files are "&#42;_INTERVENE_EducationalAttainment_AUCcomparison_Model2-4.txt" and "&#42;_INTERVENE_EducationalAttainment_NRI_IDI_Model2-4.txt"
 
 
-# Part 6: Create (supplemental) tables and figures as included in the manuscript for this project. 
+# Part 6: Fine-Gray competing risk models
+Fine–Gray competing risk models, accounting for death from other causes, were applied to FinnGen data only for diseases with significant PGS × education interactions in the Cox proportional hazard (CoxPH) models.
+Run [FGmodel4_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/FineGray/FGmodel4_EducationalAttainment.R) to run the Fine-Gray competing risk models (competing risk is all-cause mortality) with age at disease onset as timescale, where EA is dichotomized into low vs high EA (reference = low EA), and include EA, the trait-specific PGS, the EA * trait-specific PGS interaction, sex (except for prostate and breast cancer), the first 10 genetics PCs, and birth decade as covariates. Please make the following adjustments:
+1. Line 56 - if you're running this on a single core or an Rstudio session with automatic multi-threading, you can choose to out-command this line
+2. Line 59 - replace with the name of your biobank (don't include spaces in the biobank name)
+3. Lines 69 - specify file location + filename
+4. Line 85 - add biobank-specific technical covariates if required
+5. Line 83 - if running on a single core or a Rstudio session with automatic multi-threading, replace %dopar% with %do%
+6. Line 137 - specify the location you want to save the model 4 output. 
+- Output file is "*_INTERVENE_EducationalAttainment_FineGray_model4_Coeffs.txt"  
+
+Comparisons of the original CoxPH and Fine-Gray models are done with two-sided Wald tests (after Bonferroni correction for multiple traits). Run [CompareCoxPHandFGmodel4_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/FineGray/CompareCoxPHandFGmodel4_EducationalAttainment.R) to compare the estimates from the CoxPH and Fine-Gray models in the FinnGen study. This script downloads the CoxPH and Fine-Gray results from Google Drive and also uploads the result of the comparisons to Google Drive.
+
+
+# Part 7: Create (supplemental) tables and figures as included in the manuscript for this project. 
 Please note that the manuscript only includes the results for Educational Attainment. 
 ## (Supplemental) Tables: Scripts that create the Main Table 1 and the supplemental tables including the results from this project. 
 Run [MainTable1.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Tables/MainTable1.R) to create the Main Table 1 in the manuscript, which contains the general descriptive statistics across biobank studies.
