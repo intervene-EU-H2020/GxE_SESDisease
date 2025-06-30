@@ -1,5 +1,5 @@
 # Scripts for the INTERVENE GxE SES and complex diseases project
-The analyses are broken up into [Part 1](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/README.md#part-1-biobank-specific-general-data-preparation), general data preparation for individual-level analyses in each Biobank, [Part 2](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/README.md#part-2-biobank-specific-analyses), individual-level analyses with Educational Attainment and Occupation in each Biobank, [Part 3](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/README.md#part-3-meta-analyses-across-biobank-studies), meta-analyses done on summary statistics to draw conclusions across biobank studies, [Part 4](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/README.md#part-4-absolute-risk-estimation), calculation of cummulative risk incidences, [Part 5](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/README.md#part-5-prediction-comparison-in-each-biobank-study), prediction comparison in each biobank study, and [Part 6](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/README.md#part-6-create-supplemental-tables-and-figures-as-included-in-the-manuscript-for-this-project), scripts to creates the (supplemental) tables and figures as included in the manuscript describing this project.
+The analyses are broken up into [Part 1](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/README.md#part-1-biobank-specific-general-data-preparation), general data preparation for individual-level analyses in each Biobank, [Part 2](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/README.md#part-2-biobank-specific-analyses), individual-level analyses with Educational Attainment and Occupation in each Biobank, [Part 3](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/README.md#part-3-meta-analyses-across-biobank-studies), meta-analyses done on summary statistics to draw conclusions across biobank studies, [Part 4](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/README.md#part-4-absolute-risk-estimation), calculation of cummulative risk incidences (FinnGen only), [Part 5](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/README.md#part-5-prediction-comparison-in-each-biobank-study), prediction comparison in each biobank study (FinnGen and UK Biobank only), and [Part 6](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/README.md#part-6-create-supplemental-tables-and-figures-as-included-in-the-manuscript-for-this-project), scripts to creates the (supplemental) tables and figures as included in the manuscript describing this project.
 
 ### Dependencies  
 These scripts assume you have plink-1.9 and R v4.3.2 or higher installed on your biobank computing system. Required R libraries: data.table, foreach, doParallel, lubridate, tidyverse/tidyr, dplyr, plyr, forcats, stringr, survival, metafor, Hmisc, pROC, nricens, googledrive, googlesheets4, ggplot2, viridis, cowplot, grid, gridExtra, and RColorBrewer.
@@ -120,7 +120,38 @@ Listname[c(x,y,z)] <- NULL # where x, y, and z are the shorthand names for the p
 17. Lines 416 + 538 - specify the locations you want to save the .Rdata files.  
 - Output files are "&#42;_INTERVENE_EducationalAttainment_dat_80percent.RData" and "&#42;_INTERVENE_EducationalAttainment_dat_20percent.RData".
 
-### Step 5c: Occupation
+### Step 5c: Educational Attainment - Split polygenic scores into strata
+Run [DataPrep_EducationalAttainment_PGSstrata.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/DataPrep_EducationalAttainment_PGSstrata.R) to create the EA-specific samples with disease-specific polygenic scores (PGSs) split into strata (<20%, 20-40%, 40-60%, 60-95%, >95%) for each trait in your Biobank. Please make the following adjustments: 
+1. Line 50 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
+2. Line 53 - replace with the name of your biobank (don't include spaces in the biobank name)
+3. Line 63 - specify phenotype file location + filename
+4. Lines 66 + 75 - specify the location of the folder containing PGS weights
+5. Line 80 - please replace the identifier name with that used in your biobank.
+6. Lines 91-92 - if Educational Attainment has not been converted to ISCED 1997 from ISCED 2011, replace _"EDUCATION_11"_ in the code that creates the factor with the naming convention for ISCED 2011 education in your biobank; if Educational Attainment has already been converted to ISCED 1997 instead of ISCED 2011, replace it (if applicable) with code to make the ISCED 1997 variable a factor: 
+```
+pheno$ISCED97 <- factor(pheno$ISCED97, levels = c(1,2,3,4,5,6), # remove the ISCED 1997 levels not available in your biobank
+                    labels = c("ISCED 1","ISCED 2","ISCED 3","ISCED 4","ISCED 5", "ISCED 6)) # remove the ISCED 1997 not available in your biobank
+```
+7. Lines 95-120 - Run if ISCED 2011 has not yet been recoded to ISCED 1997 (otherwise out-comment); remove the ISCED 1997 levels not available in your biobank
+8. Lines 129-131 - remove the ISCED 1997 levels not available in your biobank
+9. Line 147 - please replace the identifier names with those used in your biobank.
+10. Line 151 - if your biobank contains individuals of non-European ancestry/those that have principal components calculated for NON-EUROPEAN ancestry, i.e. within ancestry principal components, not global genetic principal components, please add code to only retain individuals of European ancestry after this line, for example,:
+```
+pheno <- subset(pheno, ANCESTRY=='EUR')
+```
+11. Lines 170-196 - Code assumes you have kept the same shorthand names for the phenotypes as within [FinnGen](https://docs.google.com/spreadsheets/d/1DNKd1KzI8WOIfG2klXWskbCSyX6h5gTu/edit#gid=334983519) (column B) and you have kept the same naming structure for the PGS files as when you downloaded them. Please adjust the names of the standard covariates before running this code if the current names do not match the naming convention in your biobank and add additional (technical) covariates as required. Remove any of the traits not applicable in your biobank (i.e., if the biobank was included in GWAS the summary statistics were based on, see Supplementary Data 10 of the [INTERVENE flagship manuscript](https://doi.org/10.1038/s41467-024-48938-2).
+12. Line 223, 228, 240, 248, 258, 298, 305, 369 + 374 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
+13. Lines 262 + 267 - add additional (technical) covariates if required
+14. Lines 286-290 - If none of the PGSs have been flipped (e.g., all associations are positive) then you must out-comment these lines. 
+15. Lines 325-334 - remove birth decades _not_ present in your biobank and _add_ birth decades not included in the code that are included in your biobank. 
+**16. Before writing the output to file, please check whether each subgroup for each trait has >=5 individuals!** Remove traits from the list if <5 individuals in a subgroup, e.g., with the following code: 
+```
+Listname[c(x,y,z)] <- NULL # where x, y, and z are the shorthand names for the phenotypes as in FinnGen
+```
+17. Lines 382 - specify the locations you want to save the .Rdata files.  
+- Output file is "&#42;_INTERVENE_EducationalAttainment_dat_PGSstrata.RData".
+
+### Step 5d: Occupation
 Run [DataPrep_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/DataPrep_Occupation.R) to create the occupation-specific sample for each trait in your Biobank. Please make the following adjustments: 
 1. Line 52 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line 
 2. Line 55 - replace with the name of your biobank (don't include spaces in the biobank name)
@@ -155,11 +186,21 @@ Run [Descriptives_EducationalAttainment.R](https://github.com/intervene-EU-H2020
 3. Line 61 - specify file location + filename
 4. Line 143 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
 5. Lines 152-157  - if your Biobank was included in the prostate cancer GWASs or the number of individuals in any subgroup was <5, and you cannot investigate this trait, out-comment or remove these lines
-7. Lines 159-164 - if your Biobank was included in the breast cancer GWASs or the number of individuals in any subgroup was <5, and you cannot investigate this trait, out-comment or remove these lines
-6. Line 164 - specify the location you want to save the descriptive file. *If the descriptives were generated for the 80-20% split files, change the file name on line 168 to reflect this by adding "_80percent" or "_20percent" at the end of the file name, respectively.*
+6. Lines 159-164 - if your Biobank was included in the breast cancer GWASs or the number of individuals in any subgroup was <5, and you cannot investigate this trait, out-comment or remove these lines
+7. Line 164 - specify the location you want to save the descriptive file. *If the descriptives were generated for the 80-20% split files, change the file name on line 168 to reflect this by adding "_80percent" or "_20percent" at the end of the file name, respectively.*
 - Output files is  "&#42;_INTERVENE_EducationalAttainment_SampleDescriptives.txt"
 
-### Step 6b: Occupation
+### Step 6b: Educational Attainment - split polygenic scores into strata
+Run [Descriptives_EducationalAttainment_PGSstrata.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/Descriptives_EducationalAttainment_PGSstrata.R) to calculate the summary statistics on the phenotype files, including Educational Attainment and the strata for the disease-specific polygenic scores. Please make the following adjustments: 
+1. Line 49 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
+2. Line 52 - replace with the name of your biobank (don't include spaces in the biobank name)
+3. Line 62 - specify file location + filename
+4. Line 72, 75, 100 + 368 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
+5. Lines 377-412 - if your Biobank was included in the prostate cancer GWASs or the number of individuals in any subgroup was <5, and you cannot investigate this trait, out-comment or remove these lines
+6. Line 415 - specify the location you want to save the descriptive file.
+- Output files is  "&#42;_INTERVENE_EducationalAttainment_PGSstrata_SampleDescriptives.txt"
+
+### Step 6c: Occupation
 Run [Descriptives_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/Descriptives_Occupation.R) to calculate the summary statistics on the phenotype files including Occupation. Please make the following adjustments: 
 1. Line 50 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
 2. Line 53 - replace with the name of your biobank (don't include spaces in the biobank name)
@@ -327,6 +368,19 @@ Run [CoxPHmodel5_EducationalAttainment.R](https://github.com/intervene-EU-H2020/
 Run [CoxPHmodel5_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel5_Occupation.R) to run the Cox proportional hazard models with age at disease onset as timescale, where occupation is classified into "Manual worker", "Lower-level", "Upper-level" and (optional) "Self-employed" (reference = Manual worker), and include sex (except for prostate and breast cancer), birth decade, and the first 5 genetic PCs as covariates in each of the groups stratified by PGS ("<25%", "25-75%", and ">75%").  
 **Please note that these analyses have been discontinued.**
 
+## Model 6: Determine effect of trait-specific polygenic score groups stratified by educational attainment on disease risk
+Run [CoxPHmodel6_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel6_EducationalAttainment.R) to run the Cox proportional hazard models with age at disease onset as timescale stratified by low vs. high educational attainment, and include sex (except for prostate cancer), birth decade, and the first 10 genetic PCs as covariates. Please make the following adjustments: 
+1. Line 50 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
+2. Line 53 - replace with the name of your biobank (don't include spaces in the biobank name)
+3. Line 62 - specify file location + filename
+4. Lines 91, 103, 129, 139, 149, 159, 169 + 179 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
+5. Lines 86-87 - add biobank-specific technical covariates if required
+6. Lines 195-198 - if you cannot run the analyses for prostate cancer, rename _"modcoeffs.cox.model6.sex.low"_ and _"modcoeffs.cox.model6.sex.high"_ to _"modcoeffs.cox.model6.low"_ and _"modcoeffs.cox.model6.high"_ 
+7. Lines 200-203 - if you cannot run the analyses for prostate cancer, out-comment or remove these lines
+8. Lines 206-207 - if you cannot run the analyses for prostate cancer, remove _"modcoeffs.cox.model6.nosex.low"_ and _"modcoeffs.cox.model6.nosex.high"_
+9. Line 213 - specify the location you want to save the model 6 output.
+- Output file is "&#42;_INTERVENE_EducationalAttainment_CoxPH_model6_Coeffs.txt"
+
 
 # Part 3: Meta-analyses across biobank studies
 Please note that the meta-analysis scripts are only provided for Educational Attainment. 
@@ -372,15 +426,18 @@ Run [MetaAnalysismodel5_EducationalAttainment.R](https://github.com/intervene-EU
 
 # Part 4: Absolute Risk Estimation
 Absolute risk estimation is only performed in the FinnGen study.
-## Step 1: Extract mortality, prevalence, and incidence of the 19 complex diseases from the 2019 Global Burden of Disease (GBD) Study 
+## Step 1: Cox Proportional Hazard models 
+The results of the education-stratified Cox Proportional Hazard models for the effect of the PGS strata for the 7 complex diseases with significant interactions between disease-specific PGSs and educational attainment or occupation in the FinnGen study are required for the next steps. Instructions on how to prepare the input data for the Cox Proportional Hazard (CoxPH) models can be found [here](), descriptive statistics for the input data can be calculcated with the following [script](), and the instruction for CoxPH model can be found [here]().
+
+## Step 2: Extract mortality, prevalence, and incidence of the 19 complex diseases from the 2019 Global Burden of Disease (GBD) Study 
 Download the 2019 GBD data from [INTERVENE flagship project](https://github.com/intervene-EU-H2020/flagship/tree/main/AbsoluteRiskEstimation).  
 Run [GBD_csv_processing.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/AbsoluteRiskEstimation/GBD_csv_processing.R) to extract the mortality, prevalence, and incidence for each of the 19 complex diseases from the 2019 GBD study.
 
-## Step 2: Estimate cumulative incidences
+## Step 3: Estimate cumulative incidences
 ### Educational Attainment
-Run [AbsoluteRiskEstimation_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/AbsoluteRiskEstimation/AbsoluteRiskEstimation_EducationalAttainment.R) to calculate the cumulative risk incidences by low and high educational attainment and polygenic score (PGS) strata for the 7 complex diseases with significant interactions between disease-specific PGSs and educational attainment or occupation in the FinnGen study. Aside from the mortality, prevalence, and incidence of the complex diseases from the 2019 GBD study as obtained in step 1, this script also requires the results of the PGS-stratified Cox Proportional Hazard models in FinnGen (see ADD REF).
+Run [AbsoluteRiskEstimation_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/AbsoluteRiskEstimation/AbsoluteRiskEstimation_EducationalAttainment.R) to calculate the cumulative risk incidences by low and high educational attainment and polygenic score (PGS) strata for the 7 complex diseases with significant interactions between disease-specific PGSs and educational attainment or occupation in the FinnGen study. Aside from the mortality, prevalence, and incidence of the complex diseases from the 2019 GBD study as obtained in step 2, this script also requires the results of the education-stratified Cox Proportional Hazard models for the effect of the PGS strata in FinnGen (step 1).
 ### Occupation
-Run [AbsoluteRiskEstimation_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/AbsoluteRiskEstimation/AbsoluteRiskEstimation_Occupation.R) to calculate the cumulative risk incidences by lower- and upper-level occupation and polygenic score (PGS) strata for the 7 complex diseases with significant interactions between disease-specific PGSs and educational attainment or occupation in the FinnGen study. Aside from the mortality, prevalence, and incidence of the complex diseases from the 2019 GBD study as obtained in step 1, this script also requires the results of the PGS-stratified Cox Proportional Hazard models in FinnGen (see ADD REF).
+Run [AbsoluteRiskEstimation_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/AbsoluteRiskEstimation/AbsoluteRiskEstimation_Occupation.R) to calculate the cumulative risk incidences by lower- and upper-level occupation and polygenic score (PGS) strata for the 7 complex diseases with significant interactions between disease-specific PGSs and educational attainment or occupation in the FinnGen study. Aside from the mortality, prevalence, and incidence of the complex diseases from the 2019 GBD study as obtained in step 2, this script also requires the results of the education-stratified Cox Proportional Hazard models for the effect of the PGS strata in FinnGen (step 1).
 
 ## Step 3: Obtain confidence intervals for cumulative incidences
 ### Educational Attainment
