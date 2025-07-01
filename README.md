@@ -614,16 +614,49 @@ Run [SupplementaryTables.R](https://github.com/intervene-EU-H2020/GxE_SESDisease
 - Output files are "&#42;_INTERVENE_EducationalAttainment_TableS4.txt", "&#42;_INTERVENE_EducationalAttainment_TableS5.txt", "&#42;_INTERVENE_EducationalAttainment_TableS6.txt", "&#42;_INTERVENE_EducationalAttainment_TableS7.txt", "&#42;_INTERVENE_EducationalAttainment_TableS8.txt", "&#42;_INTERVENE_EducationalAttainment_TableS9.txt", "&#42;_INTERVENE_EducationalAttainment_TableS10.txt", "&#42;_INTERVENE_EducationalAttainment_TableS11.txt", "&#42;_INTERVENE_EducationalAttainment_TableS12.txt", "&#42;_INTERVENE_EducationalAttainment_TableS13.txt", "&#42;_INTERVENE_EducationalAttainment_TableS14.txt", "&#42;_INTERVENE_EducationalAttainment_TableS15.txt", "&#42;_INTERVENE_EducationalAttainment_TableS16.txt", "&#42;_INTERVENE_EducationalAttainment_TableS17.txt", "&#42;_INTERVENE_EducationalAttainment_TableS18.txt", "&#42;_INTERVENE_EducationalAttainment_TableS19.txt", "&#42;_INTERVENE_EducationalAttainment_TableS20.txt", "&#42;_INTERVENE_EducationalAttainment_TableS21.txt", "&#42;_INTERVENE_EducationalAttainment_TableS22.txt", "&#42;_INTERVENE_EducationalAttainment_TableS23.txt", "&#42;_INTERVENE_EducationalAttainment_TableS24.txt", "&#42;_INTERVENE_EducationalAttainment_TableS25.txt", "&#42;_INTERVENE_Occupation_TableS26.txt", "&#42;_INTERVENE_Occupation_TableS27.txt", "&#42;_INTERVENE_Occupation_TableS28.txt", "&#42;_INTERVENE_Occupation_TableS29.txt", "&#42;_INTERVENE_Occupation_TableS30.txt", "&#42;_INTERVENE_Occupation_TableS31.txt", "&#42;_INTERVENE_Occupation_TableS32.txt", "&#42;_INTERVENE_Occupation_TableS33.txt", and "&#42;_INTERVENE_Occupation_TableS34.txt".
 
 ## (Supplemental) Figures: Scripts that create the Main Figures 1 and 2 and the supplemental figures depicting the results from this project. 
-Please note that Main Figures 1 and 2 are completed in InkScape after creating the base figures in R.
+Please note that Main Figures 1-3 and eFigures 4, 7-8, and 10-13 are completed in InkScape after creating the base figures in R.
 
-Run [MainFigure1.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/MainFigure1.R) to create the base for Main Figure 1 in the manuscript, which contains 2 panels: A: meta-analyzed results model 1b; B: meta-analyzed PGS results model 1a.
+Run [MainFigure1.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/MainFigure1.R) to create the base for Main Figure 1 in the manuscript, which contains 2 panels: A: meta-analyzed results model 1b (PGS); B: meta-analyzed PGS results model 1a (education).
 - Output file is "&#42;_INTERVENE_SESDiffDiseases_MainFigure1.png"
 
-Run [MainFigure2.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/MainFigure2.R) to create the base for Main Figure 2 in the manuscript, which contains the meta-analyzed results of model 3.
+Run [MainFigure2.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/MainFigure2.R) to create the base for Main Figure 2 in the manuscript, which contains the meta-analyzed results of model 3 (PGS stratified by education).
 - Output file is "&#42;_INTERVENE_SESDiffDiseases_MainFigure2.png"
 
 Run [MainFigure3.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/MainFigure3.R) to create the base for Main Figure 3 in the manuscript, which contains 2 panels: A: Cumulative risk incidences for Atrial Fibrillation in FinnGen; B: Cumulative risk incidences for Type 2 Diabetes in FinnGen.
 - Output file is "&#42;_INTERVENE_SESDiffDiseases_MainFigure3.png"
+
+Run [eFigure3.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/eFigure3.R) to create supplemental figure 3 for the manuscript, which contains the per-biobank and meta-analyzed results for model 1b (PGS) and model 1a (Education). 
+- Output file is "&#42;_INTERVENE_EducationalAttainment_eFigure3.png"
+
+Run [eFigure4.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/eFigure4.R) to create the base for supplemental figure 4 in the manuscript, which contains a comparison of the meta-analyzed model 1b (PGS) vs model 1a (Education). 
+- Output file is "&#42;_INTERVENE_EducationalAttainment_eFigure4.png"
+
+Run [eFigure5.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/eFigure5.R) to create supplemental figure 5 for the manuscript, which contains the per-biobank and meta-analyzed results for model 2 (PGS+Education). 
+- Output file is "&#42;_INTERVENE_EducationalAttainment_eFigure5.png"
+
+Run [eFigure6.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/eFigure6.R) to create supplemental figure 6 for the manuscript, which contains the per-biobank and meta-analyzed results for model 3 (PGS stratified by education). 
+- Output file is "&#42;_INTERVENE_EducationalAttainment_eFigure6.png"
+
+Run [eFigure7.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/eFigure7.R) to create the base for supplemental figure 7 in the manuscript, which contains the education-specific cumulative incidences in FinnGen. 
+- Output file is "&#42;_INTERVENE_EducationalAttainment_eFigure7.png"
+
+Run [eFigure8.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/eFigure8.R) to create the base for supplemental figure 8 in the manuscript, which contains the comparison of model 4 (PGS+education+interaction) using a Cox proportional hazards model vs Fine-Gray competing risk model in FinnGen. 
+- Output file is "&#42;_INTERVENE_EducationalAttainment_eFigure8.png"
+
+Run [eFigure9.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/eFigure9.R) to create supplemental figure 9 for the manuscript, which contains the per-ancestry results for model 1b (PGS) and model 1a (Education) in the UK Biobank. 
+- Output file is "&#42;_INTERVENE_EducationalAttainment_eFigure9.png"
+
+Run [eFigure10.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/eFigure10.R) to create the base for supplemental Figure 10 in the manuscript, which contains 4 panels: A: FinnGen results model 1b (PGS); B: comparison PGS effect model 1b (PGS) vs model 2 (PGS+occupation) in FinnGen; C: FinnGen results model 1a (occupation); and D: comparison occupation effect model 1a (occupation) vs model 2 (PGS+occupation) in FinnGen.
+- Output file is "&#42;_INTERVENE_Occupation_eFigure10.png"
+
+Run [eFigure11.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/eFigure11.R) to create the base for supplemental Figure 11 in the manuscript, which contains 2 panels: A: FinnGen results model 3 (PGS stratified by education); B: FinnGen results model 3 (PGS stratified by occupation.
+- Output file is "&#42;_INTERVENE_Occupation_eFigure11.png"
+
+Run [eFigure12.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/eFigure12.R) to create the base for supplemental Figure 12 in the manuscript, which contains 4 panels: A: comparison of education vs. occupation effect in FinnGen; B: comparison of PGS effect in the model with education vs. occupation in FinnGen; C: comparison of PGS effect in individuals with low education vs. lower-level occupation in FinnGen; D: comparison of PGS effect in individuals with high education vs. upper-level occupation in FinnGen.
+- Output file is "&#42;_INTERVENE_Occupation_eFigure12.png"
+
+Run [eFigure13.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/eFigure13.R) to create the base for supplemental figure 13 in the manuscript, which contains the occupation-specific cumulative incidences in FinnGen. 
+- Output file is "&#42;_INTERVENE_Occupation_eFigure13.png"
 
 Run [SupplementaryFigures.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/SupplementaryFigures.R) to create the four supplemental figures for the manuscript.  
 **Please note that this script has been discontinued. Supplementary Figures are now in separate scripts.**
