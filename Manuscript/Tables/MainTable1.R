@@ -15,8 +15,7 @@ rm(list=ls())
 # required input data: FinnGen data release 11 (FGR11) + UK Biobanke
 # (UKB) + Generation Scotland (GS) descriptive statistics
 #
-# Last edits: 06/11/2024 (edits, FAH: final checks and minor tweaks prior to
-# upload to GitHub)
+# Last edits: 30/8/2025 (edits, FAH: add disease prevalences)
 # 
 ################################################################################
 
@@ -187,15 +186,19 @@ T1 <- data.frame(Study = c(rep("FinnGen",nrow(FGR11.N)),rep("UK Biobank",nrow(UK
                  MaximumFollowUp_mediaun_IQR = c(paste0(FGR11.N$Followup_Median," (",FGR11.N$Followup_IQR,")"),
                                                  paste0(UKB.N$Followup_Median," (",UKB.N$Followup_IQR,")"),
                                                  paste0(GS.N$Followup_Median," (",GS.N$Followup_IQR,")")),
-                 females = c(paste0(round(FGR11.N$Nfemales),"(",round(FGR11.N$Nfemales/FGR11.N$Ntotal*100,1),"%)"),
-                             paste0(round(UKB.N$Nfemales),"(",round(UKB.N$Nfemale/UKB.N$Ntotal*100,1),"%)"),
-                             paste0(round(GS.N$Nfemales),"(",round(GS.N$Nfemales/GS.N$Ntotal*100,1),"%)")),
-                 highEA = c(paste0(round(FGR11.N$highEA),"(",round(FGR11.N$highEA/FGR11.N$Ntotal*100,1),"%)"),
-                            paste0(round(UKB.N$highEA),"(",round(UKB.N$highEA/UKB.N$Ntotal*100,1),"%)"),
-                            paste0(round(GS.N$highEA),"(",round(GS.N$highEA/GS.N$Ntotal*100,1),"%)")),
+                 DiseasePrevalence = c(paste0(round(FGR11.N$prevalence,1),"%"),
+                                       paste0(round(UKB.N$prevalence,1),"%"),
+                                       paste0(round(GS.N$prevalence,1),"%")),
+                 females = c(paste0(round(FGR11.N$Nfemales)," (",round(FGR11.N$Nfemales/FGR11.N$Ntotal*100,1),"%)"),
+                             paste0(round(UKB.N$Nfemales)," (",round(UKB.N$Nfemale/UKB.N$Ntotal*100,1),"%)"),
+                             paste0(round(GS.N$Nfemales)," (",round(GS.N$Nfemales/GS.N$Ntotal*100,1),"%)")),
+                 highEA = c(paste0(round(FGR11.N$highEA)," (",round(FGR11.N$highEA/FGR11.N$Ntotal*100,1),"%)"),
+                            paste0(round(UKB.N$highEA)," (",round(UKB.N$highEA/UKB.N$Ntotal*100,1),"%)"),
+                            paste0(round(GS.N$highEA)," (",round(GS.N$highEA/GS.N$Ntotal*100,1),"%)")),
                  AcertainmentStrategy = c(rep("Population and hospital",nrow(FGR11.N)),
                                           rep("Population",nrow(UKB.N)),rep("Population",nrow(GS.N))))
 # write file 
 write.table(T1, file = paste0("output/Tables/",as.character(Sys.Date()),
                                "_INTERVENE_EducationalAttainment_MainTable1.txt"),
             row.names=F, col.names = T, sep="\t",quote = F)
+
