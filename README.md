@@ -626,7 +626,7 @@ Run [MainFigure2.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/ma
 Run [MainFigure3.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/MainFigure3.R) to create the base for Main Figure 3 in the manuscript, which contains 2 panels: A: Cumulative risk incidences for Atrial Fibrillation in FinnGen; B: Cumulative risk incidences for Type 2 Diabetes in FinnGen.
 - Output file is "&#42;_INTERVENE_SESDiffDiseases_MainFigure3.png"
 
-Run to create the base for Main Figure 4 in the manuscript, which contains 2 panels: A: comparison of predictive performance in 20% of Finngen; B: comparison of predictive performance in UK Biobank.
+Run [MainFigure4.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/MainFigure4.R) to create the base for Main Figure 4 in the manuscript, which contains 2 panels: A: comparison of predictive performance in 20% of Finngen; B: comparison of predictive performance in UK Biobank.
 - Output file is "&#42;_INTERVENE_SESDiffDiseases_MainFigure4.png"
 
 Run [eFigure3.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/eFigure3.R) to create supplemental figure 3 for the manuscript, which contains the per-biobank and meta-analyzed results for model 1b (PGS) and model 1a (Education). 
