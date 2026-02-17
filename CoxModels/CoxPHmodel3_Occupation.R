@@ -12,12 +12,13 @@ rm(list=ls())
 #
 # Script model 3: Run Cox Proportional-Hazards models with age of onset as
 # timescale, with trait-specific PGS by occupation level, sex (except for breast
-# and prostate cancer), bith decade, and the first 10 genetic PCS as covariates.
+# and prostate cancer), and the first 10 genetic PCS as covariates.
 #
 # Required input data: biobank-specific INTERVENE combined phenotype and PGS
 # file
 #
-# Last edits: 19/06/2025 (FAH, edits: replace with traditional stratification)
+# Last edits: 17/02/2026 (FAH, edits: remove birth decade as covariate to 
+# match all other models)
 #
 ################################################################################
 
@@ -107,11 +108,11 @@ cox.model.PGS <- function(filelist,covformula) {
   return(fit)
 }
 
-# create the formula with the first 10 genetic PCs, birth decade, and sex as
-# covariates, and one with birth decade, and the first 10 genetic PCs as
+# create the formula with the first 10 genetic PCs, and sex as
+# covariates, and one with the first 10 genetic PCs as
 # covariates (for running the analyses for prostate and breast cancer)
-mod3sex.formula <- paste0("SEX + PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + PC7 + PC8 + PC9 + PC10 + birthdecade")
-mod3nosex.formula <- paste0("PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + PC7 + PC8 + PC9 + PC10  + birthdecade")
+mod3sex.formula <- paste0("SEX + PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + PC7 + PC8 + PC9 + PC10")
+mod3nosex.formula <- paste0("PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + PC7 + PC8 + PC9 + PC10")
 
 # run Cox-PH model 3 in loop with foreach  in parallel for each of the 19
 # diseases and both education groups.
@@ -239,3 +240,4 @@ modcoeffs.cox.model3$Test <- c(rep("Lower-level",.5*nrow(modcoeffs.cox.model3)),
 write.table(modcoeffs.cox.model3, file=paste0("[PathToOutputFolder/]",as.character(Sys.Date()),
                                               "_",Biobank,"_INTERVENE_Occupation_CoxPH_model3_Coeffs.txt"),
             row.names=F, col.names = T, sep="\t",quote = F)
+
