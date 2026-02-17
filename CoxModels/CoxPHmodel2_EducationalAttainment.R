@@ -18,8 +18,8 @@ rm(list=ls())
 # Required input data: biobank-specific INTERVENE combined phenotype and PGS
 # file
 #
-# Last edits: 19/04/2024 (FAH, edits: globalize script for use in other
-# INTERVENE biobanks and upload to GitHub)
+# Last edits: 17/02/2026 (FAH, edits: add code to plot Schoenfeld residuals 
+# for Education and PGSs)
 #
 ################################################################################
 
@@ -194,3 +194,97 @@ modcoeffs.cox.model2 <- rbind.fill(modcoeffs.cox.model2.sex,modcoeffs.cox.model2
 write.table(modcoeffs.cox.model2, file=paste0("[PathToOutputFolder/]",as.character(Sys.Date()),
                                               "_",Biobank,"_INTERVENE_EducationalAttainment_CoxPH_model2_Coeffs.txt"),
             row.names=F, col.names = T, sep="\t",quote = F)
+
+
+###############################################################################
+#
+# Create Schoenfeld residual plots for the PGSs and EA
+#
+################################################################################
+
+# Test proportional hazard assumptions
+test.ph.model2 <- foreach(i=1:length(INTERVENE.list)) %dopar% {
+  cox.zph(res.cox.model2[[i]])
+}
+
+# vector with trait names
+trait <- c(unlist(lapply(INTERVENE.list, function(x) { names(x)[15] })))
+# make factor (remove non-relevant traits)
+trait <- factor(trait, levels = c("T1D","C3_PROSTATE","T2D","GOUT",
+                                  "RHEUMA_SEROPOS_OTH","C3_BREAST","I9_AF",
+                                  "C3_COLORECTAL","J10_ASTHMA","I9_CHD",
+                                  "COX_ARTHROSIS","KNEE_ARTHROSIS",
+                                  "C3_MELANOMA_SKIN","C3_BRONCHUS_LUNG",
+                                  "F5_DEPRESSIO","C3_CANCER","G6_EPLEPSY",
+                                  "K11_APPENDACUT","AUD_SWEDISH"),
+                labels = c("Type 1 Diabetes","Prostate Cancer","Type 2 Diabetes",
+                           "Gout","Rheumatoid Arthritis","Breast Cancer",
+                           "Atrial Fibrillation","Colorectal Cancer","Asthma",
+                           "Coronary Heart Disease","Hip Osteoarthritis",
+                           "Knee Osteoarthritis","Skin Melanoma","Lung Cancer",
+                           "Major Depression","Any Cancer","Epilepsy",
+                           "Appendicitis","Alcohol Use Disorder"))
+
+# create Schoenfeld residual plots
+png(filename = paste0("/scratch/project_2007428/users/FAHagenbeek/output/2classEA/CoxPropHaz_model2/",as.character(Sys.Date()),
+                      "_",Biobank,"_EUR_INTERVENE_EducationalAttainment_TestPH_model2_FIG.png"),
+    res = 300, width = 500, height = 400, units = "mm")
+par(mfrow = c(7,6)) # adjust to number of traits tested
+# only include the number of traits tested
+plot(test.ph.model2[[1]], var = c(rownames(test.ph.model2[[1]]$table)[grep(".*prs",rownames(test.ph.model2[[1]]$table))]), ylab = "Beta(t) for PGS", main=paste0(trait[1]))
+plot(test.ph.model2[[1]], var = c("EA"), ylab = paste0("Beta(t) for education"),main=paste0(trait[1]))
+#
+plot(test.ph.model2[[2]], var = c(rownames(test.ph.model2[[2]]$table)[grep(".*prs",rownames(test.ph.model2[[2]]$table))]), ylab = "Beta(t) for PGS", main=paste0(trait[2]))
+plot(test.ph.model2[[2]], var = c("EA"), ylab = paste0("Beta(t) for education"),main=paste0(trait[2]))
+#
+plot(test.ph.model2[[3]], var = c(rownames(test.ph.model2[[3]]$table)[grep(".*prs",rownames(test.ph.model2[[3]]$table))]), ylab = "Beta(t) for PGS", main=paste0(trait[3]))
+plot(test.ph.model2[[3]], var = c("EA"), ylab = paste0("Beta(t) for education"),main=paste0(trait[3]))
+#
+plot(test.ph.model2[[4]], var = c(rownames(test.ph.model2[[4]]$table)[grep(".*prs",rownames(test.ph.model2[[4]]$table))]), ylab = "Beta(t) for PGS", main=paste0(trait[4]))
+plot(test.ph.model2[[4]], var = c("EA"), ylab = paste0("Beta(t) for education"),main=paste0(trait[4]))
+#
+plot(test.ph.model2[[5]], var = c(rownames(test.ph.model2[[5]]$table)[grep(".*prs",rownames(test.ph.model2[[5]]$table))]), ylab = "Beta(t) for PGS", main=paste0(trait[5]))
+plot(test.ph.model2[[5]], var = c("EA"), ylab = paste0("Beta(t) for education"),main=paste0(trait[5]))
+#
+plot(test.ph.model2[[6]], var = c(rownames(test.ph.model2[[6]]$table)[grep(".*prs",rownames(test.ph.model2[[6]]$table))]), ylab = "Beta(t) for PGS", main=paste0(trait[6]))
+plot(test.ph.model2[[6]], var = c("EA"), ylab = paste0("Beta(t) for education"),main=paste0(trait[6]))
+#
+plot(test.ph.model2[[7]], var = c(rownames(test.ph.model2[[7]]$table)[grep(".*prs",rownames(test.ph.model2[[7]]$table))]), ylab = "Beta(t) for PGS", main=paste0(trait[7]))
+plot(test.ph.model2[[7]], var = c("EA"), ylab = paste0("Beta(t) for education"),main=paste0(trait[7]))
+#
+plot(test.ph.model2[[8]], var = c(rownames(test.ph.model2[[8]]$table)[grep(".*prs",rownames(test.ph.model2[[8]]$table))]), ylab = "Beta(t) for PGS", main=paste0(trait[8]))
+plot(test.ph.model2[[8]], var = c("EA"), ylab = paste0("Beta(t) for education"),main=paste0(trait[8]))
+#
+plot(test.ph.model2[[9]], var = c(rownames(test.ph.model2[[9]]$table)[grep(".*prs",rownames(test.ph.model2[[9]]$table))]), ylab = "Beta(t) for PGS", main=paste0(trait[9]))
+plot(test.ph.model2[[9]], var = c("EA"), ylab = paste0("Beta(t) for education"),main=paste0(trait[9]))
+#
+plot(test.ph.model2[[10]], var = c(rownames(test.ph.model2[[10]]$table)[grep(".*prs",rownames(test.ph.model2[[10]]$table))]), ylab = "Beta(t) for PGS", main=paste0(trait[10]))
+plot(test.ph.model2[[10]], var = c("EA"), ylab = paste0("Beta(t) for education"),main=paste0(trait[10]))
+#
+plot(test.ph.model2[[11]], var = c(rownames(test.ph.model2[[11]]$table)[grep(".*prs",rownames(test.ph.model2[[11]]$table))]), ylab = "Beta(t) for PGS", main=paste0(trait[11]))
+plot(test.ph.model2[[11]], var = c("EA"), ylab = paste0("Beta(t) for education"),main=paste0(trait[11]))
+#
+plot(test.ph.model2[[12]], var = c(rownames(test.ph.model2[[12]]$table)[grep(".*prs",rownames(test.ph.model2[[12]]$table))]), ylab = "Beta(t) for PGS", main=paste0(trait[12]))
+plot(test.ph.model2[[12]], var = c("EA"), ylab = paste0("Beta(t) for education"),main=paste0(trait[12]))
+#
+plot(test.ph.model2[[13]], var = c(rownames(test.ph.model2[[13]]$table)[grep(".*prs",rownames(test.ph.model2[[13]]$table))]), ylab = "Beta(t) for PGS", main=paste0(trait[13]))
+plot(test.ph.model2[[13]], var = c("EA"), ylab = paste0("Beta(t) for education"),main=paste0(trait[13]))
+#
+plot(test.ph.model2[[14]], var = c(rownames(test.ph.model2[[14]]$table)[grep(".*prs",rownames(test.ph.model2[[14]]$table))]), ylab = "Beta(t) for PGS", main=paste0(trait[14]))
+plot(test.ph.model2[[14]], var = c("EA"), ylab = paste0("Beta(t) for education"),main=paste0(trait[14]))
+#
+plot(test.ph.model2[[15]], var = c(rownames(test.ph.model2[[15]]$table)[grep(".*prs",rownames(test.ph.model2[[15]]$table))]), ylab = "Beta(t) for PGS", main=paste0(trait[15]))
+plot(test.ph.model2[[15]], var = c("EA"), ylab = paste0("Beta(t) for education"),main=paste0(trait[15]))
+#
+plot(test.ph.model2[[16]], var = c(rownames(test.ph.model2[[16]]$table)[grep(".*prs",rownames(test.ph.model2[[16]]$table))]), ylab = "Beta(t) for PGS", main=paste0(trait[16]))
+plot(test.ph.model2[[16]], var = c("EA"), ylab = paste0("Beta(t) for education"),main=paste0(trait[16]))
+#
+plot(test.ph.model2[[17]], var = c(rownames(test.ph.model2[[17]]$table)[grep(".*prs",rownames(test.ph.model2[[17]]$table))]), ylab = "Beta(t) for PGS", main=paste0(trait[17]))
+plot(test.ph.model2[[17]], var = c("EA"), ylab = paste0("Beta(t) for education"),main=paste0(trait[17]))
+#
+plot(test.ph.model2[[18]], var = c(rownames(test.ph.model2[[18]]$table)[grep(".*prs",rownames(test.ph.model2[[18]]$table))]), ylab = "Beta(t) for PGS", main=paste0(trait[18]))
+plot(test.ph.model2[[18]], var = c("EA"), ylab = paste0("Beta(t) for education"),main=paste0(trait[18]))
+#
+plot(test.ph.model2[[19]], var = c(rownames(test.ph.model2[[19]]$table)[grep(".*prs",rownames(test.ph.model2[[19]]$table))]), ylab = "Beta(t) for PGS", main=paste0(trait[19]))
+plot(test.ph.model2[[19]], var = c("EA"), ylab = paste0("Beta(t) for education"),main=paste0(trait[19]))
+dev.off()
