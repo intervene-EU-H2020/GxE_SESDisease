@@ -235,7 +235,18 @@ Run [Descriptives_EducationalAttainment.R](https://github.com/intervene-EU-H2020
 7. Line 164 - specify the location you want to save the descriptive file. *If the descriptives were generated for the 80-20% split files, change the file name on line 168 to reflect this by adding "_80percent" or "_20percent" at the end of the file name, respectively.*
 - Output files is  "&#42;_INTERVENE_EducationalAttainment_SampleDescriptives.txt"
 
-### Step 6b: Educational Attainment - split polygenic scores into strata
+### Step 6b: Educational Attainment - Cohort-specific dichotomization
+Run [Descriptives_EducationalAttainment_CohortSpecific.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/Descriptives_EducationalAttainment_CohortSpecific.R) to calculate the summary statistics on the phenotype files including Educational Attainment when education has beendichotomized with cohort-specific thresholds. Please make the following adjustments: 
+1. Line 49 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
+2. Line 52 - replace with the name of your biobank (don't include spaces in the biobank name)
+3. Line 61 - specify file location + filename
+4. Line 143 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
+5. Lines 152-157  - if your Biobank was included in the prostate cancer GWASs or the number of individuals in any subgroup was <5, and you cannot investigate this trait, out-comment or remove these lines
+6. Lines 159-164 - if your Biobank was included in the breast cancer GWASs or the number of individuals in any subgroup was <5, and you cannot investigate this trait, out-comment or remove these lines
+7. Line 167 - specify the location you want to save the descriptive file. *If the descriptives were generated for the 80-20% split files, change the file name on line 168 to reflect this by adding "_80percent" or "_20percent" at the end of the file name, respectively.*
+- Output files is  "&#42;_INTERVENE_EducationalAttainment_CohortSpecific_SampleDescriptives.txt"
+
+### Step 6c: Educational Attainment - split polygenic scores into strata
 Run [Descriptives_EducationalAttainment_FineGray.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/Descriptives_EducationalAttainment_FineGray.R) to calculate the summary statistics on the phenotype files, including Educational Attainment, which contains information on all-cause mortality as competing risk. Please make the following adjustments: 
 1. Line 49 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
 2. Line 52 - replace with the name of your biobank (don't include spaces in the biobank name)
@@ -245,7 +256,7 @@ Run [Descriptives_EducationalAttainment_FineGray.R](https://github.com/intervene
 6. Line 415 - specify the location you want to save the descriptive file.
 - Output files is  "&#42;_INTERVENE_EducationalAttainment_PGSstrata_SampleDescriptives.txt"
 
-### Step 6c: Educational Attainment - for FineGray models
+### Step 6d: Educational Attainment - for FineGray models
 Run [Descriptives_EducationalAttainment_PGSstrata.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/Descriptives_EducationalAttainment_PGSstrata.R) to calculate the summary statistics on the phenotype files, including Educational Attainment and the strata for the disease-specific polygenic scores. Please make the following adjustments: 
 1. Line 49 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
 2. Line 52 - replace with the name of your biobank (don't include spaces in the biobank name)
@@ -254,7 +265,7 @@ Run [Descriptives_EducationalAttainment_PGSstrata.R](https://github.com/interven
 5. Line 153 - specify the location you want to save the descriptive file.
 - Output files is  "&#42;_INTERVENE_EducationalAttainment_FineGray_SampleDescriptives.txt"
 
-### Step 6d: Occupation
+### Step 6e: Occupation
 Run [Descriptives_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/Descriptives_Occupation.R) to calculate the summary statistics on the phenotype files including Occupation. Please make the following adjustments: 
 1. Line 50 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
 2. Line 53 - replace with the name of your biobank (don't include spaces in the biobank name)
