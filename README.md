@@ -371,6 +371,19 @@ Run [CoxPHmodel3_EducationalAttainment.R](https://github.com/intervene-EU-H2020/
 1. Line 50 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
 2. Line 53 - replace with the name of your biobank (don't include spaces in the biobank name)
 3. Line 62 - specify file location + filename
+4. Lines 72, 77, 154, 164, 174, 184, 194 + 204 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
+5. Lines 115-116 - add biobank-specific technical covariates if required
+6. Lines 219-223 + lines 231-232 - if you cannot run the analyses for prostate and breast cancer, rename _"modcoefffs.cox.model3.sex.low"_ and _"modcoeffs.cox.model3.sex.high"_ to _"modcoeffs.cox.model3.low"_ and _"modcoeffs,cox.model3.high"_ 
+7. Lines 224-228 + lines 233-234 - if you cannot run the analyses for prostate and breast cancer, out-comment or remove these lines
+8. Line 235 - if you cannot run the analyses for prostate and breast cancer, remove _"modcoeffs.cox.model3.nosex.low"_ and _"modcoeffs.cox.model3.nosex.high"_
+9. Line 241 - specify the location you want to save the model 3 output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 238.*  
+- Output file is "&#42;_INTERVENE_EducationalAttainment_CohortSpecific_CoxPH_model3_Coeffs.txt"
+
+### Educational Attainment - with cohort-specific threshold for low vs. high education
+Run [CoxPHmodel3_EducationalAttainment_CohortSpecific.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel3_EducationalAttainment_CohortSpecific.R) to run the Education stratified (where EA is dichotomized into low vs high EA based on cohort-specific threshold) Cox proportional hazard models with age at disease onset as timescale, and include the trait-specific PGS, sex (except for breast and prostate cancer), bith decade, and the first 10 genetic PCS as covariates. Please make the following adjustments: 
+1. Line 50 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
+2. Line 53 - replace with the name of your biobank (don't include spaces in the biobank name)
+3. Line 62 - specify file location + filename
 4. Lines 71, 76, 119, 126, 153, 163, 173, 183 + 203 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
 5. Lines 115-116 - add biobank-specific technical covariates if required
 6. Lines 219-222 + lines 230-231 - if you cannot run the analyses for prostate and breast cancer, rename _"modcoefffs.cox.model3.sex.low"_ and _"modcoeffs.cox.model3.sex.high"_ to _"modcoeffs.cox.model3.low"_ and _"modcoeffs,cox.model3.high"_ 
