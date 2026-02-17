@@ -316,8 +316,11 @@ Run [CoxPHmodel2_EducationalAttainment.R](https://github.com/intervene-EU-H2020/
 5. Lines 91, 117, 127, 137, 147, 157 + 167 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
 6. Lines 174 + 180 - if you cannot run the analyses for prostate and breast cancer, rename _"modcoefffs.cox.model2.sex"_ to _"modcoeffs.cox.model2"_
 7. Lines 186-187 + 190-191 - if you cannot run the analyses for prostate and breast cancer, out-comment or remove these lines
-8. Line 194 - specify the location you want to save the model 2 output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 195.*  
-- Output file is "&#42;_INTERVENE_EducationalAttainment_CoxPH_model2_Coeffs.txt"
+8. Line 194 - specify the location you want to save the model 2 output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 195.*
+9. Lines 213-226 - remove traits not included in Biobank
+10. Line 232 - replace number of rows (currently 6) to reflect half of the number of traits analyses in Biobank
+11. Lines 234-289 - only keep the plots for the number of traits analysed in Biobank, e.g., if only 14 traits analysed, remove rows 275-289
+- Output files are "&#42;_INTERVENE_EducationalAttainment_CoxPH_model2_Coeffs.txt"  and "&#42;_INTERVENE_EducationalAttainment_TestPH_model2_FIG.png"
 
 ### Occupation 
 Run [CoxPHmodel2_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel2_Occupation.R) to run the Cox proportional hazard models with age at disease onset as timescale, where occupation is classified into "Manual worker", "Lower-level", "Upper-level" and **(optional)** "Self-employed" (reference = Manual worker), and include the trait-specific PGS, sex (except for prostate and breast cancer), birth decade and the first 10 genetic PCs as covariates. Please make the following adjustments:
