@@ -376,6 +376,18 @@ Run [CoxPHmodel4_EducationalAttainment.R](https://github.com/intervene-EU-H2020/
 11. Lines 235-309 - only keep the plots for the number of traits analysed in Biobank, e.g., if only 14 traits analysed, remove rows 290-309
 - Output file are "&#42;_INTERVENE_EducationalAttainment_CoxPH_model4_Coeffs.txt" and "&#42;_INTERVENE_EducationalAttainment_TestPH_model4_FIG.png"
 
+### Educational Attainment (not binary)
+Run [CoxPHmodel4_EducationalAttainment_allISCED.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel4_EducationalAttainment_allISCED.R) to run the Cox proportional hazard models with age at disease onset as timescale, where EA is continuous, and include EA, the trait-specific PGS, the EA * trait-specific PGS interaction, sex (except for prostate and breast cancer), the first 10 genetics PCs, and birth decade as covariates. Please make the following adjustments: 
+1. Line 51 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
+2. Line 54 - replace with the name of your biobank (don't include spaces in the biobank name)
+3. Line 63 - specify file location + filename
+4. Lines 93-94 - add biobank-specific technical covariates if required
+5. Lines 98, 124, 134, 144, 154, 164 + 174 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
+6. Lines 190 + 196 - if you cannot run the analyses for prostate and breast cancer, rename _"modcoefffs.cox.model4.sex"_ to _"modcoeffs.cox.model4"_
+7. Lines 192-194 + 197-198 - if you cannot run the analyses for prostate and breast cancer, out-comment or remove these lines
+8. Line 201 - specify the location you want to save the model 4 output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 201.*
+- Output file is "&#42;_INTERVENE_EducationalAttainment_allISCED_CoxPH_model4_Coeffs.txt"
+
 ### Occupation
 Run [CoxPHmodel4_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel4_Occupation.R) to run the Cox proportional hazard models with age at disease onset as timescale, where occupation is classified into "Manual worker", "Lower-level", "Upper-level" and **(optional)** "Self-employed" (reference = Manual worker), and include occupation, the trait-specific PGS, the occupation * trait-specific PGS interaction, sex (except for prostate and breast cancer), the first 10 genetics PCs, and birth decade as covariates. Please make the following adjustments:
 1. Line 51 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
