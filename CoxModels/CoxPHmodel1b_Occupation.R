@@ -18,8 +18,8 @@ rm(list=ls())
 # Required input data: biobank-specific INTERVENE combined phenotype and PGS
 # file
 #
-# Last edits: 19/04/2024 (FAH, edits: globalize script for use in other
-# INTERVENE biobanks and upload to GitHub)
+# Last edits: 17/02/2026 (FAH, edits: remove birth decade as covariate to 
+# match all other models)
 #
 ################################################################################
 
@@ -82,8 +82,8 @@ cox.model.PGS <- function(filelist,covformula) {
 # create the formula with the first 10 genetic PCs, birth decade and sex as
 # covariates, and one with only birth decade and the first 10 genetic PCs as
 # covariates (for running the analyses for prostate and breast cancer)
-mod1bsex.formula <- paste0("SEX + PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + PC7 + PC8 + PC9 + PC10 + birthdecade")
-mod1bnosex.formula <- paste0("PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + PC7 + PC8 + PC9 + PC10 + birthdecade")
+mod1bsex.formula <- paste0("SEX + PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + PC7 + PC8 + PC9 + PC10")
+mod1bnosex.formula <- paste0("PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + PC7 + PC8 + PC9 + PC10")
 
 # run Cox-PH model 1b, which includes the scaled trait-specific PGS in loop with
 # foreach in parallel for each of the diseases.
@@ -193,3 +193,4 @@ modcoeffs.cox.model1b <- rbind.fill(modcoeffs.cox.model1b.sex,modcoeffs.cox.mode
 write.table(modcoeffs.cox.model1b, file=paste0("[PathToOutputFolder/]",as.character(Sys.Date()),
                                                "_",Biobank,"_INTERVENE_Occupation_CoxPH_model1b_Coeffs.txt"),
             row.names=F, col.names = T, sep="\t",quote = F)
+
