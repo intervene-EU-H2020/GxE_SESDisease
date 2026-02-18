@@ -16,8 +16,7 @@ rm(list=ls())
 #
 # Data: FGR11 + UKB + GS + meta-analysis model 1a+b
 #
-# Last edits: 01/07/2025 (edits, FAH: final checks and minor tweaks prior to
-# upload to GitHub)
+# Last edits: 18/02/2026 (edits, FAH: add random-effect meta-analytical results)
 # 
 ################################################################################
 
@@ -62,27 +61,33 @@ packages("data.table","ggplot2","viridis","dplyr","forcats","stringr","cowplot",
 FGR11.1a <- fread("output/GoogleDrive/FGR11/2024-03-13_FinnGenR11_INTERVENE_EducationalAttainment_CoxPH_model1a_Coeffs.txt", data.table=FALSE)
 FGR11.1a$Biobank <- "FinnGen"
 #
-UKB.1a <- fread("output/GoogleDrive/UKB/2025-05-22_UKBiobank_EUR_INTERVENE_EducationalAttainment_CoxPH_model1a_Coeffs.txt",data.table=FALSE)
-UKB.1a$Biobank <- "UK Biobank"
+UKB.1a.EUR <- fread("output/GoogleDrive/UKB/2025-05-22_UKBiobank_EUR_INTERVENE_EducationalAttainment_CoxPH_model1a_Coeffs.txt",data.table=FALSE)
+UKB.1a.EUR$Biobank <- "UK Biobank"
 #
 GS.1a <- fread("output/GoogleDrive/GS/2024-07-04_GS_INTERVENE_EducationalAttainment_CoxPH_model1a_Coeffs.txt",data.table=FALSE)
 GS.1a$Biobank <- "Generation Scotland"
 #
 FEMA.1a <- as.data.frame(read_excel("output/GoogleDrive/MetaAnalysis/2025-05-22_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model1a.xlsx"))
 FEMA.1a$Biobank <- "FE meta-analysis"
+#
+REMA.1a <- fread("output/GoogleDrive/MetaAnalysis/2026-02-18_INTERVENE_EducationalAttainment_REMetaAnalysis_FinnGenR11_UKB_GenScot_model1a.csv",data.table = FALSE)
+REMA.1a$Biobank <- "RE meta-analysis"
 
 # read in model 1b - PRS only
 FGR11.1b <- fread("output/GoogleDrive/FGR11/2024-03-13_FinnGenR11_INTERVENE_EducationalAttainment_CoxPH_model1b_Coeffs.txt", data.table=FALSE)
 FGR11.1b$Biobank <- "FinnGen"
 #
-UKB.1b <- fread("output/GoogleDrive/UKB/2025-05-22_UKBiobank_EUR_INTERVENE_EducationalAttainment_CoxPH_model1b_Coeffs.txt",data.table=FALSE)
-UKB.1b$Biobank <- "UK Biobank"
+UKB.1b.EUR <- fread("output/GoogleDrive/UKB/2025-05-22_UKBiobank_EUR_INTERVENE_EducationalAttainment_CoxPH_model1b_Coeffs.txt",data.table=FALSE)
+UKB.1b.EUR$Biobank <- "UK Biobank"
 #
 GS.1b <- fread("output/GoogleDrive/GS/2024-07-04_GS_INTERVENE_EducationalAttainment_CoxPH_model1b_Coeffs.txt",data.table=FALSE)
 GS.1b$Biobank <- "Generation Scotland"
 #
 FEMA.1b <- as.data.frame(read_excel("output/GoogleDrive/MetaAnalysis/2025-05-22_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model1b.xlsx"))
 FEMA.1b$Biobank <- "FE meta-analysis"
+#
+REMA.1b <- fread("output/GoogleDrive/MetaAnalysis/2026-02-18_INTERVENE_EducationalAttainment_REMetaAnalysis_FinnGenR11_UKB_GenScot_model1b.csv", data.table = FALSE)
+REMA.1b$Biobank <- "RE meta-analysis"
 
 
 ################################################################################
@@ -94,8 +99,13 @@ FEMA.1b$Biobank <- "FE meta-analysis"
 ################################################################################
 
 ## remove traits not meta-analyzed ##
+# fixed effect
 FEMA.1a <- FEMA.1a[-which(FEMA.1a$Phenotype %in% c("I9_AF","C3_COLORECTAL")),]
 FEMA.1b <- FEMA.1b[-which(FEMA.1b$Phenotype %in% c("I9_AF","C3_COLORECTAL")),]
+
+# random effect
+REMA.1a <- REMA.1a[-which(REMA.1a$Phenotype %in% c("I9_AF","C3_COLORECTAL")),]
+REMA.1b <- REMA.1b[-which(REMA.1b$Phenotype %in% c("I9_AF","C3_COLORECTAL")),]
 
 
 ################################################################################
@@ -106,48 +116,59 @@ FEMA.1b <- FEMA.1b[-which(FEMA.1b$Phenotype %in% c("I9_AF","C3_COLORECTAL")),]
 
 # create dataset combining results for model 1a+b 
 TS5 <- data.frame(Biobank = c(FEMA.1a$Biobank,FEMA.1b$Biobank,
+                              REMA.1a$Biobank,REMA.1b$Biobank,
                               FGR11.1a$Biobank,FGR11.1b$Biobank,
-                              UKB.1a$Biobank,UKB.1b$Biobank,
+                              UKB.1a.EUR$Biobank,UKB.1b.EUR$Biobank,
                               GS.1a$Biobank,GS.1b$Biobank),
                   Test = c(rep("high educational attainment",nrow(FEMA.1a)), rep("PGS",nrow(FEMA.1b)),
+                           rep("high educational attainment",nrow(REMA.1a)), rep("PGS",nrow(REMA.1b)),
                            rep("high educational attainment",nrow(FGR11.1a)), rep("PGS",nrow(FGR11.1b)), 
-                           rep("high educational attainment", nrow(UKB.1a)), rep("PGS",nrow(UKB.1b)), 
+                           rep("high educational attainment", nrow(UKB.1a.EUR)), rep("PGS",nrow(UKB.1b.EUR)), 
                            rep("high educational attainment",nrow(GS.1a)), rep("PGS",nrow(GS.1b))),
                   Phenotype = c(FEMA.1a$Phenotype,FEMA.1b$Phenotype,
+                                REMA.1a$Phenotype,REMA.1b$Phenotype,
                                 FGR11.1a$trait,FGR11.1b$trait,
-                                UKB.1a$trait,UKB.1b$trait,
+                                UKB.1a.EUR$trait,UKB.1b.EUR$trait,
                                 GS.1a$trait,GS.1b$trait),
                   Beta = c(FEMA.1a$Beta,FEMA.1b$Beta,
+                           REMA.1a$Beta,REMA.1b$Beta,
                            FGR11.1a$EAhigh_beta,FGR11.1b$PRS_beta,
-                           UKB.1a$EAhigh_beta,UKB.1b$PRS_beta,
+                           UKB.1a.EUR$EAhigh_beta,UKB.1b.EUR$PRS_beta,
                            GS.1a$EAhigh_beta,GS.1b$PRS_beta),
                   SE = c(FEMA.1a$SE,FEMA.1b$SE,
+                         REMA.1a$SE,REMA.1b$SE,
                          FGR11.1a$EAhigh_se,FGR11.1b$PRS_se,
-                         UKB.1a$EAhigh_se,UKB.1b$PRS_se,
+                         UKB.1a.EUR$EAhigh_se,UKB.1b.EUR$PRS_se,
                          GS.1a$EAhigh_se,GS.1b$PRS_se),
                   Pval = c(FEMA.1a$Pval,FEMA.1b$Pval,
+                           REMA.1a$Pval,REMA.1b$Pval,
                            FGR11.1a$EAhigh_p,FGR11.1b$PRS_p,
-                           UKB.1a$EAhigh_p,UKB.1b$PRS_p,
+                           UKB.1a.EUR$EAhigh_p,UKB.1b.EUR$PRS_p,
                            GS.1a$EAhigh_p,GS.1b$PRS_p),
                   HR = c(FEMA.1a$HR,FEMA.1b$HR,
+                         REMA.1a$HR,REMA.1b$HR,
                          FGR11.1a$EAhigh_HR,FGR11.1b$PRS_HR,
-                         UKB.1a$EAhigh_HR,UKB.1b$PRS_HR,
+                         UKB.1a.EUR$EAhigh_HR,UKB.1b.EUR$PRS_HR,
                          GS.1a$EAhigh_HR,GS.1b$PRS_HR),
                   Cineg = c(FEMA.1a$Cineg,FEMA.1b$Cineg,
+                            REMA.1a$Cineg,REMA.1b$Cineg,
                             FGR11.1a$EAhigh_HR_lower95,FGR11.1b$PRS_HR_lower95,
-                            UKB.1a$EAhigh_HR_lower95,UKB.1b$PRS_HR_lower95,
+                            UKB.1a.EUR$EAhigh_HR_lower95,UKB.1b.EUR$PRS_HR_lower95,
                             GS.1a$EAhigh_HR_lower95,GS.1b$PRS_HR_lower95),
                   Cipos = c(FEMA.1a$Cipos,FEMA.1b$Cipos,
+                            REMA.1a$Cipos,REMA.1b$Cipos,
                             FGR11.1a$EAhigh_HR_upper95,FGR11.1b$PRS_HR_upper95,
-                            UKB.1a$EAhigh_HR_upper95,UKB.1b$PRS_HR_upper95,
+                            UKB.1a.EUR$EAhigh_HR_upper95,UKB.1b.EUR$PRS_HR_upper95,
                             GS.1a$EAhigh_HR_upper95,GS.1b$PRS_HR_upper95),
                   QHet = c(FEMA.1a$QHet,FEMA.1b$QHet,
+                           REMA.1a$QHet,REMA.1b$QHet,
                            rep(NA,nrow(FGR11.1a)),rep(NA,nrow(FGR11.1b)),
-                           rep(NA,nrow(UKB.1a)),rep(NA,nrow(UKB.1b)),
+                           rep(NA,nrow(UKB.1a.EUR)),rep(NA,nrow(UKB.1b.EUR)),
                            rep(NA,nrow(GS.1a)),rep(NA,nrow(GS.1b))),
                   HetPval = c(FEMA.1a$HetPval,FEMA.1b$HetPval,
+                              REMA.1a$HetPval,REMA.1b$HetPval,
                               rep(NA,nrow(FGR11.1a)),rep(NA,nrow(FGR11.1b)),
-                              rep(NA,nrow(UKB.1a)),rep(NA,nrow(UKB.1b)),
+                              rep(NA,nrow(UKB.1a.EUR)),rep(NA,nrow(UKB.1b.EUR)),
                               rep(NA,nrow(GS.1a)),rep(NA,nrow(GS.1b))))
 # adjust labels
 TS5$Phenotype <- factor(TS5$Phenotype, levels = c("T1D","C3_PROSTATE","T2D","GOUT",
@@ -166,8 +187,10 @@ TS5$Phenotype <- factor(TS5$Phenotype, levels = c("T1D","C3_PROSTATE","T2D","GOU
                                    "Appendicitis","Alcohol Use Disorder"))
 
 # Biobank as factor
-TS5$Biobank <- factor(TS5$Biobank, levels = c("FE meta-analysis","FinnGen","UK Biobank", "Generation Scotland"), 
-                      labels = c("FE meta-analysis","FinnGen","UK Biobank","Generation Scotland"))
+TS5$Biobank <- factor(TS5$Biobank, levels = c("FE meta-analysis","RE meta-analysis",
+                                              "FinnGen","UK Biobank", "Generation Scotland"), 
+                      labels = c("FE meta-analysis","RE meta-analysis","FinnGen",
+                                 "UK Biobank","Generation Scotland"))
 
 
 ################################################################################
@@ -187,7 +210,7 @@ FigS3 <- ggplot(TS5, aes(x = HR, y = Biobank,
   scale_shape_manual(values=c(15,16))+
   geom_linerange(position = position_dodge(1),size=5) +
   theme_minimal() + scale_colour_manual(values= c("#BC65DB","black")) + geom_vline(xintercept = 1, lty = 2,size = 2) +
-  geom_hline(yintercept=seq(0.5,18.5,1),color="black",size=.5) +
+  geom_hline(yintercept=seq(0.5,5.5,1),color="black",size=.5) +
   scale_x_continuous(transform = scales::transform_log(), 
                      breaks = c(0.2,0.3,0.4,0.5,0.7,1.1, 1.5, 2, 2.5, 3)) +
   theme(axis.title.y = element_blank(),legend.title = element_blank(), 
@@ -202,4 +225,5 @@ png(filename = paste0("output/Figures/Manuscript/",as.character(Sys.Date()),
      width=700,height=600,units='mm',res=600,pointsize=6)
 FigS3
 dev.off()
+
 
