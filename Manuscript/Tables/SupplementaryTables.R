@@ -78,7 +78,8 @@ rm(list=ls())
 #      30) FGR11 model 6 for occupation
 #      31) FinnGen results bootstrapped cumulative incidences for occupation 
 #
-# Last edits: 25/06/2025 (edits, FAH: upload to GitHub)
+# Last edits: 18/02/2026 (edits, FAH: add random-effect meta-analytical results
+# to Stables 5-9)
 # 
 ################################################################################
 
@@ -167,6 +168,9 @@ GS.1a$Biobank <- "Generation Scotland"
 # Meta-analysis FinnGen + UK Biobank + Generation Scotland
 FEMA.1a <- as.data.frame(read_excel("output/GoogleDrive/MetaAnalysis/2025-05-22_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model1a.xlsx")) # results for analyses on education
 FEMA.1a$Biobank <- "FE meta-analysis"
+#
+REMA.1a <- fread("output/GoogleDrive/MetaAnalysis/2026-02-18_INTERVENE_EducationalAttainment_REMetaAnalysis_FinnGenR11_UKB_GenScot_model1a.csv",data.table = FALSE)
+REMA.1a$Biobank <- "RE meta-analysis"
 
 ## read in model 1b - PGS only (education or occupation models) ##
 # FinnGen
@@ -189,6 +193,9 @@ GS.1b$Biobank <- "Generation Scotland"
 # Meta-analysis FinnGen + UK Biobank + Generation Scotland
 FEMA.1b <- as.data.frame(read_excel("output/GoogleDrive/MetaAnalysis/2025-05-22_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model1b.xlsx")) # results for analyses on education
 FEMA.1b$Biobank <- "FE meta-analysis"
+#
+REMA.1b <- fread("output/GoogleDrive/MetaAnalysis/2026-02-18_INTERVENE_EducationalAttainment_REMetaAnalysis_FinnGenR11_UKB_GenScot_model1b.csv", data.table = FALSE)
+REMA.1b$Biobank <- "RE meta-analysis"
 
 ## read in model 2 education or occupation ##
 # FinnGen
@@ -205,10 +212,15 @@ GS.2$Biobank <- "Generation Scotland"
 # Meta-analysis FinnGen + UK Biobank + Generation Scotland
 FEMA.2 <- as.data.frame(read_excel("output/GoogleDrive/MetaAnalysis/2025-05-22_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model2.xlsx")) # results for analyses on education
 FEMA.2$Biobank <- "FE meta-analysis"
+#
+REMA.2 <- fread("output/GoogleDrive/MetaAnalysis/2026-02-18_INTERVENE_EducationalAttainment_REMetaAnalysis_FinnGenR11_UKB_GenScot_model2.csv", data.table = FALSE)
+REMA.2$Biobank <- "RE meta-analysis"
 
 ## significance differences effect education/occupation and PGS model 1 vs 2 meta-analysis/FinnGen ##
 mod12sign.EA <- as.data.frame(read_excel("output/GoogleDrive/MetaAnalysis/2025-05-22_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model1vs2_Differences.xlsx")) # results for models on education meta-analyses
 mod12sign.OCC <- fread("output/EmploymentStatus/FG11/CoxPropHaz_model2/2025-01-31_INTERVENE_Occupation_FinnGenR11_model1vs2_Differences.csv", data.table=FALSE) # results for models on occupation in FinnGen only
+#
+mod12sign.RE.EA <- fread("output/GoogleDrive/MetaAnalysis/2026-02-18_INTERVENE_EducationalAttainment_REMetaAnalysis_FinnGenR11_UKB_GenScot_model1vs2_Differences.csv", data.table = FALSE)
 
 ## read in model 3 education or occupation ##
 # FinnGen
@@ -216,7 +228,7 @@ FGR11.3 <- fread("output/GoogleDrive/FGR11/2025-02-07_FinnGenR11_INTERVENE_Educa
 FGR11.3$Biobank <- "FinnGen"
 FGR11.3occ <- fread("output/EmploymentStatus/FG11/CoxPropHaz_model3/2025-02-12_INTERVENE_SESDiffDiseases_Coeffs_CoxPH_model3b_FinnGenR11.txt", data.table=FALSE) # results for analyses on occupation
 # UK Biobank
-UKB.3.EUR <- fread("output/GoogleDrive/UKB/2025-05-22_UKBiobank_EUR_INTERVENE_EducationalAttainment_CoxPH_model3b_Coeffs.txt",data.table=FALSE) # results for analyses on education in EU ancestry
+UKB.3.EUR <- fread("output/GoogleDrive/UKB/2025-05-22_UKBiobank_EUR_INTERVENE_EducationalAttainment_CoxPH_model3_Coeffs.txt",data.table=FALSE) # results for analyses on education in EU ancestry
 UKB.3.EUR$Biobank <- "UK Biobank"
 # Generation Scotland
 GS.3 <- fread("output/GoogleDrive/GS/2025-02-24_GS_INTERVENE_EducationalAttainment_CoxPH_model3_Coeffs.txt",data.table=FALSE) # results for analyses on education
@@ -225,6 +237,9 @@ GS.3$Biobank <- "Generation Scotland"
 # Meta-analysis FinnGen + UK Biobank + Generation Scotland
 FEMA.3 <- as.data.frame(read_excel("output/GoogleDrive/MetaAnalysis/2025-05-22_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model3.xlsx")) # results for analyses on education
 FEMA.3$Biobank <- "FE meta-analysis"
+#
+REMA.3 <- fread("output/GoogleDrive/MetaAnalysis/2026-02-18_INTERVENE_EducationalAttainment_REMetaAnalysis_FinnGenR11_UKB_GenScot_model3.csv", data.table = FALSE)
+REMA.3$Biobank <- "RE meta-analysis"
 
 ## read in model 4 - traditional GxEA/OCC interaction model ##
 # FinnGen
@@ -242,6 +257,9 @@ GS.4$Biobank <- "Generation Scotland"
 # Meta-analysis FinnGen + UK Biobank + Generation Scotland
 FEMA.4 <- as.data.frame(read_excel("output/GoogleDrive/MetaAnalysis/2025-05-22_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model4.xlsx"))
 FEMA.4$Biobank <- "FE meta-analysis"
+#
+REMA.4 <- fread("output/GoogleDrive/MetaAnalysis/2026-02-18_INTERVENE_EducationalAttainment_REMetaAnalysis_FinnGenR11_UKB_GenScot_model4.csv", data.table = FALSE)
+REMA.4$Biobank <- "RE meta-analysis"
 
 ## significance differences model 4 Cox vs Fine-Gray in FinnGen ##
 modCFsign <- fread("output/2classEA/FG11/CoxPropHaz_model4/2025-04-11_INTERVENE_SESDiffDiseases_Differences_CoxvsFG_model4_FinnGenR11.csv", data.table=FALSE) # results for models on occupation in FinnGen only
@@ -363,11 +381,19 @@ GS.3 <- GS.3[-which(GS.3$trait %in% c("RHEUMA_SEROPOS_OTH")),]
 ################################################################################
 
 ## remove traits not meta-analyzed Cox models ##
+# fixed effect
 FEMA.1a <- FEMA.1a[-which(FEMA.1a$Phenotype %in% c("I9_AF","C3_COLORECTAL")),]
 FEMA.1b <- FEMA.1b[-which(FEMA.1b$Phenotype %in% c("I9_AF","C3_COLORECTAL")),]
 FEMA.2 <- FEMA.2[-which(FEMA.2$Phenotype %in% c("I9_AF","C3_COLORECTAL")),]
 FEMA.3 <- FEMA.3[-which(FEMA.3$Phenotype %in% c("I9_AF","C3_COLORECTAL")),]
 FEMA.4 <- FEMA.4[-which(FEMA.4$Phenotype %in% c("I9_AF","C3_COLORECTAL")),]
+
+# random effect
+REMA.1a <- REMA.1a[-which(REMA.1a$Phenotype %in% c("I9_AF","C3_COLORECTAL")),]
+REMA.1b <- REMA.1b[-which(REMA.1b$Phenotype %in% c("I9_AF","C3_COLORECTAL")),]
+REMA.2 <- REMA.2[-which(REMA.2$Phenotype %in% c("I9_AF","C3_COLORECTAL")),]
+REMA.3 <- REMA.3[-which(REMA.3$Phenotype %in% c("I9_AF","C3_COLORECTAL")),]
+REMA.4 <- REMA.4[-which(REMA.4$Phenotype %in% c("I9_AF","C3_COLORECTAL")),]
 
 
 ################################################################################
@@ -411,46 +437,57 @@ write.table(TS4, file = paste0("output/Tables/",as.character(Sys.Date()),
 
 # create Table S5 
 TS5 <- data.frame(Biobank = c(FEMA.1a$Biobank,FEMA.1b$Biobank,
+                              REMA.1a$Biobank,REMA.1b$Biobank,
                               FGR11.1a$Biobank,FGR11.1b$Biobank,
                               UKB.1a.EUR$Biobank,UKB.1b.EUR$Biobank,
                               GS.1a$Biobank,GS.1b$Biobank),
                   Test = c(rep("high educational attainment",nrow(FEMA.1a)), rep("PGS",nrow(FEMA.1b)),
+                           rep("high educational attainment",nrow(REMA.1a)), rep("PGS",nrow(REMA.1b)),
                            rep("high educational attainment",nrow(FGR11.1a)), rep("PGS",nrow(FGR11.1b)), 
                            rep("high educational attainment", nrow(UKB.1a.EUR)), rep("PGS",nrow(UKB.1b.EUR)), 
                            rep("high educational attainment",nrow(GS.1a)), rep("PGS",nrow(GS.1b))),
                   Phenotype = c(FEMA.1a$Phenotype,FEMA.1b$Phenotype,
+                                REMA.1a$Phenotype,REMA.1b$Phenotype,
                                 FGR11.1a$trait,FGR11.1b$trait,
                                 UKB.1a.EUR$trait,UKB.1b.EUR$trait,
                                 GS.1a$trait,GS.1b$trait),
                   Beta = c(FEMA.1a$Beta,FEMA.1b$Beta,
+                           REMA.1a$Beta,REMA.1b$Beta,
                            FGR11.1a$EAhigh_beta,FGR11.1b$PRS_beta,
                            UKB.1a.EUR$EAhigh_beta,UKB.1b.EUR$PRS_beta,
                            GS.1a$EAhigh_beta,GS.1b$PRS_beta),
                   SE = c(FEMA.1a$SE,FEMA.1b$SE,
+                         REMA.1a$SE,REMA.1b$SE,
                          FGR11.1a$EAhigh_se,FGR11.1b$PRS_se,
                          UKB.1a.EUR$EAhigh_se,UKB.1b.EUR$PRS_se,
                          GS.1a$EAhigh_se,GS.1b$PRS_se),
                   Pval = c(FEMA.1a$Pval,FEMA.1b$Pval,
+                           REMA.1a$Pval,REMA.1b$Pval,
                            FGR11.1a$EAhigh_p,FGR11.1b$PRS_p,
                            UKB.1a.EUR$EAhigh_p,UKB.1b.EUR$PRS_p,
                            GS.1a$EAhigh_p,GS.1b$PRS_p),
                   HR = c(FEMA.1a$HR,FEMA.1b$HR,
+                         REMA.1a$HR,REMA.1b$HR,
                          FGR11.1a$EAhigh_HR,FGR11.1b$PRS_HR,
                          UKB.1a.EUR$EAhigh_HR,UKB.1b.EUR$PRS_HR,
                          GS.1a$EAhigh_HR,GS.1b$PRS_HR),
                   Cineg = c(FEMA.1a$Cineg,FEMA.1b$Cineg,
+                            REMA.1a$Cineg,REMA.1b$Cineg,
                             FGR11.1a$EAhigh_HR_lower95,FGR11.1b$PRS_HR_lower95,
                             UKB.1a.EUR$EAhigh_HR_lower95,UKB.1b.EUR$PRS_HR_lower95,
                             GS.1a$EAhigh_HR_lower95,GS.1b$PRS_HR_lower95),
                   Cipos = c(FEMA.1a$Cipos,FEMA.1b$Cipos,
+                            REMA.1a$Cipos,REMA.1b$Cipos,
                             FGR11.1a$EAhigh_HR_upper95,FGR11.1b$PRS_HR_upper95,
                             UKB.1a.EUR$EAhigh_HR_upper95,UKB.1b.EUR$PRS_HR_upper95,
                             GS.1a$EAhigh_HR_upper95,GS.1b$PRS_HR_upper95),
                   QHet = c(FEMA.1a$QHet,FEMA.1b$QHet,
+                           REMA.1a$QHet,REMA.1b$QHet,
                            rep(NA,nrow(FGR11.1a)),rep(NA,nrow(FGR11.1b)),
                            rep(NA,nrow(UKB.1a.EUR)),rep(NA,nrow(UKB.1b.EUR)),
                            rep(NA,nrow(GS.1a)),rep(NA,nrow(GS.1b))),
                   HetPval = c(FEMA.1a$HetPval,FEMA.1b$HetPval,
+                              REMA.1a$HetPval,REMA.1b$HetPval,
                               rep(NA,nrow(FGR11.1a)),rep(NA,nrow(FGR11.1b)),
                               rep(NA,nrow(UKB.1a.EUR)),rep(NA,nrow(UKB.1b.EUR)),
                               rep(NA,nrow(GS.1a)),rep(NA,nrow(GS.1b))))
@@ -482,47 +519,47 @@ write.table(TS5, file = paste0("output/Tables/",as.character(Sys.Date()),
 ################################################################################
 
 # create Table S6 
-TS6 <- data.frame(Biobank = c(FEMA.2$Biobank,
+TS6 <- data.frame(Biobank = c(FEMA.2$Biobank,REMA.2$Biobank,
                               FGR11.2$Biobank,FGR11.2$Biobank,
                               UKB.2.EUR$Biobank,UKB.2.EUR$Biobank,
                               GS.2$Biobank,GS.2$Biobank),
-                  Test = c(FEMA.2$Test,
+                  Test = c(FEMA.2$Test,REMA.2$Test,
                            rep("high educational attainment",nrow(FGR11.2)), rep("PGS",nrow(FGR11.2)), 
                            rep("high educational attainment", nrow(UKB.2.EUR)), rep("PGS",nrow(UKB.2.EUR)), 
                            rep("high educational attainment",nrow(GS.2)), rep("PGS",nrow(GS.2))),
-                  Phenotype = c(FEMA.2$Phenotype,
+                  Phenotype = c(FEMA.2$Phenotype,REMA.2$Phenotype,
                                 FGR11.2$trait,FGR11.2$trait,
                                 UKB.2.EUR$trait,UKB.2.EUR$trait,
                                 GS.2$trait,GS.2$trait),
-                  Beta = c(FEMA.2$Beta,
+                  Beta = c(FEMA.2$Beta,REMA.2$Beta,
                            FGR11.2$EAhigh_beta,FGR11.2$PRS_beta,
                            UKB.2.EUR$EAhigh_beta,UKB.2.EUR$PRS_beta,
                            GS.2$EAhigh_beta,GS.2$PRS_beta),
-                  SE = c(FEMA.2$SE,
+                  SE = c(FEMA.2$SE,REMA.2$SE,
                          FGR11.2$EAhigh_se,FGR11.2$PRS_se,
                          UKB.2.EUR$EAhigh_se,UKB.2.EUR$PRS_se,
                          GS.2$EAhigh_se,GS.2$PRS_se),
-                  Pval = c(FEMA.2$Pval,
+                  Pval = c(FEMA.2$Pval,REMA.2$Pval,
                            FGR11.2$EAhigh_p,FGR11.2$PRS_p,
                            UKB.2.EUR$EAhigh_p,UKB.2.EUR$PRS_p,
                            GS.2$EAhigh_p,GS.2$PRS_p),
-                  HR = c(FEMA.2$HR,
+                  HR = c(FEMA.2$HR,REMA.2$HR,
                          FGR11.2$EAhigh_HR,FGR11.2$PRS_HR,
                          UKB.2.EUR$EAhigh_HR,UKB.2.EUR$PRS_HR,
                          GS.2$EAhigh_HR,GS.2$PRS_HR),
-                  Cineg = c(FEMA.2$Cineg,
+                  Cineg = c(FEMA.2$Cineg,REMA.2$Cineg,
                             FGR11.2$EAhigh_HR_lower95,FGR11.2$PRS_HR_lower95,
                             UKB.2.EUR$EAhigh_HR_lower95,UKB.2.EUR$PRS_HR_lower95,
                             GS.2$EAhigh_HR_lower95,GS.2$PRS_HR_lower95),
-                  Cipos = c(FEMA.2$Cipos,
+                  Cipos = c(FEMA.2$Cipos,REMA.2$Cipos,
                             FGR11.2$EAhigh_HR_upper95,FGR11.2$PRS_HR_upper95,
                             UKB.2.EUR$EAhigh_HR_upper95,UKB.2.EUR$PRS_HR_upper95,
                             GS.2$EAhigh_HR_upper95,GS.2$PRS_HR_upper95),
-                  QHet = c(FEMA.2$QHet,
+                  QHet = c(FEMA.2$QHet,REMA.2$QHet,
                            rep(NA,2*nrow(FGR11.2)),
                            rep(NA,2*nrow(UKB.2.EUR)),
                            rep(NA,2*nrow(GS.2))),
-                  HetPval = c(FEMA.2$HetPval,
+                  HetPval = c(FEMA.2$HetPval,REMA.2$HetPval,
                               rep(NA,2*nrow(FGR11.2)),
                               rep(NA,2*nrow(UKB.2.EUR)),
                               rep(NA,2*nrow(GS.2))))
@@ -556,7 +593,7 @@ write.table(TS6, file = paste0("output/Tables/",as.character(Sys.Date()),
 ################################################################################
 
 # create Table S7 
-TS7 <- mod12sign.EA[,c(1:12,14)]
+TS7 <- rbind(mod12sign.EA[,c(1:12,14)],mod12sign.RE.EA[,c(1:12,14)])
 # rename columns
 names(TS7) <- c("Phenotype", "HR_Unadjusted","HR_Adjusted","beta_Unadjusted",
                 "beta_Adjusted","se_Unadjusted","se_Adjusted","HR_difference",
@@ -565,6 +602,11 @@ names(TS7) <- c("Phenotype", "HR_Unadjusted","HR_Adjusted","beta_Unadjusted",
 TS7 <- TS7[,c("Phenotype","Test","HR_Unadjusted","HR_Adjusted","beta_Unadjusted",
               "beta_Adjusted","se_Unadjusted","se_Adjusted","HR_difference",
               "beta_difference","se_difference","Pval_difference")]
+
+# add column to indicate kind of meta-analysis
+TS7$MetaAnalysis <- NA
+TS7$MetaAnalysis[1:nrow(mod12sign.EA)] <- "FE meta-analysis"
+TS7$MetaAnalysis[which(is.na(TS7$MetaAnalysis))] <- "RE meta-analysis"
 
 # add columns with 95% CIs (first calculate based on beta than convert to HR scale)
 TS7$lb_beta_difference <- TS7$beta_difference - 1.96*TS7$se_difference
@@ -589,26 +631,29 @@ write.table(TS7, file = paste0("output/Tables/",as.character(Sys.Date()),
 ################################################################################
 
 # Create Table S8
-TS8 <- data.frame(Biobank = c(FEMA.3$Biobank,FGR11.3$Biobank,UKB.3.EUR$Biobank,
-                              GS.3$Biobank),
-                  EducationGroup = c(FEMA.3$EA,FGR11.3$Test,UKB.3.EUR$Test,
-                                     GS.3$Test),
-                  Phenotype = c(FEMA.3$Phenotype,FGR11.3$trait,UKB.3.EUR$trait,
-                                GS.3$trait),
-                  Beta = c(FEMA.3$Beta,FGR11.3$PRS_beta,UKB.3.EUR$PRS_beta,
-                           GS.3$PRS_beta),
-                  SE = c(FEMA.3$SE,FGR11.3$PRS_se,UKB.3.EUR$PRS_se,GS.3$PRS_se),
-                  Pval = c(FEMA.3$Pval,FGR11.3$PRS_p,UKB.3.EUR$PRS_p,GS.3$PRS_p),
-                  HR = c(FEMA.3$HR,FGR11.3$PRS_HR,UKB.3.EUR$PRS_HR,GS.3$PRS_HR),
-                  Cineg = c(FEMA.3$Cineg,FGR11.3$PRS_HR_lower95,
+TS8 <- data.frame(Biobank = c(FEMA.3$Biobank,REMA.3$Biobank,FGR11.3$Biobank,
+                              UKB.3.EUR$Biobank,GS.3$Biobank),
+                  EducationGroup = c(FEMA.3$EA,REMA.3$EA,FGR11.3$Test,
+                                     UKB.3.EUR$Test,GS.3$Test),
+                  Phenotype = c(FEMA.3$Phenotype,REMA.3$Phenotype,FGR11.3$trait,
+                                UKB.3.EUR$trait,GS.3$trait),
+                  Beta = c(FEMA.3$Beta,REMA.3$Beta,FGR11.3$PRS_beta,
+                           UKB.3.EUR$PRS_beta,GS.3$PRS_beta),
+                  SE = c(FEMA.3$SE,REMA.3$SE,FGR11.3$PRS_se,UKB.3.EUR$PRS_se,
+                         GS.3$PRS_se),
+                  Pval = c(FEMA.3$Pval,REMA.3$Pval,FGR11.3$PRS_p,UKB.3.EUR$PRS_p,
+                           GS.3$PRS_p),
+                  HR = c(FEMA.3$HR,REMA.3$HR,FGR11.3$PRS_HR,UKB.3.EUR$PRS_HR,
+                         GS.3$PRS_HR),
+                  Cineg = c(FEMA.3$Cineg,REMA.3$Cineg,FGR11.3$PRS_HR_lower95,
                             UKB.3.EUR$PRS_HR_lower95,GS.3$PRS_HR_lower95),
-                  Cipos = c(FEMA.3$Cipos,FGR11.3$PRS_HR_upper95,
+                  Cipos = c(FEMA.3$Cipos,REMA.3$Cipos,FGR11.3$PRS_HR_upper95,
                             UKB.3.EUR$PRS_HR_upper95,GS.3$PRS_HR_upper95),
-                  QHet = c(FEMA.3$QHet,
+                  QHet = c(FEMA.3$QHet,REMA.3$QHet,
                            rep(NA,nrow(FGR11.3)),
                            rep(NA,nrow(UKB.3.EUR)),
                            rep(NA,nrow(GS.3))),
-                  HetPval = c(FEMA.3$HetPval,
+                  HetPval = c(FEMA.3$HetPval,REMA.3$HetPval,
                               rep(NA,nrow(FGR11.3)),
                               rep(NA,nrow(UKB.3.EUR)),
                               rep(NA,nrow(GS.3))))
@@ -643,47 +688,47 @@ write.table(TS8, file = paste0("output/Tables/",as.character(Sys.Date()),
 ################################################################################
 
 # create combined table with model 4 results
-TS9 <- data.frame(Biobank = c(FEMA.4$Biobank,
+TS9 <- data.frame(Biobank = c(FEMA.4$Biobank,REMA.4$Biobank,
                                rep(FGR11.4$Biobank,3),
                                rep(UKB.4.EUR$Biobank,3),
                                rep(GS.4$Biobank,3)),
-                   Test = c(FEMA.4$Test,
+                   Test = c(FEMA.4$Test,REMA.4$Test,
                             rep("high educational attainment",nrow(FGR11.4)), rep("EAxPGS",nrow(FGR11.4)), rep("PGS",nrow(FGR11.4)), 
                             rep("high educational attainment", nrow(UKB.4.EUR)), rep("EAxPGS",nrow(UKB.4.EUR)), rep("PGS",nrow(UKB.4.EUR)),  
                             rep("high educational attainment",nrow(GS.4)), rep("EAxPGS",nrow(GS.4)), rep("PGS",nrow(GS.4))),
-                   Phenotype = c(FEMA.4$Phenotype,
+                   Phenotype = c(FEMA.4$Phenotype,REMA.4$Phenotype,
                                  rep(FGR11.4$trait,3),
                                  rep(UKB.4.EUR$trait,3),
                                  rep(GS.4$trait,3)),
-                   Beta = c(FEMA.4$Beta,
+                   Beta = c(FEMA.4$Beta,REMA.4$Beta,
                             FGR11.4$EAhigh_beta,FGR11.4$`PRS:EAhigh_beta`,FGR11.4$PRS_beta,
                             UKB.4.EUR$EAhigh_beta,UKB.4.EUR$`PRS:EAhigh_beta`,UKB.4.EUR$PRS_beta,
                             GS.4$EAhigh_beta,GS.4$`PRS:EAhigh_beta`,GS.4$PRS_beta),
-                   SE = c(FEMA.4$SE,
+                   SE = c(FEMA.4$SE,REMA.4$SE,
                           FGR11.4$EAhigh_se,FGR11.4$`PRS:EAhigh_se`,FGR11.4$PRS_se,
                           UKB.4.EUR$EAhigh_se,UKB.4.EUR$`PRS:EAhigh_se`,UKB.4.EUR$PRS_se,
                           GS.4$EAhigh_se,GS.4$`PRS:EAhigh_se`,GS.4$PRS_se),
-                   Pval = c(FEMA.4$Pval,
+                   Pval = c(FEMA.4$Pval,REMA.4$Pval,
                             FGR11.4$EAhigh_p,FGR11.4$`PRS:EAhigh_p`,FGR11.4$PRS_p,
                             UKB.4.EUR$EAhigh_p,UKB.4.EUR$`PRS:EAhigh_p`,UKB.4.EUR$PRS_p,
                             GS.4$EAhigh_p,GS.4$`PRS:EAhigh_p`,GS.4$PRS_p),
-                   HR = c(FEMA.4$HR,
+                   HR = c(FEMA.4$HR,REMA.4$HR,
                           FGR11.4$EAhigh_HR,FGR11.4$`PRS:EAhigh_HR`,FGR11.4$PRS_HR,
                           UKB.4.EUR$EAhigh_HR,UKB.4.EUR$`PRS:EAhigh_HR`,UKB.4.EUR$PRS_HR,
                           GS.4$EAhigh_HR,GS.4$`PRS:EAhigh_HR`,GS.4$PRS_HR),
-                   Cineg = c(FEMA.4$Cineg,
+                   Cineg = c(FEMA.4$Cineg,REMA.4$Cineg,
                              FGR11.4$EAhigh_HR_lower95,FGR11.4$`PRS:EAhigh_HR_lower95`,FGR11.4$PRS_HR_lower95,
                              UKB.4.EUR$EAhigh_HR_lower95,UKB.4.EUR$`PRS:EAhigh_HR_lower95`,UKB.4.EUR$PRS_HR_lower95,
                              GS.4$EAhigh_HR_lower95,GS.4$`PRS:EAhigh_HR_lower95`,GS.4$PRS_HR_lower95),
-                   Cipos = c(FEMA.4$Cipos,
+                   Cipos = c(FEMA.4$Cipos,REMA.4$Cipos,
                              FGR11.4$EAhigh_HR_upper95,FGR11.4$`PRS:EAhigh_HR_upper95`,FGR11.4$PRS_HR_upper95,
                              UKB.4.EUR$EAhigh_HR_upper95,UKB.4.EUR$`PRS:EAhigh_HR_upper95`,UKB.4.EUR$PRS_HR_upper95,
                              GS.4$EAhigh_HR_upper95,GS.4$`PRS:EAhigh_HR_upper95`,GS.4$PRS_HR_upper95),
-                   QHet = c(FEMA.4$QHet,
+                   QHet = c(FEMA.4$QHet,REMA.4$QHet,
                             rep(NA,3*nrow(FGR11.4)),
                             rep(NA,3*nrow(UKB.4.EUR)),
                             rep(NA,3*nrow(GS.4))),
-                   HetPval = c(FEMA.4$HetPval,
+                   HetPval = c(FEMA.4$HetPval,REMA.4$HetPval,
                                rep(NA,3*nrow(FGR11.4)),
                                rep(NA,3*nrow(UKB.4.EUR)),
                                rep(NA,3*nrow(GS.4))))
@@ -1814,3 +1859,4 @@ TS34 <- data.frame(Test = c(rep("Lower-level occupation",640),
 write.table(TS34, file = paste0("output/Tables/",as.character(Sys.Date()),
                                 "_INTERVENE_Occupation_eTable34.txt"),
             row.names=F, col.names = T, sep="\t",quote = F)
+
