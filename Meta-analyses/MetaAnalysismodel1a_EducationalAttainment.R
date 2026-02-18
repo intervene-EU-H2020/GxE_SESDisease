@@ -10,7 +10,7 @@ rm(list=ls())
 #
 # Author: F.A. Hagenbeek [FAH] (fiona.hagenbeek@helsinki.fi)
 #
-# Script meta-analysis model 1a: Run fixed-effects meta-analysis of Cox
+# Script meta-analysis model 1a: Run fixed- and random effects meta-analysis of Cox
 # Proportional-Hazards models with age of onset as timescale, where EA is
 # dichotomized into low vs high EA (reference = low EA), and include sex (except
 # for prostate and breast cancer), birth decade and the first 5 genetic PCs as
@@ -196,5 +196,6 @@ drive_upload(media = "output/2classEA/MetaAnalysis/FGR11_UKB_GS/model1/2026-02-1
              path = as_id("1Wi0KDwGtnZoUclUgZwu7F_Dwj-6uvJYH"),
              name = "2026-02-18_INTERVENE_EducationalAttainment_REMetaAnalysis_FinnGenR11_UKB_GenScot_model1a.csv",
              type = "spreadsheet")
+
 
 
