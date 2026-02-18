@@ -20,8 +20,7 @@ rm(list=ls())
 #
 # required input data: FGR11 + UKB + GS model 1 EA only (from INTERVENE GxE_SESDisease GoogleDrive Folder)
 #
-# Last edits: 06/11/2024 (edits, FAH: final checks and minor tweaks prior to
-# upload to GitHub)
+# Last edits: 18/02/2026 (edits, FAH: add random-effects meta-analytical models)
 # 
 ################################################################################
 
@@ -116,7 +115,7 @@ all.1a <- rbind(FGR11.1a[,c("trait","EAhigh_beta","EAhigh_se","Biobank")],
 
 ################################################################################
 #
-# Run meta-analyses
+# Run meta-analyses - fixed effect
 #
 ################################################################################
 
@@ -149,12 +148,51 @@ fwrite(metaresults.1a, paste("output/2classEA/MetaAnalysis/FGR11_UKB_GS/model1/"
 
 ################################################################################
 #
+# Run meta-analyses - random effect
+#
+################################################################################
+
+## model 1a ##
+
+# run meta-analysis model 1a
+metaresultsr.1a <- c()
+for(i in unique(all.1a$trait)){
+  print(i)
+  disease <- subset(all.1a, trait==i & !(is.na(EAhigh_beta)))
+  
+  #Meta analysis should be done at the beta level and stratified by ancestry 
+  metar <- rma(yi=EAhigh_beta, sei=EAhigh_se, data=disease, method="REML")
+  
+  metaresultsr.1a <- rbind(metaresultsr.1a, c(i, metar$b, metar$se, metar$pval, metar$QE, metar$QEp))
+}
+
+# reorganize the meta-analysis results  
+metaresultsr.1a <- as.data.frame(metaresultsr.1a)
+colnames(metaresultsr.1a) <- c("Phenotype","Beta","SE","Pval","QHet","HetPval")
+metaresultsr.1a <- metaresultsr.1a %>% mutate_at(c(2:6),as.numeric)
+metaresultsr.1a$HR <- exp(metaresultsr.1a$Beta)
+metaresultsr.1a$Cipos <- exp(metaresultsr.1a$Beta + (1.96*metaresultsr.1a$SE))
+metaresultsr.1a$Cineg <- exp(metaresultsr.1a$Beta - (1.96*metaresultsr.1a$SE))
+
+# write to file
+fwrite(metaresultsr.1a, paste("output/2classEA/MetaAnalysis/FGR11_UKB_GS/model1/", as.character(Sys.Date()), 
+                             "_INTERVENE_EducationalAttainment_REMetaAnalysis_FinnGenR11_UKB_GenScot_model1a.csv",sep=""))
+
+
+################################################################################
+#
 # Upload meta-analyzed results to Google Drive
 #
 ################################################################################
 
-# model 1a
+# model 1a -fixed effects
 drive_upload(media = "output/2classEA/MetaAnalysis/FGR11_UKB_GS/model1/2025-05-22_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model1a_anyN.csv",
              path = as_id("1Wi0KDwGtnZoUclUgZwu7F_Dwj-6uvJYH"),
              name = "2025-05-22_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model1a.csv",
+             type = "spreadsheet")
+
+# model 1a - random effects
+drive_upload(media = "output/2classEA/MetaAnalysis/FGR11_UKB_GS/model1/2026-02-18_INTERVENE_EducationalAttainment_REMetaAnalysis_FinnGenR11_UKB_GenScot_model1a.csv.csv",
+             path = as_id("1Wi0KDwGtnZoUclUgZwu7F_Dwj-6uvJYH"),
+             name = "2025-05-22_INTERVENE_EducationalAttainment_REMetaAnalysis_FinnGenR11_UKB_GenScot_model1a.csv",
              type = "spreadsheet")
