@@ -16,8 +16,7 @@ rm(list=ls())
 #
 # Data: FGR11 + UKB + GS + meta-analysis model 3
 #
-# Last edits: 01/07//2025 (edits, FAH: final checks and minor tweaks prior to
-# upload to GitHub)
+# Last edits: 18/02/2026 (edits, FAH: add random-effect meta-analytical results)
 # 
 ################################################################################
 
@@ -71,6 +70,9 @@ GS.3$Biobank <- "Generation Scotland"
 #
 FEMA.3 <- as.data.frame(read_excel("output/GoogleDrive/MetaAnalysis/2025-05-22_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model3.xlsx"))
 FEMA.3$Biobank <- "FE meta-analysis"
+#
+REMA.3 <- fread("output/GoogleDrive/MetaAnalysis/2026-02-18_INTERVENE_EducationalAttainment_REMetaAnalysis_FinnGenR11_UKB_GenScot_model3.csv", data.table = FALSE)
+REMA.3$Biobank <- "RE meta-analysis"
 
 
 ################################################################################
@@ -93,7 +95,11 @@ GS.3 <- GS.3[-which(GS.3$trait %in% c("RHEUMA_SEROPOS_OTH")),]
 ################################################################################
 
 ## remove traits not meta-analyzed ##
+# fixed effect
 FEMA.3 <- FEMA.3[-which(FEMA.3$Phenotype %in% c("I9_AF","C3_COLORECTAL")),]
+
+# random effect
+REMA.3 <- REMA.3[-which(REMA.3$Phenotype %in% c("I9_AF","C3_COLORECTAL")),]
 
 
 ################################################################################
@@ -103,25 +109,26 @@ FEMA.3 <- FEMA.3[-which(FEMA.3$Phenotype %in% c("I9_AF","C3_COLORECTAL")),]
 ################################################################################
 
 # create dataset combining results for model 3 
-TS7 <- data.frame(Biobank = c(FEMA.3$Biobank,FGR11.3$Biobank,UKB.3$Biobank,
-                              GS.3$Biobank),
-                  EducationGroup = c(FEMA.3$EA,FGR11.3$Test,UKB.3$Test,GS.3$Test),
-                  Phenotype = c(FEMA.3$Phenotype,FGR11.3$trait,UKB.3$trait,
-                                GS.3$trait),
-                  Beta = c(FEMA.3$Beta,FGR11.3$PRS_beta,UKB.3$PRS_beta,
+TS7 <- data.frame(Biobank = c(FEMA.3$Biobank,REMA.3$Biobank,FGR11.3$Biobank,
+                              UKB.3$Biobank,GS.3$Biobank),
+                  EducationGroup = c(FEMA.3$EA,REMA.3$EA,FGR11.3$Test,UKB.3$Test,
+                                     GS.3$Test),
+                  Phenotype = c(FEMA.3$Phenotype,REMA.3$Phenotype,FGR11.3$trait,
+                                UKB.3$trait,GS.3$trait),
+                  Beta = c(FEMA.3$Beta,REMA.3$Beta,FGR11.3$PRS_beta,UKB.3$PRS_beta,
                            GS.3$PRS_beta),
-                  SE = c(FEMA.3$SE,FGR11.3$PRS_se,UKB.3$PRS_se,GS.3$PRS_se),
-                  Pval = c(FEMA.3$Pval,FGR11.3$PRS_p,UKB.3$PRS_p,GS.3$PRS_p),
-                  HR = c(FEMA.3$HR,FGR11.3$PRS_HR,UKB.3$PRS_HR,GS.3$PRS_HR),
-                  Cineg = c(FEMA.3$Cineg,FGR11.3$PRS_HR_lower95,
+                  SE = c(FEMA.3$SE,REMA.3$SE,FGR11.3$PRS_se,UKB.3$PRS_se,GS.3$PRS_se),
+                  Pval = c(FEMA.3$Pval,REMA.3$Pval,FGR11.3$PRS_p,UKB.3$PRS_p,GS.3$PRS_p),
+                  HR = c(FEMA.3$HR,REMA.3$HR,FGR11.3$PRS_HR,UKB.3$PRS_HR,GS.3$PRS_HR),
+                  Cineg = c(FEMA.3$Cineg,REMA.3$Cineg,FGR11.3$PRS_HR_lower95,
                             UKB.3$PRS_HR_lower95,GS.3$PRS_HR_lower95),
-                  Cipos = c(FEMA.3$Cipos,FGR11.3$PRS_HR_upper95,
+                  Cipos = c(FEMA.3$Cipos,REMA.3$Cipos,FGR11.3$PRS_HR_upper95,
                             UKB.3$PRS_HR_upper95,GS.3$PRS_HR_upper95),
-                  QHet = c(FEMA.3$QHet,
+                  QHet = c(FEMA.3$QHet,REMA.3$QHet,
                            rep(NA,nrow(FGR11.3)),
                            rep(NA,nrow(UKB.3)),
                            rep(NA,nrow(GS.3))),
-                  HetPval = c(FEMA.3$HetPval,
+                  HetPval = c(FEMA.3$HetPval,REMA.3$HetPval,
                               rep(NA,nrow(FGR11.3)),
                               rep(NA,nrow(UKB.3)),
                               rep(NA,nrow(GS.3))))
@@ -144,8 +151,10 @@ TS7$Phenotype <- factor(TS7$Phenotype, levels = c("T1D","C3_PROSTATE","T2D","GOU
                                    "Major Depression","Any Cancer","Epilepsy",
                                    "Appendicitis","Alcohol Use Disorder"))
 # Biobank as factor
-TS7$Biobank <- factor(TS7$Biobank, levels = c("FE meta-analysis","FinnGen","UK Biobank", "Generation Scotland"), 
-                      labels = c("FE meta-analysis","FinnGen","UK Biobank","Generation Scotland"))
+TS7$Biobank <- factor(TS7$Biobank, levels = c("FE meta-analysis","RE meta-analysis",
+                                              "FinnGen","UK Biobank", "Generation Scotland"), 
+                      labels = c("FE meta-analysis","RE meta-analysis",
+                                              "FinnGen","UK Biobank", "Generation Scotland"))
 
 
 ################################################################################
@@ -165,7 +174,7 @@ FigS6 <- ggplot(TS7, aes(x = HR, y = Biobank,
   scale_shape_manual(values=c(15,16))+
   geom_linerange(position = position_dodge(1),size=5) +
   theme_minimal() + scale_colour_manual(values= c(  "#BC65DB","#3869AF")) + geom_vline(xintercept = 1, lty = 2,size = 2) +
-  geom_hline(yintercept=seq(0.5,18.5,1),color="black",size=.5) +
+  geom_hline(yintercept=seq(0.5,5.5,1),color="black",size=.5) +
   scale_x_continuous(transform = scales::transform_log(),
                      breaks = c(0.5,0.7,1.0,1.5,2.0,2.5,3.0,4.0),
                      limits = c(0.5, 4.5),
@@ -183,4 +192,5 @@ png(filename = paste0("output/Figures/Manuscript/",as.character(Sys.Date()),
      width=700,height=600,units='mm',res=600,pointsize=6)
 FigS6
 dev.off()
+
 
