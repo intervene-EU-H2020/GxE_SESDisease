@@ -192,7 +192,8 @@ drive_upload(media = "output/2classEA/MetaAnalysis/FGR11_UKB_GS/model1/2025-05-2
              type = "spreadsheet")
 
 # model 1a - random effects
-drive_upload(media = "output/2classEA/MetaAnalysis/FGR11_UKB_GS/model1/2026-02-18_INTERVENE_EducationalAttainment_REMetaAnalysis_FinnGenR11_UKB_GenScot_model1a.csv.csv",
+drive_upload(media = "output/2classEA/MetaAnalysis/FGR11_UKB_GS/model1/2026-02-18_INTERVENE_EducationalAttainment_REMetaAnalysis_FinnGenR11_UKB_GenScot_model1a.csv",
              path = as_id("1Wi0KDwGtnZoUclUgZwu7F_Dwj-6uvJYH"),
              name = "2025-05-22_INTERVENE_EducationalAttainment_REMetaAnalysis_FinnGenR11_UKB_GenScot_model1a.csv",
              type = "spreadsheet")
+
