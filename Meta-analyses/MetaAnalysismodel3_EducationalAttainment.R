@@ -10,7 +10,7 @@ rm(list=ls())
 #
 # Author: F.A. Hagenbeek [FAH] (fiona.hagenbeek@helsinki.fi)
 #
-# Script meta-analysis model 3: Run fixed-effects meta-analysis of Cox
+# Script meta-analysis model 3: Run fixed and random-effects meta-analysis of Cox
 # Proportional-Hazards models with age of onset as timescale, with
 # trait-specific PGS by EA level, sex (except for breast and prostate cancer),
 # bith decade, and the first 10 genetic PCS as covariates across FinnGen data
@@ -20,8 +20,7 @@ rm(list=ls())
 #
 # required input data: FGR11 + UKB + GS model 3 (from INTERVENE GxE_SESDisease GoogleDrive Folder)
 #
-# Last edits: 06/11/2024 (edits, FAH: final checks and minor tweaks prior to
-# upload to GitHub)
+# Last edits: 18/02/2026 (edits, FAH: add random-effects meta-analytical models)
 # 
 ################################################################################
 
@@ -143,13 +142,13 @@ all.3 <- rbind(FGR11.3long,UKB.3long,GS.3long)
 
 ################################################################################
 #
-# Run meta-analyses
+# Run meta-analyses - fixed effect
 #
 ################################################################################
 
 # run meta-analysis model 3
 metaresults.3 <- c()
-for(l in c("lowEA","highEA")){
+for(l in c("LowEA","HighEA")){
   
   quartile <- subset(all.3, Test==l)
   
@@ -182,12 +181,57 @@ fwrite(metaresults.3, paste("output/2classEA/MetaAnalysis/FGR11_UKB_GS/model3/",
 
 ################################################################################
 #
+# Run meta-analyses - random effect
+#
+################################################################################
+
+# run meta-analysis model 3
+metaresultsr.3 <- c()
+for(l in c("LowEA","HighEA")){
+  
+  quartile <- subset(all.3, Test==l)
+  
+  for(i in unique(quartile$trait)){
+    print(i)
+    disease <- subset(quartile, trait==i & !(is.na(beta)))
+    
+    
+    #Meta analysis should be done at the beta level 
+    metar <- rma(yi=beta, sei=se, data=disease, method="REML")
+    
+    metaresultsr.3 <- rbind(metaresultsr.3, c(l, i, metar$b, metar$se, metar$pval, metar$QE, metar$QEp))
+    
+  }
+  
+}
+
+# reorganize the meta-analysis results 
+metaresultsr.3 <- as.data.frame(metaresultsr.3)
+colnames(metaresultsr.3) <- c("EA","Phenotype","Beta","SE","Pval","QHet","HetPval")
+metaresultsr.3 <- metaresultsr.3 %>% mutate_at(c(3:7),as.numeric)
+metaresultsr.3$HR <- exp(metaresultsr.3$Beta)
+metaresultsr.3$Cipos <- exp(metaresultsr.3$Beta + (1.96*metaresultsr.3$SE))
+metaresultsr.3$Cineg <- exp(metaresultsr.3$Beta - (1.96*metaresultsr.3$SE))
+
+# write to file
+fwrite(metaresultsr.3, paste("output/2classEA/MetaAnalysis/FGR11_UKB_GS/model3/", as.character(Sys.Date()), 
+                            "_INTERVENE_EducationalAttainment_REMetaAnalysis_FinnGenR11_UKB_GenScot_model3.csv",sep=""))
+
+
+################################################################################
+#
 # Upload meta-analyzed results to Google Drive
 #
 ################################################################################
 
+# fixed effect
 drive_upload(media = "output/2classEA/MetaAnalysis/FGR11_UKB_GS/model3/2025-05-22_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model3_anyN.csv",
              path = as_id("1Wi0KDwGtnZoUclUgZwu7F_Dwj-6uvJYH"),
              name = "2025-05-22_INTERVENE_EducationalAttainment_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model3.csv",
              type = "spreadsheet")
 
+# random effect
+drive_upload(media = "output/2classEA/MetaAnalysis/FGR11_UKB_GS/model3/2026-02-18_INTERVENE_EducationalAttainment_REMetaAnalysis_FinnGenR11_UKB_GenScot_model3.csv",
+             path = as_id("1Wi0KDwGtnZoUclUgZwu7F_Dwj-6uvJYH"),
+             name = "2026-02-18_INTERVENE_EducationalAttainment_REMetaAnalysis_FinnGenR11_UKB_GenScot_model3.csv",
+             type = "spreadsheet")
