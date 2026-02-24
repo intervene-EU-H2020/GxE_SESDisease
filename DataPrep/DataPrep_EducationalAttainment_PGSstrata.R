@@ -85,7 +85,7 @@ PGS <- Reduce(function(x,y) merge(x = x, y = y, by = c("UKBID"),all=T), files)
 #
 ################################################################################
 
-eno$SEX <- as.numeric(factor(pheno$SEX, 
+peno$SEX <- as.numeric(factor(pheno$SEX, 
                              levels = c("male","female")))-1
 # education convert to factor
 pheno$EDUCATION_11 <- factor(pheno$EDUCATION_11, levels = c(2,3,4,7),
@@ -380,4 +380,5 @@ names(INTERVENE.list) <- c(unlist(lapply(INTERVENE.list, function(x) { names(x)[
 
 # write to file
 save(INTERVENE.list, file = paste("[PathToOutputFolder/]", as.character(Sys.Date()),
+
                                   "_",Biobank,"_INTERVENE_EducationalAttainment_dat_PGSstrata.RData",sep = ""))
