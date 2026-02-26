@@ -43,8 +43,8 @@ packages<-function(...) {
 # packages function as specified above): survival = computing survival
 # analyses; foreach = run multiple analyses in a loop, also install "doParallel"
 # which will allow you to run foreach in parallel across the number of cores you
-# desire/have available; plyr = data wrangling.
-packages("survival","foreach","doParallel","plyr")
+# desire/have available; plyr & dplyr = data wrangling.
+packages("survival","foreach","doParallel","plyr","dplyr")
 
 # set-up multicore-like functionality (with doParallel when running foreach). I
 # like to leave one core "open", thus, I select the number of available cores - 1
@@ -244,6 +244,7 @@ modcoeffs.cox.model6$Test <- c(rep("LowEA",.5*nrow(modcoeffs.cox.model6)),rep("H
 write.table(modcoeffs.cox.model6, file=paste0("[PathToOutputFolder/]",as.character(Sys.Date()),
                                               "_",Biobank,"_INTERVENE_EducationalAttainment_CoxPH_model6_Coeffs.txt"),
             row.names=F, col.names = T, sep="\t",quote = F)
+
 
 
 
