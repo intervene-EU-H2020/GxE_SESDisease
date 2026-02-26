@@ -18,7 +18,8 @@ rm(list=ls())
 # file
 #
 # Last edits: 26/02/2026 (FAH, edits: script did not include splitting into 
-# low vs high education; added)
+# low vs high education; and it hard-coded the number of trait in the list 
+# instead of which trait)
 # 
 ################################################################################
 
@@ -119,7 +120,7 @@ mod6nosex.formula <- paste0("PGS_group + PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + PC7
 # run Cox-PH model 6 in loop with foreach in parallel for each diseases.
 # run stratified by low EA
 res.cox.model6.low <- foreach(i=1:length(lowEA)) %dopar% {
-  if(i==2) {
+  if(names(INTERVENE.list[[i]][15])=="C3_PROSTATE") {
     cox.model(filelist = lowEA[[i]],covformula = mod6nosex.formula) 
   } else {
     cox.model(filelist = lowEA[[i]],covformula = mod6sex.formula)
@@ -131,7 +132,7 @@ names(res.cox.model6.low) <- c(unlist(lapply(lowEA, function(x) { names(x)[15] }
 
 # run stratified by high EA
 res.cox.model6.high <- foreach(i=1:length(highEA)) %dopar% {
-  if(i==2) {
+  if(names(INTERVENE.list[[i]][15])=="C3_PROSTATE") {
     cox.model(filelist = highEA[[i]],covformula = mod6nosex.formula) 
   } else {
     cox.model(filelist = highEA[[i]],covformula = mod6sex.formula)
@@ -243,5 +244,6 @@ modcoeffs.cox.model6$Test <- c(rep("LowEA",.5*nrow(modcoeffs.cox.model6)),rep("H
 write.table(modcoeffs.cox.model6, file=paste0("[PathToOutputFolder/]",as.character(Sys.Date()),
                                               "_",Biobank,"_INTERVENE_EducationalAttainment_CoxPH_model6_Coeffs.txt"),
             row.names=F, col.names = T, sep="\t",quote = F)
+
 
 
