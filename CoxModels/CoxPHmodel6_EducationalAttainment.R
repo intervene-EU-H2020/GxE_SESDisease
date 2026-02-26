@@ -17,8 +17,8 @@ rm(list=ls())
 # Required input data: biobank-specific INTERVENE combined phenotype and PGS
 # file
 #
-# Last edits: 18/04/2024 (FAH, edits: globalize script for use in other
-# INTERVENE biobanks and upload to GitHub)
+# Last edits: 26/02/2026 (FAH, edits: script did not include splitting into 
+# low vs high education; added)
 # 
 ################################################################################
 
@@ -62,6 +62,39 @@ Biobank <- c("Biobank")
 load("[PathToPhenotypeFile/PhenotypeFile.RData]")
 
 
+################################################################################
+#
+# Adjust data prior to running Cox model
+#
+################################################################################
+
+# split by Education
+lowEA <- foreach(i=1:length(INTERVENE.list)) %dopar% {
+  subset(INTERVENE.list[[i]], EA == "low")
+}
+highEA <- foreach(i=1:length(INTERVENE.list)) %dopar% {
+  subset(INTERVENE.list[[i]], EA == "high")
+}
+
+# this might result <5 individuals with a given birth decade and in empty levels for
+# birth decade factor; remove those
+# Function to drop unused levels of birthdecade in each dataframe
+clean_birthdecade <- function(df) {
+  df <- df %>%
+    group_by(birthdecade) %>%
+    filter(n() >= 5) %>%
+    ungroup()
+  
+  df$birthdecade <- droplevels(df$birthdecade)  # Drop empty levels
+  
+  return(df)
+}
+
+# Apply to both lists of dataframes
+lowEA <- lapply(lowEA, clean_birthdecade)
+highEA <- lapply(highEA, clean_birthdecade)
+
+
 ###############################################################################
 #
 # Run Cox Proportional-Hazards models stratified by EA level,
@@ -71,9 +104,6 @@ load("[PathToPhenotypeFile/PhenotypeFile.RData]")
 ################################################################################
 
 # function to run Cox Proportional Hazards Models with multiple covariates
-#
-################################################################################
-
 cox.model <- function(filelist,covformula) {
   fit <- coxph(as.formula(paste0("Surv(AGE,",names(filelist[15]),") ~ ",covformula)), 
                data =  filelist, na.action = na.exclude)
@@ -213,4 +243,5 @@ modcoeffs.cox.model6$Test <- c(rep("LowEA",.5*nrow(modcoeffs.cox.model6)),rep("H
 write.table(modcoeffs.cox.model6, file=paste0("[PathToOutputFolder/]",as.character(Sys.Date()),
                                               "_",Biobank,"_INTERVENE_EducationalAttainment_CoxPH_model6_Coeffs.txt"),
             row.names=F, col.names = T, sep="\t",quote = F)
+
 
