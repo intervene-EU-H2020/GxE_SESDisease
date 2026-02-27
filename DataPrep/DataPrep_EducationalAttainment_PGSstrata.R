@@ -16,7 +16,7 @@ rm(list=ls())
 # Required input data: biobank-specific INTERVENE phenotype file and
 # biobank-specific INTERVENE PGS files
 #
-# Last edits: 27/06/2025 (FAH, edits: last edits and tweaks for GitHub upload)
+# Last edits: 27/02/2026 (FAH, edits: expand to include all 19 possible phenotypes)
 # 
 ################################################################################
 
@@ -150,23 +150,18 @@ INTERVENE <- merge(pheno,PGS,by.x = "ID",by.y = "UKBID")
 # ancestry individuals
 sum(!INTERVENE$ANCESTRY=="EUR",na.rm = T) #0 individuals no need for further filtering
 
-# separate vectors for each of the 9 diseases for which we observed a
-# significant PGS * education or occupation effect in the FinnGen study (1.	Type
-# I Diabetes = T1D + T1D_DATE; 2.	Prostate Cancer = C3_PROSTATE +
-# C3_PROSTATE_DATE; 3.	Type 2 Diabetes = T2D + T2D_DATE; 4.	Atrial Fibrillation
-# = I9_AF + I9_AF_DATE; 5.	Asthma = J10_ASTHMA + J10_ASTHMA_DATE; 6.	Coronary
-# Heart Disease = I9_CHD + I9_CHD_DATE; 7.	Hip Osteoarthritis = COX_ARTHROSIS +
-# COX_ARTHROSIS_DATE; 8.	Knee Osteoarthritis = KNEE_ARTHROSIS +
-# KNEE_ARTHROSIS_DATE; 9.	All Cancers = C3_CANCER + C3_CANCER_DATE; Besides the
-# case-control indicator for each disease and the event data, always include the
-# first 14 variables (i.e., ID, sex, birth date, genetic PCs & ancestry [cols
-# 1:14]), dichotmized Education [col 95] and END_OF_FOLLOWUP [col 92] that were
-# originally included in the phenotype file, the covariates [cols 128:131], and
-# the PGSs (PGS names are: 1.	Type I Diabetes = T1D; 2.	Prostate Cancer =
-# C3_PROSTATE; 3.	Type 2 Diabetes = T2D; 4.	Atrial Fibrillation = I9_AF;
-# 5.	Asthma = Asthma; 6.	Coronary Heart Disease = I9_CHD; 7.	Hip Osteoarthritis
-# = Hip_Osteoarthritis; 8.	Knee Osteoarthritis = Knee_Osteoarthritis; 9.	All
-# Cancers = AllCancers
+# separate vectors for each of the 18 diseases included in the INTERVENE
+# flagship manuscript and Alcohol use disorder for UKB Besides the case-control
+# indicator for each disease + the event date (naming convention from FinnGen)
+# and the PRSs (names as downloaded), also include the following variables
+# (rename if required):
+# "ID","SEX","DATE_OF_BIRTH","PC1","PC2","PC3","PC4","PC5","PC6","PC7","PC8",
+# "PC9","PC10","ANCESTRY","END_OF_FOLLOWUP","ISCED97", and "EA" (should mostly
+# have been included in the phenotype file) + (if relevant) biobank specific
+# additional (technical covariates).
+# Note, please keep variables in this order and add additionally required
+# variables at the end (otherwise the scripts will run on the wrong variable or
+# not at all)
 T1D = names(INTERVENE[,c("ID","SEX","DATE_OF_BIRTH","PC1","PC2","PC3","PC4","PC5",
                          "PC6","PC7","PC8","PC9","PC10","ANCESTRY","T1D","T1D_DATE",
                          "END_OF_FOLLOWUP","ISCED97","EA","T1D_prs")]) 
@@ -175,10 +170,22 @@ PC = names(INTERVENE[,c("ID","SEX","DATE_OF_BIRTH","PC1","PC2","PC3","PC4","PC5"
                         "END_OF_FOLLOWUP","ISCED97","EA","Prostate_Cancer_prs")]) 
 T2D = names(INTERVENE[,c("ID","SEX","DATE_OF_BIRTH","PC1","PC2","PC3","PC4","PC5",
                          "PC6","PC7","PC8","PC9","PC10","ANCESTRY","T2D","T2D_DATE",
-                         "END_OF_FOLLOWUP","ISCED97","EA","T2D_prs")])
+                         "END_OF_FOLLOWUP","ISCED97","EA","T2D_prs")]) 
+GOUT = names(INTERVENE[,c("ID","SEX","DATE_OF_BIRTH","PC1","PC2","PC3","PC4","PC5",
+                          "PC6","PC7","PC8","PC9","PC10","ANCESTRY","GOUT","GOUT_DATE",
+                          "END_OF_FOLLOWUP","ISCED97","EA","Gout_prs")]) 
+RA = names(INTERVENE[,c("ID","SEX","DATE_OF_BIRTH","PC1","PC2","PC3","PC4","PC5",
+                        "PC6","PC7","PC8","PC9","PC10","ANCESTRY","RHEUMA_SEROPOS_OTH","RHEUMA_SEROPOS_OTH_DATE",
+                        "END_OF_FOLLOWUP","ISCED97","EA","Rheumatoid_Arthritis_prs")]) 
+BC = names(INTERVENE[,c("ID","SEX","DATE_OF_BIRTH","PC1","PC2","PC3","PC4","PC5",
+                        "PC6","PC7","PC8","PC9","PC10","ANCESTRY","C3_BREAST","C3_BREAST_DATE",
+                        "END_OF_FOLLOWUP","ISCED97","EA","Breast_Cancer_prs")]) 
 AF = names(INTERVENE[,c("ID","SEX","DATE_OF_BIRTH","PC1","PC2","PC3","PC4","PC5",
                         "PC6","PC7","PC8","PC9","PC10","ANCESTRY","I9_AF","I9_AF_DATE",
-                        "END_OF_FOLLOWUP","ISCED97","EA","Atrial_Fibrillation_prs")])
+                        "END_OF_FOLLOWUP","ISCED97","EA","Atrial_Fibrillation_prs")]) 
+CC = names(INTERVENE[,c("ID","SEX","DATE_OF_BIRTH","PC1","PC2","PC3","PC4","PC5",
+                        "PC6","PC7","PC8","PC9","PC10","ANCESTRY","C3_COLORECTAL","C3_COLORECTAL_DATE",
+                        "END_OF_FOLLOWUP","ISCED97","EA","Colorectal_Cancer_prs")]) 
 ASTHMA = names(INTERVENE[,c("ID","SEX","DATE_OF_BIRTH","PC1","PC2","PC3","PC4","PC5",
                             "PC6","PC7","PC8","PC9","PC10","ANCESTRY","J10_ASTHMA","J10_ASTHMA_DATE",
                             "END_OF_FOLLOWUP","ISCED97","EA","Asthma_prs")]) 
@@ -191,21 +198,49 @@ HIP = names(INTERVENE[,c("ID","SEX","DATE_OF_BIRTH","PC1","PC2","PC3","PC4","PC5
 KNEE = names(INTERVENE[,c("ID","SEX","DATE_OF_BIRTH","PC1","PC2","PC3","PC4","PC5",
                           "PC6","PC7","PC8","PC9","PC10","ANCESTRY","KNEE_ARTHROSIS","KNEE_ARTHROSIS_DATE",
                           "END_OF_FOLLOWUP","ISCED97","EA","Knee_Osteoarthritis_prs")]) 
+SKIN = names(INTERVENE[,c("ID","SEX","DATE_OF_BIRTH","PC1","PC2","PC3","PC4","PC5",
+                          "PC6","PC7","PC8","PC9","PC10","ANCESTRY","C3_MELANOMA_SKIN","C3_MELANOMA_SKIN_DATE",
+                          "END_OF_FOLLOWUP","ISCED97","EA","Melanoma_prs")]) 
+LC = names(INTERVENE[,c("ID","SEX","DATE_OF_BIRTH","PC1","PC2","PC3","PC4","PC5",
+                        "PC6","PC7","PC8","PC9","PC10","ANCESTRY","C3_BRONCHUS_LUNG","C3_BRONCHUS_LUNG_DATE",
+                        "END_OF_FOLLOWUP","ISCED97","EA","Lung_Cancer_prs")]) 
+MDD = names(INTERVENE[,c("ID","SEX","DATE_OF_BIRTH","PC1","PC2","PC3","PC4","PC5",
+                         "PC6","PC7","PC8","PC9","PC10","ANCESTRY","F5_DEPRESSIO","F5_DEPRESSIO_DATE",
+                         "END_OF_FOLLOWUP","ISCED97","EA","MDD_prs")]) 
 CANCER = names(INTERVENE[,c("ID","SEX","DATE_OF_BIRTH","PC1","PC2","PC3","PC4","PC5",
                             "PC6","PC7","PC8","PC9","PC10","ANCESTRY","C3_CANCER","C3_CANCER_DATE",
-                            "END_OF_FOLLOWUP","ISCED97","EA","AllCancers_prs")])
+                            "END_OF_FOLLOWUP","ISCED97","EA","AllCancers_prs")]) 
+EPILEP = names(INTERVENE[,c("ID","SEX","DATE_OF_BIRTH","PC1","PC2","PC3","PC4","PC5",
+                            "PC6","PC7","PC8","PC9","PC10","ANCESTRY","G6_EPLEPSY","G6_EPLEPSY_DATE",
+                            "END_OF_FOLLOWUP","ISCED97","EA","Epilepsy_prs")])
+APPC = names(INTERVENE[,c("ID","SEX","DATE_OF_BIRTH","PC1","PC2","PC3","PC4","PC5",
+                          "PC6","PC7","PC8","PC9","PC10","ANCESTRY","K11_APPENDACUT","K11_APPENDACUT_DATE",
+                          "END_OF_FOLLOWUP","ISCED97","EA","Appendicitis_prs")]) 
+AUD = names(INTERVENE[,c("ID","SEX","DATE_OF_BIRTH","PC1","PC2","PC3","PC4","PC5",
+                         "PC6","PC7","PC8","PC9","PC10","ANCESTRY","AUD_SWEDISH","AUD_SWEDISH_DATE",
+                         "END_OF_FOLLOWUP","ISCED97","EA","Alcohol_Use_Disorder_prs")]) 
 
 # based on the list of column name vectors produced in the previous step, create
-# a list with data.frames for each of the disorders.
+# a list with data.frames for each of the 5 disorders.
 INTERVENE.list <- list(T1D = INTERVENE[,which(names(INTERVENE) %in% T1D)],
                        PC = INTERVENE[,which(names(INTERVENE) %in% PC)],
                        T2D = INTERVENE[,which(names(INTERVENE) %in% T2D)],
+                       GOUT = INTERVENE[,which(names(INTERVENE) %in% GOUT)],
+                       RA = INTERVENE[,which(names(INTERVENE) %in% RA)],
+                       BC = INTERVENE[,which(names(INTERVENE) %in% BC)],
                        AF = INTERVENE[,which(names(INTERVENE) %in% AF)],
+                       CC = INTERVENE[,which(names(INTERVENE) %in% CC)],
                        ASTHMA = INTERVENE[,which(names(INTERVENE) %in% ASTHMA)],
                        CHD = INTERVENE[,which(names(INTERVENE) %in% CHD)],
                        HIP = INTERVENE[,which(names(INTERVENE) %in% HIP)],
                        KNEE = INTERVENE[,which(names(INTERVENE) %in% KNEE)],
-                       CANCER = INTERVENE[,which(names(INTERVENE) %in% CANCER)])
+                       SKIN = INTERVENE[,which(names(INTERVENE) %in% SKIN)],
+                       LC = INTERVENE[,which(names(INTERVENE) %in% LC)],
+                       MDD = INTERVENE[,which(names(INTERVENE) %in% MDD)],
+                       CANCER = INTERVENE[,which(names(INTERVENE) %in% CANCER)],
+                       EPILEP = INTERVENE[,which(names(INTERVENE) %in% EPILEP)],
+                       APPC = INTERVENE[,which(names(INTERVENE) %in% APPC)],
+                       AUD = INTERVENE[which(names(INTERVENE) %in% AUD)])
 
 # function to calculate age at event (i.e., age at onset) for cases (date event
 # minus birthday. %..% calculates and interval between two dates and by dividing
@@ -382,4 +417,5 @@ names(INTERVENE.list) <- c(unlist(lapply(INTERVENE.list, function(x) { names(x)[
 save(INTERVENE.list, file = paste("[PathToOutputFolder/]", as.character(Sys.Date()),
 
                                   "_",Biobank,"_INTERVENE_EducationalAttainment_dat_PGSstrata.RData",sep = ""))
+
 
