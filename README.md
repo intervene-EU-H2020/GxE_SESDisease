@@ -170,16 +170,16 @@ pheno$ISCED97 <- factor(pheno$ISCED97, levels = c(1,2,3,4,5,6), # remove the ISC
 ```
 pheno <- subset(pheno, ANCESTRY=='EUR')
 ```
-11. Lines 170-196 - Code assumes you have kept the same shorthand names for the phenotypes as within [FinnGen](https://docs.google.com/spreadsheets/d/1DNKd1KzI8WOIfG2klXWskbCSyX6h5gTu/edit#gid=334983519) (column B) and you have kept the same naming structure for the PGS files as when you downloaded them. Please adjust the names of the standard covariates before running this code if the current names do not match the naming convention in your biobank and add additional (technical) covariates as required. Remove any of the traits not applicable in your biobank (i.e., if the biobank was included in GWAS the summary statistics were based on, see Supplementary Data 10 of the [INTERVENE flagship manuscript](https://doi.org/10.1038/s41467-024-48938-2).
-12. Line 223, 228, 240, 248, 258, 298, 305, 369 + 374 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
-13. Lines 262 + 267 - add additional (technical) covariates if required
-14. Lines 286-290 - If none of the PGSs have been flipped (e.g., all associations are positive) then you must out-comment these lines. 
-15. Lines 325-334 - remove birth decades _not_ present in your biobank and _add_ birth decades not included in the code that are included in your biobank. 
+11. Lines 165-243 - Code assumes you have kept the same shorthand names for the phenotypes as within [FinnGen](https://docs.google.com/spreadsheets/d/1DNKd1KzI8WOIfG2klXWskbCSyX6h5gTu/edit#gid=334983519) (column B) and you have kept the same naming structure for the PGS files as when you downloaded them. Please adjust the names of the standard covariates before running this code if the current names do not match the naming convention in your biobank and add additional (technical) covariates as required. Remove any of the traits not applicable in your biobank (i.e., if the biobank was included in GWAS the summary statistics were based on, see Supplementary Data 10 of the [INTERVENE flagship manuscript](https://doi.org/10.1038/s41467-024-48938-2).
+12. Line 258, 263, 275, 283, 293, 333, 340, 404 + 409 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
+13. Lines 297 + 302 - add additional (technical) covariates if required
+14. Lines 321-325 - If none of the PGSs have been flipped (e.g., all associations are positive), then you must out-comment these lines. 
+15. Lines 360-367 - remove birth decades _not_ present in your biobank and _add_ birth decades not included in the code that are included in your biobank. 
 **16. Before writing the output to file, please check whether each subgroup for each trait has >=5 individuals!** Remove traits from the list if <5 individuals in a subgroup, e.g., with the following code: 
 ```
 Listname[c(x,y,z)] <- NULL # where x, y, and z are the shorthand names for the phenotypes as in FinnGen
 ```
-17. Lines 382 - specify the locations you want to save the .Rdata files.  
+17. Lines 417 - specify the locations you want to save the.Rdata files.  
 - Output file is "&#42;_INTERVENE_EducationalAttainment_dat_PGSstrata.RData".
 
 ### Step 5e: Educational Attainment - data preparation for Fine Gray models
