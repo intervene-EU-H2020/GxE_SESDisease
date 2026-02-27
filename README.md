@@ -479,15 +479,15 @@ Run [CoxPHmodel5_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDise
 
 ## Model 6: Determine effect of trait-specific polygenic score groups stratified by educational attainment on disease risk
 Run [CoxPHmodel6_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel6_EducationalAttainment.R) to run the Cox proportional hazard models with age at disease onset as timescale stratified by low vs. high educational attainment, and include sex (except for prostate cancer), birth decade, and the first 10 genetic PCs as covariates. Please make the following adjustments: 
-1. Line 51 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
-2. Line 54 - replace with the name of your biobank (don't include spaces in the biobank name)
-3. Line 63 - specify file location + filename
-4. Lines 73, 76, 122, 134, 160, 170, 180, 200 + 210 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
-5. Lines 117-118 - add biobank-specific technical covariates if required
-6. Lines 226-229 - if you cannot run the analyses for prostate cancer, rename _"modcoeffs.cox.model6.sex.low"_ and _"modcoeffs.cox.model6.sex.high"_ to _"modcoeffs.cox.model6.low"_ and _"modcoeffs.cox.model6.high"_ 
-7. Lines 231-234 - if you cannot run the analyses for prostate cancer, out-comment or remove these lines
-8. Lines 237-238 - if you cannot run the analyses for prostate cancer, remove _"modcoeffs.cox.model6.nosex.low"_ and _"modcoeffs.cox.model6.nosex.high"_
-9. Line 244 - specify the location you want to save the model 6 output.
+1. Line 50 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
+2. Line 53 - replace with the name of your biobank (don't include spaces in the biobank name)
+3. Line 62 - specify file location + filename
+4. Lines 72, 75, 121, 133, 159, 169, 179, 189, 199 + 209 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
+5. Lines 116-117 - add biobank-specific technical covariates if required
+6. Lines 225-228 - if you cannot run the analyses for prostate and/or breast cancer, rename _"modcoeffs.cox.model6.sex.low"_ and _"modcoeffs.cox.model6.sex.high"_ to _"modcoeffs.cox.model6.low"_ and _"modcoeffs.cox.model6.high"_ 
+7. Lines 230-233 - if you cannot run the analyses for prostate and/or breast cancer, out-comment or remove these lines
+8. Lines 236-237 - if you cannot run the analyses for prostate and/or breastcancer, remove _"modcoeffs.cox.model6.nosex.low"_ and _"modcoeffs.cox.model6.nosex.high"_
+9. Line 243 - specify the location you want to save the model 6 output.
 - Output file is "&#42;_INTERVENE_EducationalAttainment_CoxPH_model6_Coeffs.txt"
 
 
