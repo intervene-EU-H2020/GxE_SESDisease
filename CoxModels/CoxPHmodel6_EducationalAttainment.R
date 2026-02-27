@@ -17,9 +17,8 @@ rm(list=ls())
 # Required input data: biobank-specific INTERVENE combined phenotype and PGS
 # file
 #
-# Last edits: 26/02/2026 (FAH, edits: script did not include splitting into 
-# low vs high education; and it hard-coded the number of trait in the list 
-# instead of which trait)
+# Last edits: 27/02/2026 (FAH, edits: add breast cancer as an exception to 
+# traits without sex covariate)
 # 
 ################################################################################
 
@@ -223,15 +222,15 @@ extract.coeffs <- function(model.output,filelist) {
 }
 
 # extract model coefficients for each trait with sex as covariate
-modcoeffs.cox.model6.sex.low <- extract.coeffs(model.output = res.cox.model6.low[!names(res.cox.model6.low) %in% c("C3_PROSTATE")],
-                                                          filelist = lowEA[!names(lowEA) %in% c("C3_PROSTATE")])
-modcoeffs.cox.model6.sex.high <- extract.coeffs(model.output = res.cox.model6.high[!names(res.cox.model6.high) %in% c("C3_PROSTATE")],
-                                                           filelist = highEA[!names(highEA) %in% c("C3_PROSTATE")])
+modcoeffs.cox.model6.sex.low <- extract.coeffs(model.output = res.cox.model6.low[!names(res.cox.model6.low) %in% c("C3_PROSTATE","C3_BREAST")],
+                                                          filelist = lowEA[!names(lowEA) %in% c("C3_PROSTATE","C3_BREAST")])
+modcoeffs.cox.model6.sex.high <- extract.coeffs(model.output = res.cox.model6.high[!names(res.cox.model6.high) %in% c("C3_PROSTATE","C3_BREAST")],
+                                                           filelist = highEA[!names(highEA) %in% c("C3_PROSTATE","C3_BREAST")])
 # extract model coefficients for each trait without sex as covariate
-modcoeffs.cox.model6.nosex.low <- extract.coeffs(model.output = res.cox.model6.low[c("C3_PROSTATE")],
-                                                  filelist = lowEA[c("C3_PROSTATE")])
-modcoeffs.cox.model6.nosex.high <- extract.coeffs(model.output = res.cox.model6.high[c("C3_PROSTATE")],
-                                                   filelist = highEA[c("C3_PROSTATE")])
+modcoeffs.cox.model6.nosex.low <- extract.coeffs(model.output = res.cox.model6.low[c("C3_PROSTATE","C3_BREAST")],
+                                                  filelist = lowEA[c("C3_PROSTATE","C3_BREAST")])
+modcoeffs.cox.model6.nosex.high <- extract.coeffs(model.output = res.cox.model6.high[c("C3_PROSTATE","C3_BREAST")],
+                                                   filelist = highEA[c("C3_PROSTATE","C3_BREAST")])
 
 #combine into single result data frame
 modcoeffs.cox.model6 <- rbind.fill(modcoeffs.cox.model6.sex.low,modcoeffs.cox.model6.nosex.low,
@@ -244,6 +243,7 @@ modcoeffs.cox.model6$Test <- c(rep("LowEA",.5*nrow(modcoeffs.cox.model6)),rep("H
 write.table(modcoeffs.cox.model6, file=paste0("[PathToOutputFolder/]",as.character(Sys.Date()),
                                               "_",Biobank,"_INTERVENE_EducationalAttainment_CoxPH_model6_Coeffs.txt"),
             row.names=F, col.names = T, sep="\t",quote = F)
+
 
 
 
