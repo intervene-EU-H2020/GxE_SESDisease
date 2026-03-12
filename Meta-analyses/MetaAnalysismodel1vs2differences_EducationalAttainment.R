@@ -184,7 +184,7 @@ REMA.2 <- REMA.2[-which(REMA.2$Phenotype %in% c("I9_AF","C3_COLORECTAL")),]
 
 ################################################################################
 #
-# Combine FGR11 & UKB & meta-analysis results for plotting - fixed effect
+# Combine FGR11, UKB, GenScot & meta-analysis results for plotting - fixed effect
 #
 ################################################################################
 
@@ -385,7 +385,7 @@ fwrite(plot12_diff, paste("output/2classEA/MetaAnalysis/FGR11_UKB_GS/model2/", a
 
 ################################################################################
 #
-# Combine FGR11 & UKB & meta-analysis results for plotting - random effect
+# Combine FGR11, UKB, GenScot & meta-analysis results for plotting - random effect
 #
 ################################################################################
 
@@ -599,4 +599,5 @@ drive_upload(media = "output/2classEA/MetaAnalysis/FGR11_UKB_GS/model2/2026-02-1
              path = as_id("1Wi0KDwGtnZoUclUgZwu7F_Dwj-6uvJYH"),
              name = "2026-02-18_INTERVENE_EducationalAttainment_REMetaAnalysis_FinnGenR11_UKB_GenScot_model1vs2_Differences.csv",
              type = "spreadsheet")
+
 
