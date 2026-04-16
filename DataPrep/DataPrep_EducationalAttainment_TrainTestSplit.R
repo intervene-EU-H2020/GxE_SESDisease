@@ -283,6 +283,17 @@ INTERVENE.list.80 <- foreach(i=1:length(INTERVENE.list.80)) %dopar% {
   cbind(INTERVENE.list.80[[i]],AGE=INTERVENE.AGE[[i]])
 }
 
+# create function to extract birth year for each of the 19 traits
+extract_birth_year <- function(filelist, date_col = "DATE_OF_BIRTH") { 
+  lapply(filelist, function(df) {
+    df$birth_year <- as.numeric(format(as.Date(df[[date_col]]), "%Y"))
+    return(df)
+    })
+  }
+  
+# run function to extract birth year for each of the 19 traits 
+INTERVENE.list.80 <- extract_birth_year(INTERVENE.list.80) 
+  
 # according to the INTERVENE flagship follow-up of participants started at birth
 # and ended with (1) age of first record of disease diagnosis, (2) age at death
 # for non-disease cause, (3) age at last available EHR, or (4) age 80. Under the
@@ -456,6 +467,9 @@ INTERVENE.list.20 <- foreach(i=1:length(INTERVENE.list.20)) %dopar% {
   cbind(INTERVENE.list.20[[i]],AGE=INTERVENE.AGE[[i]])
 }
 
+# run function to extract birth year for each of the 19 traits 
+INTERVENE.list.20 <- extract_birth_year(INTERVENE.list.20) 
+  
 # according to the INTERVENE flagship follow-up of participants started at birth
 # and ended with (1) age of first record of disease diagnosis, (2) age at death
 # for non-disease cause, (3) age at last available EHR, or (4) age 80. Under the
