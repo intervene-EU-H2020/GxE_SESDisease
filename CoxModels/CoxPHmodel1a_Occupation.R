@@ -11,8 +11,8 @@ rm(list=ls())
 # Author: F.A. Hagenbeek [FAH] (fiona.hagenbeek@helsinki.fi)
 #
 # Script model 1a: Run Cox Proportional-Hazards models with age of onset as
-# timescale, where occupation is classified into "Manual worker", "Lower-level",
-# "Upper-level" and (optional) "Self-employed" (reference = Manual worker), and
+# timescale, where occupation is classified into "Lower-level" and
+# "Upper-level" (reference = Lower-level), and
 # include sex (except for prostate and breast cancer), birth decade and the
 # first 5 genetic PCs as covariates
 #
