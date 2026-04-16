@@ -63,7 +63,7 @@ load("[PathToPhenotypeFile/PhenotypeFile.RData]")
 
 ###############################################################################
 #
-# Run Cox Proportional-Hazards model 0b) trait-specific polygenic score (PGS),
+# Run Cox Proportional-Hazards model 0b) 
 # sex (except for prostate and breast cancer), first 10 genetic PCs + birth
 # decade as covariates.
 #
@@ -84,7 +84,7 @@ cox.model.PGS <- function(filelist,covformula) {
 mod0bsex.formula <- paste0("SEX + PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + PC7 + PC8 + PC9 + PC10 + birth_year")
 mod0bnosex.formula <- paste0("PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + PC7 + PC8 + PC9 + PC10 + birth_year")
 
-# run Cox-PH model 0b, which includes the scaled trait-specific PGS in loop with
+# run Cox-PH model 0b, in loop with
 # foreach in parallel for each of the diseases.
 res.cox.model0b <- foreach(i=1:length(INTERVENE.list)) %dopar% {
   if(names(INTERVENE.list[[i]][15])=="C3_PROSTATE" | names(INTERVENE.list[[i]][15])=="C3_BREAST") {
