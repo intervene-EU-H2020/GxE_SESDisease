@@ -12,7 +12,7 @@ rm(list=ls())
 #
 # Script model 6: Run Cox Proportional-Hazards models stratified by occupation
 # level, trait-specific PGS factor, sex (except for breast and prostate cancer),
-# birth decade, and the first 10 genetic PCS as covariates.
+# and the first 10 genetic PCS as covariates.
 #
 # Required input data: biobank-specific INTERVENE combined phenotype and PGS
 # file
