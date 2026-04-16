@@ -4,21 +4,19 @@ rm(list=ls())
 ################################################################################
 #
 # Project: INTERVENE - Differences by socioeconomic status (SES, as assessed by
-# education [EA]) in risk of 18 common diseases (as previously
-# selected in the INTERVENE flagship manuscript:
-# https://doi.org/10.1101/2023.06.12.23291186) and alcohol use disorder
+# occupation) in risk of 18 common diseases (as previously selected in the
+# INTERVENE flagship manuscript: https://doi.org/10.1101/2023.06.12.23291186)
+# and alcohol use disorder
 #
-# Authors: F.A. Hagenbeek [FAH] (fiona.hagenbeek@helsinki.fi)
+# Author: F.A. Hagenbeek [FAH] (fiona.hagenbeek@helsinki.fi)
 #
-# Script: Create Supplementary Figure for lifetime risk of PGS (Model 6 (PGS as
-# factor: <20%, 20-40%, 40-60% (=reference group), 60-95%, >95%) stratified by
-# EA for Finngen (FGR11)))
+# Script: Create supplementary figures (per cohort + meta-analysis)
 #
-# Data: Bootstrapped lifetime risk estimates for education stratified PGSs for
-# all diseases except AF + T2D (in Main Figure 3)
+# Figure this script creates: eFigure 7: model 1 (occupation or PRS): per cohort + meta-analysis
 #
-# Last edits: 01/07//2025 (edits, FAH: final checks and minor tweaks prior to
-# upload to GitHub)
+# Data: FGR11 + UKB + GS + meta-analysis model 1a+b
+#
+# Last edits: 16/04/2026 (edits, FAH: replace original eFigure7 script with new eFigure7 script)
 # 
 ################################################################################
 
@@ -28,9 +26,8 @@ rm(list=ls())
 #
 ################################################################################
 
-# set working directory (the working directory is the project folder on my VM on
-# the FinnGen Sosioeconomic Data Sandbox)
-setwd("C:/Users/hagenbee/OneDrive - University of Helsinki/SESdiffDiseaseRisk/")
+# set working directory 
+setwd("C:/Users/fhk210/OneDrive - Vrije Universiteit Amsterdam/OngoingProjects/SESDiffDiseaseRisk")
 
 # function to install (if required) and load R packages
 packages<-function(...) {
@@ -46,414 +43,176 @@ packages<-function(...) {
 # install (if required) and load the following R packages (this uses the
 # packages function as specified in the source file): data.table = package for
 # efficiently reading in large data sets; ggplot2 = versatile visualizations;
-# viridis = color-blind friendly colors; dplyr, forcats, stringr & tidyr = data
-# wrangling; cowplot + grid + gridExtra = combining plots.
-packages("data.table","ggplot2","viridis","dplyr","forcats","stringr","tidyr",
-         "cowplot","grid","gridExtra", "RColorBrewer")
-
-# plot set-up
-line_size=1.9
-point_size=7
-axis_line_size <- 1
-base_size <- 28
-size_small <- 16
-size_medium <- 18
-font <- "Sans Serif"
-
-# theme functions from Kira Detrois [https://github.com/intervene-EU-H2020/onset_prediction/blob/main/analysis/scripts/utils.R]. 
-# Added dashed y grid.
-theme_hrs <- function(base_size = 18,
-                      legend_pos = "bottom",
-                      plot_top_margin = -30,
-                      axis_x_bottom_margin=0,
-                      axis_y_left_margin=0,
-                      legend_box_spacing=1,
-                      line_size=1.5) {
-  ggplot2::theme_minimal(base_size = base_size) %+replace%
-    ggplot2::theme(
-      text=ggplot2::element_text(colour="black"),
-      # Titles
-      plot.title=ggplot2::element_text(hjust=0, margin=margin(t=plot_top_margin, b=5), size=base_size),
-      plot.subtitle=ggplot2::element_text(hjust=0, size=base_size*0.9,  margin=margin(t=plot_top_margin, b=5), face="bold"),
-      plot.caption=ggplot2::element_text(size=base_size*0.6, hjust=0, margin=margin(t=10)),
-      # Facet grid / wrap titles
-      strip.text = ggplot2::element_text(hjust=0, face="bold", size=base_size*0.8, margin=margin(b=5)),
-      # Legend
-      legend.title=ggplot2::element_blank(),
-      legend.position = legend_pos,
-      legend.text=ggplot2::element_text(size=base_size*0.8),
-      legend.key.spacing.y=grid::unit(0.5, "lines"),
-      legend.margin = ggplot2::margin(legend_box_spacing, legend_box_spacing, legend_box_spacing, legend_box_spacing),
-      # Axes
-      axis.title=ggplot2::element_text(size=base_size*0.5),
-      axis.text = ggplot2::element_text(size=base_size*0.75,margin = margin(b=0)),
-      axis.title.x = ggplot2::element_text(margin=margin(t=5, b=axis_x_bottom_margin)),
-      axis.title.y = ggplot2::element_text(margin=margin(r=10), l=axis_y_left_margin, angle=90),
-      # Other settings
-      panel.border = ggplot2::element_blank(),
-      panel.background = ggplot2::element_rect(colour=NA, fill=NA),
-      # Grid settings
-      panel.grid.minor.y = ggplot2::element_line(colour="grey", linewidth=line_size-0.75*line_size, linetype=2),
-      panel.grid.major.y = ggplot2::element_line(colour="grey", linewidth=line_size-0.5*line_size, linetype=2),
-      panel.grid.major.x = ggplot2::element_line(colour="grey", linewidth=line_size-0.5*line_size, linetype=2),
-      panel.grid.minor.x = ggplot2::element_line(colour = "grey", linewidth=line_size-0.75*line_size, linetype=2),
-    )
-}
-
-theme_comp <- function(base_size = 18,
-                       legend_pos = "bottom",
-                       plot_top_margin = -30,
-                       axis_x_bottom_margin=0,
-                       axis_y_left_margin=0,
-                       legend_box_spacing=1) {
-  ggplot2::theme_minimal(base_size = base_size) %+replace%
-    ggplot2::theme(
-      text=ggplot2::element_text(colour="black"),
-      # Titles
-      plot.title=ggplot2::element_text(hjust=0, margin=margin(t=plot_top_margin, b=5), size=base_size),
-      plot.subtitle=ggplot2::element_text(hjust=0, size=base_size*0.9,  margin=margin(t=plot_top_margin, b=5), face="bold"),
-      plot.caption=ggplot2::element_text(size=base_size*0.5, hjust=0),
-      # Facet grid / wrap titles
-      strip.text = ggplot2::element_text(hjust=0, face="bold", size=base_size*0.6, margin=margin(b=5)),
-      # Legend
-      legend.title=ggplot2::element_blank(),
-      legend.position = legend_pos,
-      legend.text=ggplot2::element_text(size=base_size*0.75),
-      legend.key.spacing.y=grid::unit(0.5, "lines"),
-      legend.margin = ggplot2::margin(legend_box_spacing, legend_box_spacing, legend_box_spacing, legend_box_spacing),
-      # Axes
-      axis.title=ggplot2::element_text(size=base_size*0.8),
-      axis.text = ggplot2::element_text(size=base_size*0.75),
-      axis.title.x = ggplot2::element_text(margin=margin(t=5, b=axis_x_bottom_margin)),
-      axis.title.y = ggplot2::element_text(margin=margin(r=5), l=axis_y_left_margin, angle=90),
-      # Other settings
-      panel.border = ggplot2::element_blank(),
-      panel.background = ggplot2::element_rect(colour=NA, fill=NA),
-      aspect.ratio=1
-    )
-}
+# viridis = color-blind friendly colors; dplyr, forcats & stringr = data
+# wrangling; cowplot + grid + gridExtra = combining plots; readxl = read excel
+# files (upload to googledrive converts csv to xlsx).
+packages("data.table","ggplot2","viridis","dplyr","forcats","stringr","cowplot",
+         "grid","gridExtra","readxl")
 
 
 ################################################################################
 #
-# Read in bootstrapped lifetime risk estimates 
+# Read in full sample hazard ratios per standard deviation
 #
 ################################################################################
 
-# bootstrapped lifetime risk estimates - low education
-ASTHMAlow <- fread("output/LifetimeRisk/model6/FinnGen/2025-03-26_J10_ASTHMA_LifetimeRisk_LowEducation_Bootstrapped_FinnGen.csv",data.table=FALSE)
-CHDlow <- fread("output/LifetimeRisk/model6/FinnGen/2025-03-26_I9_CHD_LifetimeRisk_LowEducation_Bootstrapped_FinnGen.csv",data.table=FALSE)
-Hiplow <- fread("output/LifetimeRisk/model6/FinnGen/2025-03-27_COX_ARTHROSIS_LifetimeRisk_LowEducation_Bootstrapped_FinnGen.csv",data.table=FALSE)
-Kneelow <- fread("output/LifetimeRisk/model6/FinnGen/2025-03-27_KNEE_ARTHROSIS_LifetimeRisk_LowEducation_Bootstrapped_FinnGen.csv",data.table=FALSE)
-Cancerlow <- fread("output/LifetimeRisk/model6/FinnGen/2025-03-27_C3_CANCER_LifetimeRisk_LowEducation_Bootstrapped_FinnGen.csv",data.table=FALSE)
-Prostatelow <- fread("output/LifetimeRisk/model6/FinnGen/2025-03-27_C3_PROSTATE_LifetimeRisk_LowEducation_Bootstrapped_FinnGen.csv",data.table=FALSE)
-T1Dlow <- fread("output/LifetimeRisk/model6/FinnGen/2025-03-27_T1D_LifetimeRisk_LowEducation_Bootstrapped_FinnGen.csv",data.table=FALSE)
-
-# bootstrapped lifetime risk estimates - high education
-Cancerhigh <- fread("output/LifetimeRisk/model6/FinnGen/2025-03-27_C3_CANCER_LifetimeRisk_HighEducation_Bootstrapped_FinnGen.csv",data.table=FALSE)
-T1Dhigh <- fread("output/LifetimeRisk/model6/FinnGen/2025-03-27_T1D_LifetimeRisk_HighEducation_Bootstrapped_FinnGen.csv",data.table=FALSE)
-Asthmahigh <- fread("output/LifetimeRisk/model6/FinnGen/2025-03-27_J10_ASTHMA_LifetimeRisk_HighEducation_Bootstrapped_FinnGen.csv",data.table=FALSE)
-CHDhigh <- fread("output/LifetimeRisk/model6/FinnGen/2025-03-27_I9_CHD_LifetimeRisk_HighEducation_Bootstrapped_FinnGen.csv",data.table=FALSE)
-Hiphigh <- fread("output/LifetimeRisk/model6/FinnGen/2025-03-27_COX_ARTHROSIS_LifetimeRisk_HighEducation_Bootstrapped_FinnGen.csv",data.table=FALSE)
-Kneehigh <- fread("output/LifetimeRisk/model6/FinnGen/2025-03-27_KNEE_ARTHROSIS_LifetimeRisk_HighEducation_Bootstrapped_FinnGen.csv",data.table=FALSE)
-Prostatehigh <- fread("output/LifetimeRisk/model6/FinnGen/2025-03-27_C3_PROSTATE_LifetimeRisk_HighEducation_Bootstrapped_FinnGen.csv",data.table=FALSE)
-
-################################################################################
+# read in model 1a - EA only
+FGR11.1a <- fread("output/GoogleDrive/FGR11/2025-01-30_INTERVENE_Occupation_Coeffs_CoxPH_model1a_FinnGenR11.txt", data.table=FALSE)
+FGR11.1a$Biobank <- "FinnGen"
 #
-# Adjust data prior to modelling  
+UKB.1a <- fread("output/GoogleDrive/UKB/2026-02-17_UKBiobank_INTERVENE_Occupation_CoxPH_model1a_Coeffs.txt",data.table=FALSE)
+UKB.1a$Biobank <- "UK Biobank"
 #
-################################################################################
-
-# add variable to indicate whether results are for low vs high education
-ASTHMAlow$Education <- "low"
-CHDlow$Education <- "low"
-Hiplow$Education <- "low"
-Kneelow$Education <- "low"
-Cancerlow$Education <- "low"
-Prostatelow$Education <- "low"
-T1Dlow$Education <- "low"
+GS.1a <- fread("output/GoogleDrive/GS/2026-02-27_GS_INTERVENE_Occupation_CoxPH_model1a_Coeffs.txt",data.table=FALSE)
+GS.1a$Biobank <- "Generation Scotland"
 #
-Asthmahigh$Education <- "high"
-CHDhigh$Education <- "high"
-Hiphigh$Education <- "high"
-Kneehigh$Education <- "high"
-Cancerhigh$Education <- "high"
-Prostatehigh$Education <- "high"
-T1Dhigh$Education <- "high"
-
-# combine the low and high results 
-ASTHMA <- rbind(ASTHMAlow,Asthmahigh)
-CHD <- rbind(CHDlow,CHDhigh)
-Hip <- rbind(Hiplow,Hiphigh)
-Knee <- rbind(Kneelow,Kneehigh)
-Cancer <- rbind(Cancerlow,Cancerhigh)
-Prostate <- rbind(Prostatelow,Prostatehigh)
-T1D <- rbind(T1Dlow,T1Dhigh)
-
-# Education as factor
-ASTHMA$Education <- factor(ASTHMA$Education, levels = c("low","high"),
-                       labels = c("Low Education","High Education"))
-CHD$Education <- factor(CHD$Education, levels = c("low","high"),
-                       labels = c("Low Education","High Education"))
-Hip$Education <- factor(Hip$Education, levels = c("low","high"),
-                        labels = c("Low Education","High Education"))
-Knee$Education <- factor(Knee$Education, levels = c("low","high"),
-                        labels = c("Low Education","High Education"))
-Cancer$Education <- factor(Cancer$Education, levels = c("low","high"),
-                        labels = c("Low Education","High Education"))
-Prostate$Education <- factor(Prostate$Education, levels = c("low","high"),
-                        labels = c("Low Education","High Education"))
-T1D$Education <- factor(T1D$Education, levels = c("low","high"),
-                        labels = c("Low Education","High Education"))
-
-
-# remove PGS groups we do not want to plot the lifetime risk estimates for
-ASTHMA <- ASTHMA[-which(ASTHMA$Group=="20-40%" | ASTHMA$Group=="60-95%"),]
-CHD <- CHD[-which(CHD$Group=="20-40%" | CHD$Group=="60-95%"),]
-Hip <- Hip[-which(Hip$Group=="20-40%" | Hip$Group=="60-95%"),]
-Knee <- Knee[-which(Knee$Group=="20-40%" | Knee$Group=="60-95%"),]
-Cancer <- Cancer[-which(Cancer$Group=="20-40%" | Cancer$Group=="60-95%"),]
-Prostate <- Prostate[-which(Prostate$Group=="20-40%" | Prostate$Group=="60-95%"),]
-T1D <- T1D[-which(T1D$Group=="20-40%" | T1D$Group=="60-95%"),]
-
-# PGS group as factor
-ASTHMA$Group <- factor(ASTHMA$Group, levels = c(">95%","40-60%","<20%"),
-                   labels = c(">95%","40-60%","<20%"))
-CHD$Group <- factor(CHD$Group, levels = c(">95%","40-60%","<20%"),
-                   labels = c(">95%","40-60%","<20%"))
-Hip$Group <- factor(Hip$Group, levels = c(">95%","40-60%","<20%"),
-                    labels = c(">95%","40-60%","<20%"))
-Knee$Group <- factor(Knee$Group, levels = c(">95%","40-60%","<20%"),
-                    labels = c(">95%","40-60%","<20%"))
-Cancer$Group <- factor(Cancer$Group, levels = c(">95%","40-60%","<20%"),
-                    labels = c(">95%","40-60%","<20%"))
-Prostate$Group <- factor(Prostate$Group, levels = c(">95%","40-60%","<20%"),
-                    labels = c(">95%","40-60%","<20%"))
-T1D$Group <- factor(T1D$Group, levels = c(">95%","40-60%","<20%"),
-                    labels = c(">95%","40-60%","<20%"))
-
-################################################################################
+FEMA.1a <- fread("output/GoogleDrive/MetaAnalysis/2026-03-12_INTERVENE_Occupation_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model1a.csv", data.table = FALSE)
+FEMA.1a$Biobank <- "FE meta-analysis"
 #
-# Create lifetime risk plots where low vs high education are panels  
+REMA.1a <- fread("output/GoogleDrive/MetaAnalysis/2026-03-12_INTERVENE_Occupation_REMetaAnalysis_FinnGenR11_UKB_GenScot_model1a.csv",data.table = FALSE)
+REMA.1a$Biobank <- "RE meta-analysis"
+
+# read in model 1b - PRS only
+FGR11.1b <- fread("output/GoogleDrive/FGR11/2025-01-30_INTERVENE_Occupation_Coeffs_CoxPH_model1b_FinnGenR11.txt", data.table=FALSE)
+FGR11.1b$Biobank <- "FinnGen"
 #
-################################################################################
-
-# Asthma
-Fig.Asthma <- ggplot(ASTHMA, aes(age, LifetimeRisk, color=Group, group=Group)) +
-  # Theme
-  labs(x="Age Range", y="Cummulative Risk (%)", title="", fill=NULL, subtitle="") +
-  theme_hrs(base_size=base_size, plot_top_margin=-20,legend_pos = "none") +
-  ## Fonts
-  theme(legend.text=element_text(size=size_medium, family=font), 
-        axis.text.x=element_text(size=size_small, family=font),
-        axis.text.y=element_text(size=size_small, family=font),
-        axis.title=element_text(size=size_medium, family=font),
-        strip.text =element_text(size = size_medium,family = font)) +
-  # Extra lines
-  geom_vline(xintercept=0, linetype=1, size=axis_line_size, color="black") +
-  geom_hline(yintercept=0, linetype=1, size=axis_line_size, color="black") +
-  # Data points
-  geom_line(size=1.5) +
-  geom_ribbon(aes(ymin=CIneg, ymax=CIpos, fill=Group), alpha=0.3, colour = NA) +
-  facet_wrap(~Education) +
-  # Scales
-  scale_color_hue(labels = c(">95%", "40-60%","<20%")) +
-  scale_fill_hue(labels = c(">95%", "40-60%%", "<20%")) + 
-  # Axis limits
-  scale_x_continuous(limits = c(0, 80),
-                     expand = c(0,0)) +
-  # Axis limits
-  scale_y_continuous(limits = c(0, 55),
-                     expand = c(0,0))
-
-
-# CHD
-Fig.CHD <- ggplot(CHD, aes(age, LifetimeRisk, color=Group, group=Group)) +
-  # Theme
-  labs(x="Age Range", y="Cummulative Risk (%)", title="", fill=NULL, subtitle="") +
-  theme_hrs(base_size=base_size, plot_top_margin=-20,legend_pos = "none") +
-  ## Fonts
-  theme(legend.text=element_text(size=size_medium, family=font), 
-        axis.text.x=element_text(size=size_small, family=font),
-        axis.text.y=element_text(size=size_small, family=font),
-        axis.title=element_text(size=size_medium, family=font),
-        strip.text =element_text(size = size_medium,family = font)) +
-  # Extra lines
-  geom_vline(xintercept=0, linetype=1, size=axis_line_size, color="black") +
-  geom_hline(yintercept=0, linetype=1, size=axis_line_size, color="black") +
-  # Data points
-  geom_line(size=1.5) +
-  geom_ribbon(aes(ymin=CIneg, ymax=CIpos, fill=Group), alpha=0.3, colour = NA) +
-  facet_wrap(~Education) +
-  # Scales
-  scale_color_hue(labels = c(">95%", "40-60%","<20%")) +
-  scale_fill_hue(labels = c(">95%", "40-60%%", "<20%")) + 
-  # Axis limits
-  scale_x_continuous(limits = c(0, 80),
-                     expand = c(0,0)) +
-  # Axis limits
-  scale_y_continuous(limits = c(0, 50),
-                     expand = c(0,0))
-
-# Hip OA
-Fig.Hip <- ggplot(Hip, aes(age, LifetimeRisk, color=Group, group=Group)) +
-  # Theme
-  labs(x="Age Range", y="Cummulative Risk (%)", title="", fill=NULL, subtitle="") +
-  theme_hrs(base_size=base_size, plot_top_margin=-20,legend_pos = "none") +
-  ## Fonts
-  theme(legend.text=element_text(size=size_medium, family=font), 
-        axis.text.x=element_text(size=size_small, family=font),
-        axis.text.y=element_text(size=size_small, family=font),
-        axis.title=element_text(size=size_medium, family=font),
-        strip.text =element_text(size = size_medium,family = font)) +
-  # Extra lines
-  geom_vline(xintercept=0, linetype=1, size=axis_line_size, color="black") +
-  geom_hline(yintercept=0, linetype=1, size=axis_line_size, color="black") +
-  # Data points
-  geom_line(size=1.5) +
-  geom_ribbon(aes(ymin=CIneg, ymax=CIpos, fill=Group), alpha=0.3, colour = NA) +
-  facet_wrap(~Education) +
-  # Scales
-  scale_color_hue(labels = c(">95%", "40-60%","<20%")) +
-  scale_fill_hue(labels = c(">95%", "40-60%%", "<20%")) + 
-  # Axis limits
-  scale_x_continuous(limits = c(0, 80),
-                     expand = c(0,0)) +
-  # Axis limits
-  scale_y_continuous(limits = c(0, 10),
-                     expand = c(0,0))
-
-# Knee OA
-Fig.Knee <- ggplot(Knee, aes(age, LifetimeRisk, color=Group, group=Group)) +
-  # Theme
-  labs(x="Age Range", y="Cummulative Risk (%)", title="", fill=NULL, subtitle="") +
-  theme_hrs(base_size=base_size, plot_top_margin=-20,legend_pos = "none") +
-  ## Fonts
-  theme(legend.text=element_text(size=size_medium, family=font), 
-        axis.text.x=element_text(size=size_small, family=font),
-        axis.text.y=element_text(size=size_small, family=font),
-        axis.title=element_text(size=size_medium, family=font),
-        strip.text =element_text(size = size_medium,family = font)) +
-  # Extra lines
-  geom_vline(xintercept=0, linetype=1, size=axis_line_size, color="black") +
-  geom_hline(yintercept=0, linetype=1, size=axis_line_size, color="black") +
-  # Data points
-  geom_line(size=1.5) +
-  geom_ribbon(aes(ymin=CIneg, ymax=CIpos, fill=Group), alpha=0.3, colour = NA) +
-  facet_wrap(~Education) +
-  # Scales
-  scale_color_hue(labels = c(">95%", "40-60%","<20%")) +
-  scale_fill_hue(labels = c(">95%", "40-60%%", "<20%")) + 
-  # Axis limits
-  scale_x_continuous(limits = c(0, 80),
-                     expand = c(0,0)) +
-  # Axis limits
-  scale_y_continuous(limits = c(0, 60),
-                     expand = c(0,0))
-
-# Any Cancer
-Fig.Cancer <- ggplot(Cancer, aes(age, LifetimeRisk, color=Group, group=Group)) +
-  # Theme
-  labs(x="Age Range", y="Cummulative Risk (%)", title="", fill=NULL, subtitle="") +
-  theme_hrs(base_size=base_size, plot_top_margin=-20,legend_pos = "none") +
-  ## Fonts
-  theme(legend.text=element_text(size=size_medium, family=font), 
-        axis.text.x=element_text(size=size_small, family=font),
-        axis.text.y=element_text(size=size_small, family=font),
-        axis.title=element_text(size=size_medium, family=font),
-        strip.text =element_text(size = size_medium,family = font)) +
-  # Extra lines
-  geom_vline(xintercept=0, linetype=1, size=axis_line_size, color="black") +
-  geom_hline(yintercept=0, linetype=1, size=axis_line_size, color="black") +
-  # Data points
-  geom_line(size=1.5) +
-  geom_ribbon(aes(ymin=CIneg, ymax=CIpos, fill=Group), alpha=0.3, colour = NA) +
-  facet_wrap(~Education) +
-  # Scales
-  scale_color_hue(labels = c(">95%", "40-60%","<20%")) +
-  scale_fill_hue(labels = c(">95%", "40-60%%", "<20%")) + 
-  # Axis limits
-  scale_x_continuous(limits = c(0, 80),
-                     expand = c(0,0)) +
-  # Axis limits
-  scale_y_continuous(limits = c(0, 50),
-                     expand = c(0,0))
-
-# Prostate Cancer
-Fig.Prostate <- ggplot(Prostate, aes(age, LifetimeRisk, color=Group, group=Group)) +
-  # Theme
-  labs(x="Age Range", y="Cummulative Risk (%)", title="", fill=NULL, subtitle="") +
-  theme_hrs(base_size=base_size, plot_top_margin=-20,legend_pos = "none") +
-  ## Fonts
-  theme(legend.text=element_text(size=size_medium, family=font), 
-        axis.text.x=element_text(size=size_small, family=font),
-        axis.text.y=element_text(size=size_small, family=font),
-        axis.title=element_text(size=size_medium, family=font),
-        strip.text =element_text(size = size_medium,family = font)) +
-  # Extra lines
-  geom_vline(xintercept=0, linetype=1, size=axis_line_size, color="black") +
-  geom_hline(yintercept=0, linetype=1, size=axis_line_size, color="black") +
-  # Data points
-  geom_line(size=1.5) +
-  geom_ribbon(aes(ymin=CIneg, ymax=CIpos, fill=Group), alpha=0.3, colour = NA) +
-  facet_wrap(~Education) +
-  # Scales
-  scale_color_hue(labels = c(">95%", "40-60%","<20%")) +
-  scale_fill_hue(labels = c(">95%", "40-60%%", "<20%")) + 
-  # Axis limits
-  scale_x_continuous(limits = c(0, 80),
-                     expand = c(0,0)) +
-  # Axis limits
-  scale_y_continuous(limits = c(0, 45),
-                     expand = c(0,0))
-
-# T1D
-Fig.T1D <- ggplot(T1D, aes(age, LifetimeRisk, color=Group, group=Group)) +
-  # Theme
-  labs(x="Age Range", y="Cummulative Risk (%)", title="", fill=NULL, subtitle="") +
-  theme_hrs(base_size=base_size, plot_top_margin=-20,legend_pos = "none") +
-  ## Fonts
-  theme(legend.text=element_text(size=size_medium, family=font), 
-        axis.text.x=element_text(size=size_small, family=font),
-        axis.text.y=element_text(size=size_small, family=font),
-        axis.title=element_text(size=size_medium, family=font),
-        strip.text =element_text(size = size_medium,family = font)) +
-  # Extra lines
-  geom_vline(xintercept=0, linetype=1, size=axis_line_size, color="black") +
-  geom_hline(yintercept=0, linetype=1, size=axis_line_size, color="black") +
-  # Data points
-  geom_line(size=1.5) +
-  geom_ribbon(aes(ymin=CIneg, ymax=CIpos, fill=Group), alpha=0.3, colour = NA) +
-  facet_wrap(~Education) +
-  # Scales
-  scale_color_hue(labels = c(">95%", "40-60%","<20%")) +
-  scale_fill_hue(labels = c(">95%", "40-60%%", "<20%")) + 
-  # Axis limits
-  scale_x_continuous(limits = c(0, 80),
-                     expand = c(0,0)) +
-  # Axis limits
-  scale_y_continuous(limits = c(0, 11),
-                     expand = c(0,0))
+UKB.1b <- fread("output/GoogleDrive/UKB/2026-02-17_UKBiobank_INTERVENE_Occupation_CoxPH_model1b_Coeffs.txt",data.table=FALSE)
+UKB.1b$Biobank <- "UK Biobank"
+#
+GS.1b <- fread("output/GoogleDrive/GS/2026-02-27_GS_INTERVENE_Occupation_CoxPH_model1b_Coeffs.txt",data.table=FALSE)
+GS.1b$Biobank <- "Generation Scotland"
+#
+FEMA.1b <- fread("output/GoogleDrive/MetaAnalysis/2026-03-12_INTERVENE_Occupation_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model1b.csv", data.table = FALSE)
+FEMA.1b$Biobank <- "FE meta-analysis"
+#
+REMA.1b <- fread("output/GoogleDrive/MetaAnalysis/2026-03-12_INTERVENE_Occupation_REMetaAnalysis_FinnGenR11_UKB_GenScot_model1b.csv", data.table = FALSE)
+REMA.1b$Biobank <- "RE meta-analysis"
 
 
 ################################################################################
 #
-# Create figure comprising all traits (2 traits per row)
+# Generation Scotland included "T1D, Rheumatoid arthritis, skin melanoma, and
+# epilepsy" which have too small sample sizes to perform the analyses in. Remove
+# these traits prior to the meta-analysis
 #
 ################################################################################
 
-# combine plots with empty space
-top_plt <- plot_grid(Fig.Asthma,Fig.Cancer,
-                     Fig.CHD,Fig.Hip,
-                     Fig.Knee,Fig.Prostate,
-                     Fig.T1D,nrow=4)
-# add additional empty space for legends
-Fig7 <- plot_grid(top_plt,NULL, nrow=2, rel_heights=c(0.95, 0.05))
+GS.1a <- GS.1a[-which(GS.1a$trait %in% c("T1D","RHEUMA_SEROPOS_OTH",
+                                         "C3_MELANOMA_SKIN","G6_EPLEPSY")),]
+GS.1b <- GS.1b[-which(GS.1b$trait %in% c("T1D","RHEUMA_SEROPOS_OTH",
+                                         "C3_MELANOMA_SKIN","G6_EPLEPSY")),]
+
+
+################################################################################
+#
+# As current version of the meta-analysis also includes traits only available in
+# FinnGen, subset those data frames to only include the traits where >=2 cohorts
+# were analysed.
+#
+################################################################################
+
+## remove traits not meta-analyzed ##
+# fixed effect
+FEMA.1a <- FEMA.1a[-which(FEMA.1a$Phenotype %in% c("I9_AF","C3_COLORECTAL",
+                                                   "C3_MELANOMA_SKIN")),]
+FEMA.1b <- FEMA.1b[-which(FEMA.1b$Phenotype %in% c("I9_AF","C3_COLORECTAL",
+                                                   "C3_MELANOMA_SKIN")),]
+
+# random effect
+REMA.1a <- REMA.1a[-which(REMA.1a$Phenotype %in% c("I9_AF","C3_COLORECTAL",
+                                                   "C3_MELANOMA_SKIN")),]
+REMA.1b <- REMA.1b[-which(REMA.1b$Phenotype %in% c("I9_AF","C3_COLORECTAL",
+                                                   "C3_MELANOMA_SKIN")),]
+
+
+################################################################################
+#
+# Combine FGR11 & UKB & GenScot & meta-analysis results
+#
+################################################################################
+
+# model 1 
+model1 <- data.frame(trait = c(FGR11.1a$trait,FGR11.1b$trait,UKB.1a$trait,
+                               UKB.1b$trait,GS.1a$trait,GS.1b$trait,
+                               FEMA.1a$Phenotype,FEMA.1b$Phenotype,REMA.1a$Phenotype,REMA.1b$Phenotype),
+                     HR = c(FGR11.1a$`OccupationUpper-level_HR`,FGR11.1b$PRS_HR,
+                            UKB.1a$`OccupationUpper-level_HR`,UKB.1b$PRS_HR,
+                            GS.1a$`OccupationUpper-level_HR`,GS.1b$PRS_HR,
+                            FEMA.1a$HR,FEMA.1b$HR,REMA.1a$HR,REMA.1b$HR),
+                     lb = c(FGR11.1a$`OccupationUpper-level_HR_lower95`,FGR11.1b$PRS_HR_lower95,
+                            UKB.1a$`OccupationUpper-level_HR_lower95`,UKB.1b$PRS_HR_lower95,
+                            GS.1a$`OccupationUpper-level_HR_lower95`,GS.1b$PRS_HR_lower95,
+                            FEMA.1a$Cineg,FEMA.1b$Cineg,REMA.1a$Cineg,REMA.1b$Cineg),
+                     ub = c(FGR11.1a$`OccupationUpper-level_HR_upper95`,FGR11.1b$PRS_HR_upper95,
+                            UKB.1a$`OccupationUpper-level_HR_upper95`,UKB.1b$PRS_HR_upper95,
+                            GS.1a$`OccupationUpper-level_HR_upper95`,GS.1b$PRS_HR_upper95,
+                            FEMA.1a$Cipos,FEMA.1b$Cipos,REMA.1a$Cipos,REMA.1b$Cipos),
+                     Test = c(rep("Upper-level Occupation",nrow(FGR11.1a)),rep("PRS",nrow(FGR11.1b)), 
+                              rep("Upper-level Occupation", nrow(UKB.1a)),rep("PRS",nrow(UKB.1b)), 
+                              rep("Upper-level Occupation",nrow(GS.1a)),rep("PRS",nrow(GS.1b)),
+                              rep("Upper-level Occupation",nrow(FEMA.1a)), rep("PRS",nrow(FEMA.1b)),
+                              rep("Upper-level Occupation",nrow(REMA.1a)), rep("PRS",nrow(REMA.1b))),
+                     Biobanks = c(FGR11.1a$Biobank,FGR11.1b$Biobank,UKB.1a$Biobank,
+                                  UKB.1b$Biobank,GS.1a$Biobank,GS.1b$Biobank,
+                                  FEMA.1a$Biobank,FEMA.1b$Biobank,
+                                  REMA.1a$Biobank,REMA.1b$Biobank))
+# traits as factor to rename them and plot them in the order they've been
+# plotted in the INTERVENE flagship figures
+model1$trait <- factor(model1$trait, levels = c("T1D","C3_PROSTATE","T2D","GOUT",
+                                                "RHEUMA_SEROPOS_OTH","C3_BREAST",
+                                                "C3_COLORECTAL","I9_AF","I9_CHD",
+                                                "COX_ARTHROSIS","C3_MELANOMA_SKIN",
+                                                "J10_ASTHMA","KNEE_ARTHROSIS",
+                                                "F5_DEPRESSIO","C3_BRONCHUS_LUNG",
+                                                "C3_CANCER","K11_APPENDACUT","G6_EPLEPSY",
+                                                "AUD_SWEDISH"),
+                       labels = c("Type 1 Diabetes","Prostate Cancer","Type 2 Diabetes",
+                                  "Gout","Rheumatoid Arthritis","Breast Cancer",
+                                  "* Colorectal Cancer","* Atrial Fibrillation",
+                                  "Coronary Heart Disease","Hip Osteoarthritis",
+                                  "* Skin Melanoma","Asthma","Knee Osteoarthritis",
+                                  "Major Depression","Lung Cancer","Any Cancer",
+                                  "Appendicitis","Epilepsy","Alcohol Use Disorder"))
+# EA levels as factor to plot them in order of magnitude
+model1$Test <- factor(model1$Test, levels = c("Upper-level Occupation","PRS"), labels = c("Upper-level Occupation","PRS"))
+# Biobank as factor
+model1$Biobanks <- factor(model1$Biobanks, levels = c("Generation Scotland","UK Biobank","FinnGen",
+                                                      "RE meta-analysis","FE meta-analysis"), 
+                          labels = c("Generation Scotland","UK Biobank","FinnGen",
+                                     "RE meta-analysis","FE meta-analysis"))
+#reverse factor order 
+model1$Biobanks <- fct_rev(model1$Biobanks)
+
+
+################################################################################
+#
+# Create Figure
+#
+################################################################################
+
+# plot hazard ratios in ggplot2 with geom_point + geom_errorbar. Use color-blind
+# friendly colors for the different HR's. Get classic layout and add vertical
+# line on x=1 to represent HR=1 (i.e., if HR's cross 1 they're not significant).
+# Remove y axis and legend label, and rename x axis label.
+FigS7 <- ggplot(model1, aes(x = HR, y = Biobanks, 
+                            xmin = lb, xmax = ub,
+                            group = Test, color = Test)) + 
+  geom_point(position = position_dodge(1), size=9.5) + 
+  scale_shape_manual(values=c(15,16))+
+  geom_linerange(position = position_dodge(1),size=5) +
+  theme_minimal() + scale_colour_manual(values= c("#BC65DB","black")) + geom_vline(xintercept = 1, lty = 2,size = 2) +
+  geom_hline(yintercept=seq(0.5,5.5,1),color="black",size=.5) +
+  scale_x_continuous(transform = scales::transform_log(), 
+                     breaks = c(0.2,0.3,0.4,0.6,1.0, 1.5, 2, 2.6,3.3)) +
+  theme(axis.title.y = element_blank(),legend.title = element_blank(), 
+        legend.position = "bottom", axis.text.x = element_text(size=15),
+        axis.text.y = element_text(size=20),axis.title = element_text(size = 22),
+        legend.text = element_text(size = 20),strip.text.x = element_text(size = 20)) + 
+  xlab("Hazard Ratio per Standard Deviation (95% CI)") + facet_wrap(~trait)
 
 # save figure as png
 png(filename = paste0("output/Figures/Manuscript/",as.character(Sys.Date()),
-                      "_INTERVENE_EducationalAttainment_eFigure7.png"),
-    width = 22, height = 22,units='in',res=600)
-Fig7
+                       "_INTERVENE_Occupation_eFigure7.png"),
+     width=700,height=600,units='mm',res=600,pointsize=6)
+FigS7
 dev.off()
-#script is finalized in inkscape
