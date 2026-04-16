@@ -10,7 +10,7 @@ rm(list=ls())
 #
 # Author: F.A. Hagenbeek [FAH] (fiona.hagenbeek@helsinki.fi)
 #
-# Script: Suplemental figure 12 - compare EA and OCC 
+# Script: Suplemental figure 10 - compare EA and OCC 
 #
 # Data: 
 #       1) FGR11 + UKB + GS + fixed-effect meta-analysis model 1a (EA + occupation)
