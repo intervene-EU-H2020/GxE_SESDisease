@@ -855,6 +855,21 @@ Run [eFigure12.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main
 Run [eFigure13.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/eFigure13.R) to create the base for supplemental figure 13 in the manuscript, which contains the occupation-specific cumulative incidences in FinnGen. 
 - Output file is "&#42;_INTERVENE_Occupation_eFigure13.png"
 
+Run [eFigure14.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/eFigure14.R) to create the base for supplemental figure 14 in the manuscript, which contains 6 panels: A: comparison of the fixed-effect meta-analysed education effects when using the same education dichotomization vs cohort-specific cutoff; B: comparison of the fixed-effect meta-analysed PGS effect when using the same education dichotomization vs cohort-specific cutoff; C: comparison of the fixed-effect meta-analysed interaction effect when using the same education dichotomization vs cohort-specific cutoff; D: comparison of the random-effect meta-analysed education effects when using the same education dichotomization vs cohort-specific cutoff; E: comparison of the random-effect meta-analysed PGS effect when using the same education dichotomization vs cohort-specific cutoff; F: comparison of the random-effect meta-analysed interaction effect when using the same education dichotomization vs cohort-specific cutoff.
+- Output file is "&#42;_INTERVENE_EducationalAttainment_eFigure14.png"
+
+Run [eFigure15.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/eFigure15.R) to create the base for supplemental figure 15 in the manuscript, which contains 6 panels: A: comparison of the fixed-effect meta-analysed education effects when dichotomizing education vs without dichotomization; B: comparison of the fixed-effect meta-analysed PGS effect when dichotomizing education vs without dichotomization; C: comparison of the fixed-effect meta-analysed interaction effect when dichotomizing education vs without dichotomization; D: comparison of the random-effect meta-analysed education effects when dichotomizing education vs without dichotomization; E: comparison of the random-effect meta-analysed PGS effect when dichotomizing education vs without dichotomization; F: comparison of the random-effect meta-analysed interaction effect when dichotomizing education vs without dichotomization.
+- Output file is "&#42;_INTERVENE_EducationalAttainment_eFigure15.png"
+
+Run [eFigure16.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/eFigure16.R) to create the base for supplemental figure 16 in the manuscript, which contains the comparison of model 4 (PGS+education+interaction) in the full FinnGen sample vs after excluding cases before cohort entry.
+- Output file is "&#42;_INTERVENE_EducationalAttainment_eFigure16.png"
+
+Run [eFigure17.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/eFigure17.R) to create the base for supplemental figure 17 in the manuscript, which contains the comparison of model 4 (PGS+education+interaction) in the full FinnGen sample vs after excluding mutual cases.
+- Output file is "&#42;_INTERVENE_EducationalAttainment_eFigure17.png"
+
+Run [eFigure18.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/eFigure18.R) to create the base for supplemental figure 18 in the manuscript, which contains the comparison of model 4 (PGS+education+interaction) vs a model that also includes the PGS for EA and its interaction with the disease-specific PGS.
+- Output file is "&#42;_INTERVENE_EducationalAttainment_eFigure18.png"
+
 Run [eFigure19.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/eFigure19.R) to create the base for supplemental figure 8 in the manuscript, which contains the comparison of model 4 (PGS+education+interaction) using a Cox proportional hazards model vs Fine-Gray competing risk model in FinnGen. 
 - Output file is "&#42;_INTERVENE_EducationalAttainment_eFigure19.png"
 
