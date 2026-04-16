@@ -840,6 +840,9 @@ Run [eFigure7.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/
 Run [eFigure8.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/eFigure8.R) to create figure 8 in the manuscript, which contains the per-biobank and met-analyzed results for model 1b (PGS) and model 1a (occupation).
 - Output file is "$#42;_INTERVENE_Occupation_eFigure8.png"
 
+Run [eFfigure9.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/eFigure9.R) to create the base for supplemental figure 9 in the manuscript, which contains a comparison of the meta-analyzed model 1b (PGS) vs model 1a (occupation). 
+- Output file is "$#42;_INTERVENE_Occupation_eFigure9.png"
+
 Run [eFigure10.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/eFigure10.R) to create the base for supplemental Figure 10 in the manuscript, which contains 4 panels: A: FinnGen results model 1b (PGS); B: comparison PGS effect model 1b (PGS) vs model 2 (PGS+occupation) in FinnGen; C: FinnGen results model 1a (occupation); and D: comparison occupation effect model 1a (occupation) vs model 2 (PGS+occupation) in FinnGen.
 - Output file is "&#42;_INTERVENE_Occupation_eFigure10.png"
 
