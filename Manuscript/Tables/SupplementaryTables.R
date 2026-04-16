@@ -78,8 +78,8 @@ rm(list=ls())
 #      30) FGR11 model 6 for occupation
 #      31) FinnGen results bootstrapped cumulative incidences for occupation 
 #
-# Last edits: 18/02/2026 (edits, FAH: add random-effect meta-analytical results
-# to Stables 5-9)
+# Last edits: 16/04/2026 (edits, FAH: update prediction tables (eTables 13-20)
+# to include Cox not LogReg results)
 # 
 ################################################################################
 
@@ -105,10 +105,10 @@ packages<-function(...) {
 
 # install (if required) and load the following R packages (this uses the
 # packages function as specified in the source file): data.table = package for
-# efficiently reading in large data sets; dplyr, forcats & stringr = data
+# efficiently reading in large data sets; dplyr, tidyr, forcats & stringr = data
 # wrangling; readxl = read excel files (upload to googledrive converts csv to
 # xlsx).
-packages("data.table","dplyr","forcats","stringr","readxl")
+packages("data.table","dplyr","forcats","stringr","readxl","tidyr")
 
 
 ################################################################################
@@ -123,8 +123,8 @@ FGR11.N <- fread("output/2classEA/FG11/2024-03-13_INTERVENE_SESDiffDiseases_Samp
 FGR11.N$Biobank <- "FinnGen"
 FGR11.N6 <- fread("output/2classEA/FG11/2025-03-14_INTERVENE_SESDiffDiseases_SampleDescriptives_mod6_FinnGenR11.txt",data.table=FALSE) # descriptive for analyses on education by PGS strata
 FGR11.NFG <- fread("output/2classEA/FG11/2025-03-25_INTERVENE_SESDiffDiseases_SampleDescriptives_FineGray_FinnGenR11.txt",data.table=FALSE) # descriptives for analyses on education with Fine-Gray models
-FGR11.N80 <- fread("output/2classEA/FG11/2025-06-03_INTERVENE_SESDiffDiseases_SampleDescriptives_FinnGenR11_80percent.txt",data.table=FALSE) # descriptives for analyses on education in random 80% sample
-FGR11.N20 <- fread("output/2classEA/FG11/2025-06-03_INTERVENE_SESDiffDiseases_SampleDescriptives_FinnGenR11_20percent.txt",data.table=FALSE) # descriptives for analyses on education in random 20% sample
+FGR11.N80 <- fread("output/2classEA/FG11/2026-02-25_INTERVENE_SESDiffDiseases_SampleDescriptives_FinnGenR11_80percent.txt",data.table=FALSE) # descriptives for analyses on education in random 80% sample
+FGR11.N20 <- fread("output/2classEA/FG11/2026-02-25_INTERVENE_SESDiffDiseases_SampleDescriptives_FinnGenR11_20percent.txt",data.table=FALSE) # descriptives for analyses on education in random 20% sample
 FGR11.N20$Biobank <- "FinnGen (20%)"
 FGR11.Nocc <- fread("output/EmploymentStatus/FG11/2025-01-30_INTERVENE_SESDiffDiseases_SampleDescriptives_FinnGenR11_Occupation_MANLOWCOMB.txt",data.table=FALSE) # descriptives for analyses on occupation
 FGR11.N6occ <- fread("output/EmploymentStatus/FG11/2025-03-14_INTERVENE_SESDiffDiseases_SampleDescriptives_FinnGenR11_Occupation_mod6.txt",data.table=FALSE) # descriptives for analyses on occupation by PGS strata
@@ -151,7 +151,7 @@ FGR11.0b80 <- fread("output/2classEA/FG11/LogReg/2025-06-13_INTERVENE_SESDiffDis
 # FinnGen
 FGR11.1a <- fread("output/GoogleDrive/FGR11/2024-03-13_FinnGenR11_INTERVENE_EducationalAttainment_CoxPH_model1a_Coeffs.txt", data.table=FALSE) # results for analyses on education
 FGR11.1a$Biobank <- "FinnGen"
-FGR11.1a80 <- fread("output/2classEA/FG11/LogReg/2025-06-13_INTERVENE_SESDiffDiseases_Coeffs_glm_by_model1a_FinnGenR11_80percent.txt", data.table=FALSE) # results for analyses on education in random 80% sample
+FGR11.1a80 <- fread("output/2classEA/FG11/CoxPropHaz_model1/2026-02-25_INTERVENE_SESDiffDiseases_Coeffs_CoxPH_model1a_FinnGenR11_80percent.txt", data.table=FALSE) # results for analyses on education in random 80% sample
 FGR11.1aocc <- fread("output/EmploymentStatus/FG11/CoxPropHaz_model1/2025-01-30_INTERVENE_SESDiffDiseases_Coeffs_CoxPH_model1a_FinnGenR11.txt", data.table=FALSE) # results for analyses on occupation
 # UK Biobank
 UKB.1a.EUR <- fread("output/GoogleDrive/UKB/2025-05-22_UKBiobank_EUR_INTERVENE_EducationalAttainment_CoxPH_model1a_Coeffs.txt",data.table=FALSE) # results for analyses on education in EU ancestry
@@ -176,7 +176,7 @@ REMA.1a$Biobank <- "RE meta-analysis"
 # FinnGen
 FGR11.1b <- fread("output/GoogleDrive/FGR11/2024-03-13_FinnGenR11_INTERVENE_EducationalAttainment_CoxPH_model1b_Coeffs.txt", data.table=FALSE) # results for analyses on education
 FGR11.1b$Biobank <- "FinnGen"
-FGR11.1b80 <- fread("output/2classEA/FG11/LogReg/2025-06-13_INTERVENE_SESDiffDiseases_Coeffs_glm_by_model1b_FinnGenR11_80percent.txt", data.table=FALSE) # results for analyses on education in random 80% sample
+FGR11.1b80 <- fread("output/2classEA/FG11/CoxPropHaz_model1/2026-02-25_INTERVENE_SESDiffDiseases_Coeffs_CoxPH_model1b_FinnGenR11_80percent.txt", data.table=FALSE) # results for analyses on education in random 80% sample
 FGR11.1bocc <- fread("output/EmploymentStatus/FG11/CoxPropHaz_model1/2025-01-30_INTERVENE_SESDiffDiseases_Coeffs_CoxPH_model1b_FinnGenR11.txt", data.table=FALSE) # results for analyses on occupation
 # UK Biobank
 UKB.1b.EUR <- fread("output/GoogleDrive/UKB/2025-05-22_UKBiobank_EUR_INTERVENE_EducationalAttainment_CoxPH_model1b_Coeffs.txt",data.table=FALSE) # results for analyses on education in EU ancestry
@@ -201,7 +201,7 @@ REMA.1b$Biobank <- "RE meta-analysis"
 # FinnGen
 FGR11.2 <- fread("output/GoogleDrive/FGR11/2024-03-13_FinnGenR11_INTERVENE_EducationalAttainment_CoxPH_model2_Coeffs.txt", data.table=FALSE) # results for analyses on education
 FGR11.2$Biobank <- "FinnGen"
-FGR11.280 <- fread("output/2classEA/FG11/LogReg/2025-06-13_INTERVENE_SESDiffDiseases_Coeffs_glm_by_model2_FinnGenR11_80percent.txt", data.table=FALSE) # results for analyses on education in random 80% sample
+FGR11.280 <- fread("output/2classEA/FG11/CoxPropHaz_model2/2026-02-25_INTERVENE_SESDiffDiseases_Coeffs_CoxPH_model2c_FinnGenR11_80percent.txt", data.table=FALSE) # results for analyses on education in random 80% sample
 FGR11.2occ <- fread("output/EmploymentStatus/FG11/CoxPropHaz_model2/2025-01-30_INTERVENE_SESDiffDiseases_Coeffs_CoxPH_model2_FinnGenR11.txt", data.table=FALSE) # results for analyses on occupation
 # UK Biobank
 UKB.2.EUR <- fread("output/GoogleDrive/UKB/2025-05-22_UKBiobank_EUR_INTERVENE_EducationalAttainment_CoxPH_model2_Coeffs.txt",data.table=FALSE) # results for analyses on education in EU ancestry
@@ -245,7 +245,7 @@ REMA.3$Biobank <- "RE meta-analysis"
 # FinnGen
 FGR11.4 <- fread("output/GoogleDrive/FGR11/2024-03-13_FinnGenR11_INTERVENE_EducationalAttainment_CoxPH_model4_Coeffs.txt", data.table=FALSE) # results for analyses on education
 FGR11.4$Biobank <- "FinnGen"
-FGR11.480 <- fread("output/2classEA/FG11/LogReg/2025-06-13_INTERVENE_SESDiffDiseases_Coeffs_glm_by_model4_FinnGenR11_80percent.txt", data.table=FALSE) # results for analyses on education in random 80% sample
+FGR11.480 <- fread("output/2classEA/FG11/CoxPropHaz_model4/2026-02-25_INTERVENE_SESDiffDiseases_Coeffs_CoxPH_model4c_FinnGenR11_80percent.txt", data.table=FALSE) # results for analyses on education in random 80% sample
 FGR11.4FG <- fread("output/2classEA/FG11/CoxPropHaz_model4/2025-03-14_INTERVENE_SESDiffDiseases_Coeffs_FineGray_model4_FinnGenR11.txt", data.table=FALSE) # results for Fine-Gray analyses on education 
 FGR11.4occ <- fread("output/EmploymentStatus/FG11/CoxPropHaz_model4/2025-01-30_INTERVENE_SESDiffDiseases_Coeffs_CoxPH_model4_FinnGenR11.txt", data.table=FALSE) # results for analyses on occupation
 # Uk Biobank
@@ -310,50 +310,50 @@ UL.T2D <- fread("output/LifetimeRisk/model6/FinnGen/2025-03-27_T2D_LifetimeRisk_
 
 ## read in AUC per cohort and UK (UK biobank + Generation Scotland) meta-analyses ##
 # FinnGen
-FGR11.0a1aAUC <- fread("output/Prediction/FinnGen/2025-06-16_FinnGen_20percent_INTERVENE_EducationalAttainment_AUCcomparison_Model0a-1a_by.txt",data.table=FALSE) # results model 1a vs 2
+FGR11.0a1aAUC <- fread("output/Prediction/FinnGen/2026-03-31_FinnGen_20percent_INTERVENE_EducationalAttainment_AUCcomparisonCox_Model0a-1a_by.txt",data.table=FALSE) # results model 1a vs 2
 FGR11.0a1aAUC$Biobank <- "FinnGen"
-FGR11.0b1bAUC <- fread("output/Prediction/FinnGen/2025-06-13_FinnGen_20percent_INTERVENE_EducationalAttainment_AUCcomparison_Model0b-1b_by.txt",data.table=FALSE) # results model 1b vs 2
+FGR11.0b1bAUC <- fread("output/Prediction/FinnGen/2026-03-31_FinnGen_20percent_INTERVENE_EducationalAttainment_AUCcomparisonCox_Model0b-1b_by.txt",data.table=FALSE) # results model 1b vs 2
 FGR11.0b1bAUC$Biobank <- "FinnGen"
-FGR11.1a2AUC <- fread("output/Prediction/FinnGen/2025-06-16_FinnGen_20percent_INTERVENE_EducationalAttainment_AUCcomparison_Model1a-2_by.txt",data.table=FALSE) # results model 1a vs 2
+FGR11.1a2AUC <- fread("output/Prediction/FinnGen/2026-03-31_FinnGen_20percent_INTERVENE_EducationalAttainment_AUCcomparisonCox_Model1a-2_by.txt",data.table=FALSE) # results model 1a vs 2
 FGR11.1a2AUC$Biobank <- "FinnGen"
-FGR11.1b2AUC <- fread("output/Prediction/FinnGen/2025-06-13_FinnGen_20percent_INTERVENE_EducationalAttainment_AUCcomparison_Model1b-2_by.txt",data.table=FALSE) # results model 1b vs 2
+FGR11.1b2AUC <- fread("output/Prediction/FinnGen/2026-03-31_FinnGen_20percent_INTERVENE_EducationalAttainment_AUCcomparisonCox_Model1b-2_by.txt",data.table=FALSE) # results model 1b vs 2
 FGR11.1b2AUC$Biobank <- "FinnGen"
-FGR11.24AUC <- fread("output/Prediction/FinnGen/2025-06-13_FinnGen_20percent_INTERVENE_EducationalAttainment_AUCcomparison_Model2-4_by.txt",data.table=FALSE) # results model 2 vs 4
+FGR11.24AUC <- fread("output/Prediction/FinnGen/2026-03-31_FinnGen_20percent_INTERVENE_EducationalAttainment_AUCcomparisonCox_Model2-4_by.txt",data.table=FALSE) # results model 2 vs 4
 FGR11.24AUC$Biobank <- "FinnGen"
 # UK Biobank
-UKB.0a1aAUC.EUR <- fread("output/Prediction/UKB/2025-06-13_UKBiobank_EUR_INTERVENE_EducationalAttainment_AUCcomparison_Model0a-1a_by.txt",data.table=FALSE) # results model 1a vs 2 in EU ancestry
+UKB.0a1aAUC.EUR <- fread("output/Prediction/UKB/2026-04-02_UKBiobank_EUR_INTERVENE_EducationalAttainment_AUCcomparison_Model0a-1a_by.txt",data.table=FALSE) # results model 1a vs 2 in EU ancestry
 UKB.0a1aAUC.EUR$Biobank <- "UKBiobank"
-UKB.0b1bAUC.EUR <- fread("output/Prediction/UKB/2025-06-13_UKBiobank_EUR_INTERVENE_EducationalAttainment_AUCcomparison_Model0b-1b_by.txt",data.table=FALSE) # results model 1b vs 2 in EU ancestry
+UKB.0b1bAUC.EUR <- fread("output/Prediction/UKB/2026-04-02_UKBiobank_EUR_INTERVENE_EducationalAttainment_AUCcomparison_Model0b-1b_by.txt",data.table=FALSE) # results model 1b vs 2 in EU ancestry
 UKB.0b1bAUC.EUR$Biobank <- "UKBiobank"
-UKB.1a2AUC.EUR <- fread("output/Prediction/UKB/2025-06-13_UKBiobank_EUR_INTERVENE_EducationalAttainment_AUCcomparison_Model1a-2_by.txt",data.table=FALSE) # results model 1a vs 2 in EU ancestry
+UKB.1a2AUC.EUR <- fread("output/Prediction/UKB/2026-04-01_UKBiobank_EUR_INTERVENE_EducationalAttainment_AUCcomparison_Model1a-2_by.txt",data.table=FALSE) # results model 1a vs 2 in EU ancestry
 UKB.1a2AUC.EUR$Biobank <- "UKBiobank"
-UKB.1b2AUC.EUR <- fread("output/Prediction/UKB/2025-06-13_UKBiobank_EUR_INTERVENE_EducationalAttainment_AUCcomparison_Model1b-2_by.txt",data.table=FALSE) # results model 1b vs 2 in EU ancestry
+UKB.1b2AUC.EUR <- fread("output/Prediction/UKB/2026-04-01_UKBiobank_EUR_INTERVENE_EducationalAttainment_AUCcomparison_Model1b-2_by.txt",data.table=FALSE) # results model 1b vs 2 in EU ancestry
 UKB.1b2AUC.EUR$Biobank <- "UKBiobank"
-UKB.24AUC.EUR <- fread("output/Prediction/UKB/2025-06-13_UKBiobank_EUR_INTERVENE_EducationalAttainment_AUCcomparison_Model2-4_by.txt",data.table=FALSE) # results model 2 vs 2 in EU ancestry
+UKB.24AUC.EUR <- fread("output/Prediction/UKB/2026-04-01_UKBiobank_EUR_INTERVENE_EducationalAttainment_AUCcomparison_Model2-4_by.txt",data.table=FALSE) # results model 2 vs 2 in EU ancestry
 UKB.24AUC.EUR$Biobank <- "UKBiobank"
 
 ## read in NRI/IDI per cohort ##
 # FinnGen
-FGR11.0a1aNRIIDI <- fread("output/Prediction/FinnGen/2025-06-13_FinnGen_20percent_INTERVENE_EducationalAttainment_NRI_IDI_Model0a-1a_by.txt",data.table=FALSE) # results model 1a vs 2
+FGR11.0a1aNRIIDI <- fread("output/Prediction/FinnGen/2026-03-31_FinnGen_20percent_INTERVENE_EducationalAttainment_Cox_NRI_IDI_Model0a-1a_by.txt",data.table=FALSE) # results model 1a vs 2
 FGR11.0a1aNRIIDI$Biobank <- "FinnGen"
-FGR11.0b1bNRIIDI <- fread("output/Prediction/FinnGen/2025-06-13_FinnGen_20percent_INTERVENE_EducationalAttainment_NRI_IDI_Model0b-1b_by.txt",data.table=FALSE) # results model 1b vs 2
+FGR11.0b1bNRIIDI <- fread("output/Prediction/FinnGen/2026-03-31_FinnGen_20percent_INTERVENE_EducationalAttainment_Cox_NRI_IDI_Model0b-1b_by.txt",data.table=FALSE) # results model 1b vs 2
 FGR11.0b1bNRIIDI$Biobank <- "FinnGen"
-FGR11.1a2NRIIDI <- fread("output/Prediction/FinnGen/2025-06-13_FinnGen_20percent_INTERVENE_EducationalAttainment_NRI_IDI_Model1a-2_by.txt",data.table=FALSE) # results model 1a vs 2
+FGR11.1a2NRIIDI <- fread("output/Prediction/FinnGen/2026-03-31_FinnGen_20percent_INTERVENE_EducationalAttainment_Cox_NRI_IDI_Model1a-2_by.txt",data.table=FALSE) # results model 1a vs 2
 FGR11.1a2NRIIDI$Biobank <- "FinnGen"
-FGR11.1b2NRIIDI <- fread("output/Prediction/FinnGen/2025-06-13_FinnGen_20percent_INTERVENE_EducationalAttainment_NRI_IDI_Model1b-2_by.txt",data.table=FALSE) # results model 1b vs 2
+FGR11.1b2NRIIDI <- fread("output/Prediction/FinnGen/2026-03-31_FinnGen_20percent_INTERVENE_EducationalAttainment_Cox_NRI_IDI_Model1b-2_by.txt",data.table=FALSE) # results model 1b vs 2
 FGR11.1b2NRIIDI$Biobank <- "FinnGen"
-FGR11.24NRIIDI <- fread("output/Prediction/FinnGen/2025-06-13_FinnGen_20percent_INTERVENE_EducationalAttainment_NRI_IDI_Model2-4_by.txt",data.table=FALSE) # results model 2 vs 4
+FGR11.24NRIIDI <- fread("output/Prediction/FinnGen/2026-03-31_FinnGen_20percent_INTERVENE_EducationalAttainment_Cox_NRI_IDI_Model2-4_by.txt",data.table=FALSE) # results model 2 vs 4
 FGR11.24NRIIDI$Biobank <- "FinnGen"
 # UK Biobank
-UKB.0a1aNRIIDI.EUR <- fread("output/Prediction/UKB/2025-06-13_UKBiobank_EUR_INTERVENE_EducationalAttainment_NRI_IDI_Model0a-1a_by.txt",data.table=FALSE) # results model 1a vs 2 in EU ancestry
+UKB.0a1aNRIIDI.EUR <- fread("output/Prediction/UKB/2026-04-02_UKBiobank_EUR_INTERVENE_EducationalAttainment_NRI_IDI_Model0a-1a_by.txt",data.table=FALSE) # results model 1a vs 2 in EU ancestry
 UKB.0a1aNRIIDI.EUR$Biobank <- "UK Biobank"
-UKB.0b1bNRIIDI.EUR <- fread("output/Prediction/UKB/2025-06-13_UKBiobank_EUR_INTERVENE_EducationalAttainment_NRI_IDI_Model0b-1b_by.txt",data.table=FALSE) # results model 1b vs 2 in EU ancestry
+UKB.0b1bNRIIDI.EUR <- fread("output/Prediction/UKB/2026-04-02_UKBiobank_EUR_INTERVENE_EducationalAttainment_NRI_IDI_Model0b-1b_by.txt",data.table=FALSE) # results model 1b vs 2 in EU ancestry
 UKB.0b1bNRIIDI.EUR$Biobank <- "UK Biobank"
-UKB.1a2NRIIDI.EUR <- fread("output/Prediction/UKB/2025-06-13_UKBiobank_EUR_INTERVENE_EducationalAttainment_NRI_IDI_Model1a-2_by.txt",data.table=FALSE) # results model 1a vs 2 in EU ancestry
+UKB.1a2NRIIDI.EUR <- fread("output/Prediction/UKB/2026-04-01_UKBiobank_EUR_INTERVENE_EducationalAttainment_NRI_IDI_Model1a-2_by.txt",data.table=FALSE) # results model 1a vs 2 in EU ancestry
 UKB.1a2NRIIDI.EUR$Biobank <- "UK Biobank"
-UKB.1b2NRIIDI.EUR <- fread("output/Prediction/UKB/2025-06-13_UKBiobank_EUR_INTERVENE_EducationalAttainment_NRI_IDI_Model1b-2_by.txt",data.table=FALSE) # results model 1b vs 2 in EU ancestry
+UKB.1b2NRIIDI.EUR <- fread("output/Prediction/UKB/2026-04-01_UKBiobank_EUR_INTERVENE_EducationalAttainment_NRI_IDI_Model1b-2_by.txt",data.table=FALSE) # results model 1b vs 2 in EU ancestry
 UKB.1b2NRIIDI.EUR$Biobank <- "UK Biobank"
-UKB.24NRIIDI.EUR <- fread("output/Prediction/UKB/2025-06-13_UKBiobank_EUR_INTERVENE_EducationalAttainment_NRI_IDI_Model2-4_by.txt",data.table=FALSE) # results model 2 vs 2 in EU ancestry
+UKB.24NRIIDI.EUR <- fread("output/Prediction/UKB/2026-04-01_UKBiobank_EUR_INTERVENE_EducationalAttainment_NRI_IDI_Model2-4_by.txt",data.table=FALSE) # results model 2 vs 2 in EU ancestry
 UKB.24NRIIDI.EUR$Biobank <- "UK Biobank"
 
 
