@@ -1,0 +1,208 @@
+#empty working dir on script start
+rm(list=ls())
+
+################################################################################
+#
+# Project: INTERVENE - Differences by socioeconomic status (SES, as assessed by
+# occupation) in risk of 18 common diseases (as previously selected in the
+# INTERVENE flagship manuscript: https://doi.org/10.1101/2023.06.12.23291186)
+# and alcohol use disorder
+#
+# Author: F.A. Hagenbeek [FAH] (fiona.hagenbeek@helsinki.fi)
+#
+# Script meta-analysis model 1b: Run fixed-effects meta-analysis of Cox
+# Proportional-Hazards models with age of onset as timescale, with
+# trait-specifict polygenic score (PGS), sex (except for prostate and breast
+# cancer), first 10 genetic PCs, and birth decade as covariates across FinnGen
+# data release 11 (FGR11), UK Biobank (UKB), and Generation Scotland (GS)
+# (script inspired by the INTERVENE Flagship project scripts:
+# https://github.com/intervene-EU-H2020/flagship)
+#
+# required input data: FGR11 + UKB + GS model 1 PRS only (from INTERVENE
+# GxE_SESDisease GoogleDrive Folder)
+#
+# Last edits: 16/04/2026 (edits, FAH: gloabalize for Github update)
+# 
+################################################################################
+
+################################################################################
+#
+# Set up script
+#
+################################################################################
+
+# function to install (if required) and load R packages
+packages<-function(...) {
+  libs<-unlist(list(...))
+  req<-unlist(lapply(libs,require,character.only=TRUE))
+  need<-libs[req==FALSE]
+  if(length(need)>0){ 
+    install.packages(need)
+    lapply(need,require,character.only=TRUE)
+  }
+}
+
+# install (if required) and load the following R packages (this uses the
+# packages function as specified in the source file): data.table = package for
+# efficiently reading in large data sets; dplyr, forcats & stringr = data
+# wrangling; metafor = meta-analysis package; googledrive + googlesheets4 =
+# read/write to/from GoogleDrive.
+packages("data.table","metafor","dplyr","forcats","stringr",
+         "googledrive","googlesheets4")
+
+# set working directory 
+setwd("C:/Users/fhk210/OneDrive - Vrije Universiteit Amsterdam/OngoingProjects/SESDiffDiseaseRisk")
+
+# run GoogleDrive - set to FALSE if latest results have already been downloaded!
+run_googledrive<-FALSE
+
+
+################################################################################
+#
+# Read in full sample hazard ratios per standard deviation
+#
+################################################################################
+
+# download latest version of files to local machine
+if (run_googledrive==TRUE) {
+  #identify folder
+  folder_id = drive_get(as_id("18iI9QxxJ7WXrXO6hcNal_amvGmR1F_jv")) # this ID links to the "INTERVENE flagship/GxE_SESDisease/Output_CoxPHmodels_perBB" folder. ID obtained with drive_find(pattern = "Output_Cox")
+  
+  #find files in folder
+  files = drive_ls(folder_id)
+  
+  #loop dirs and download files inside them
+  for (i in seq_along(files$name)) {
+    #list files
+    i_dir = drive_ls(files[i, ])
+    
+    #mkdir
+    try({dir.create(paste0("output/GoogleDrive/",files$name[i]))})
+    
+    #download files
+    for (file_i in seq_along(i_dir$name)) {
+      #fails if already exists
+      try({
+        drive_download(
+          as_id(i_dir$id[file_i]),
+          path = paste0("output/GoogleDrive/",files$name[i], "/",i_dir$name[file_i])
+        )
+      })
+    }
+  }
+}
+
+# read in model 1b - PRS only
+FGR11.1b <- fread("output/GoogleDrive/FGR11/2025-01-30_INTERVENE_Occupation_Coeffs_CoxPH_model1b_FinnGenR11.txt", data.table=FALSE)
+FGR11.1b$Biobank <- "FinnGen"
+#
+UKB.1b <- fread("output/GoogleDrive/UKB/2026-02-17_UKBiobank_INTERVENE_Occupation_CoxPH_model1b_Coeffs.txt",data.table=FALSE)
+UKB.1b$Biobank <- "UK Biobank"
+#
+GS.1b <- fread("output/GoogleDrive/GS/2026-02-27_GS_INTERVENE_Occupation_CoxPH_model1b_Coeffs.txt",data.table=FALSE)
+GS.1b$Biobank <- "Generation Scotland"
+
+
+################################################################################
+#
+# Generation Scotland included "T1D, Rheumatoid arthritis, skin melanoma, and
+# epilepsy" which have too small sample sizes to perform the analyses in. Remove
+# these traits prior to the meta-analysis
+#
+################################################################################
+
+GS.1b <- GS.1b[-which(GS.1b$trait %in% c("T1D","RHEUMA_SEROPOS_OTH",
+                                         "C3_MELANOMA_SKIN","G6_EPLEPSY")),]
+
+
+################################################################################
+#
+# Combine FGR11, UKB & GenScot results
+#
+################################################################################
+
+all.1b <- rbind(FGR11.1b[,c("trait","PRS_beta","PRS_se","Biobank")],
+                UKB.1b[,c("trait","PRS_beta","PRS_se","Biobank")],
+                GS.1b[,c("trait","PRS_beta","PRS_se","Biobank")])
+
+
+################################################################################
+#
+# Run meta-analyses - fixed effect
+#
+################################################################################
+
+# run meta-analysis model 1b
+metaresults.1b <- c()
+for(i in unique(all.1b$trait)){
+  print(i)
+  disease <- subset(all.1b, trait==i & !(is.na(PRS_beta)))
+  
+  #Meta analysis should be done at the beta level  
+  meta <- rma(yi=PRS_beta, sei=PRS_se, data=disease, method="FE")
+  
+  metaresults.1b <- rbind(metaresults.1b, c(i, meta$b, meta$se, meta$pval, meta$QE, meta$QEp))
+}
+
+# reorganize the meta-analysis results  
+metaresults.1b <- as.data.frame(metaresults.1b)
+colnames(metaresults.1b) <- c("Phenotype","Beta","SE","Pval","QHet","HetPval")
+metaresults.1b <- metaresults.1b %>% mutate_at(c(2:6),as.numeric)
+metaresults.1b$HR <- exp(metaresults.1b$Beta)
+metaresults.1b$Cipos <- exp(metaresults.1b$Beta + (1.96*metaresults.1b$SE))
+metaresults.1b$Cineg <- exp(metaresults.1b$Beta - (1.96*metaresults.1b$SE))
+
+# write to file
+fwrite(metaresults.1b, paste("output/EmploymentStatus/MetaAnalysis/FGR11_UKB_GS/model1/", as.character(Sys.Date()), 
+                             "_INTERVENE_Occupation_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model1b.csv",sep=""))
+
+
+################################################################################
+#
+# Run meta-analyses - random effect
+#
+################################################################################
+
+# run meta-analysis model 1b
+metaresultsr.1b <- c()
+for(i in unique(all.1b$trait)){
+  print(i)
+  disease <- subset(all.1b, trait==i & !(is.na(PRS_beta)))
+  
+  #Meta analysis should be done at the beta level  
+  metar <- rma(yi=PRS_beta, sei=PRS_se, data=disease, method="REML")
+  
+  metaresultsr.1b <- rbind(metaresultsr.1b, c(i, metar$b, metar$se, metar$pval, metar$QE, metar$QEp))
+}
+
+# reorganize the meta-analysis results  
+metaresultsr.1b <- as.data.frame(metaresultsr.1b)
+colnames(metaresultsr.1b) <- c("Phenotype","Beta","SE","Pval","QHet","HetPval")
+metaresultsr.1b <- metaresultsr.1b %>% mutate_at(c(2:6),as.numeric)
+metaresultsr.1b$HR <- exp(metaresultsr.1b$Beta)
+metaresultsr.1b$Cipos <- exp(metaresultsr.1b$Beta + (1.96*metaresultsr.1b$SE))
+metaresultsr.1b$Cineg <- exp(metaresultsr.1b$Beta - (1.96*metaresultsr.1b$SE))
+
+# write to file
+fwrite(metaresultsr.1b, paste("output/EmploymentStatus/MetaAnalysis/FGR11_UKB_GS/model1/", as.character(Sys.Date()), 
+                             "_INTERVENE_Occupation_REMetaAnalysis_FinnGenR11_UKB_GenScot_model1b.csv",sep=""))
+
+
+################################################################################
+#
+# Upload meta-analyzed results to Google Drive
+#
+################################################################################
+
+# model 1b - fixed effects
+drive_upload(media = "output/EmploymentStatus/MetaAnalysis/FGR11_UKB_GS/model1/2026-03-12_INTERVENE_Occupation_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model1b.csv",
+             path = as_id("1Wi0KDwGtnZoUclUgZwu7F_Dwj-6uvJYH"),
+             name = "2026-03-12_INTERVENE_Occupation_FEMetaAnalysis_FinnGenR11_UKB_GenScot_model1b.csv",
+             type = "spreadsheet")
+
+# model 1b - random effects
+drive_upload(media = "output/EmploymentStatus/MetaAnalysis/FGR11_UKB_GS/model1/2026-03-12_INTERVENE_Occupation_REMetaAnalysis_FinnGenR11_UKB_GenScot_model1b.csv.csv",
+             path = as_id("1Wi0KDwGtnZoUclUgZwu7F_Dwj-6uvJYH"),
+             name = "2026-03-12_INTERVENE_Occupation_REMetaAnalysis_FinnGenR11_UKB_GenScot_model1b.csv",
+             type = "spreadsheet")
+
