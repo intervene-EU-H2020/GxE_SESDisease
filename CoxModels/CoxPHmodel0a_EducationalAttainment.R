@@ -77,11 +77,11 @@ cox.model <- function(filelist,covformula) {
   return(fit)
 }
 
-# create the formula with EA, the first 5 genetic PCs, birth decade and sex as
-# covariates, and one with only EA, the first 5 genetic PCs, birth decade as
+# create the formula with the first 5 genetic PCs, birth year and sex as
+# covariates, and one with only the first 5 genetic PCs, birth year as
 # covariates (for running the analyses for prostate and breast cancer)
-mod0asex.formula <- paste0("EA + SEX + PC1 + PC2 + PC3 + PC4 + PC5 + birth_year")
-mod0anosex.formula <- paste0("EA + PC1 + PC2 + PC3 + PC4 + PC5 + birth_year")
+mod0asex.formula <- paste0("SEX + PC1 + PC2 + PC3 + PC4 + PC5 + birth_year")
+mod0anosex.formula <- paste0("PC1 + PC2 + PC3 + PC4 + PC5 + birth_year")
 
 # run Cox-PH model 0a in loop with foreach  in parallel for each of the diseases.
 res.cox.model0a <- foreach(i=1:length(INTERVENE.list)) %dopar% {
