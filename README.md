@@ -349,7 +349,7 @@ Run [CoxPHmodel1a_EducationalAttainment.R](https://github.com/intervene-EU-H2020
 4. Lines 89, 115, 125, 135, 145,155 + 165 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
 5. Lines 181 - if you cannot run the analyses for prostate and breast cancer, rename _"modcoefffs.cox.model1a.sex"_ to _"modcoeffs.cox.model1a"_
 6. Lines 184-187 - if you cannot run the analyses for prostate and breast cancer, out-comment or remove these lines
-7. Line 190 - specify the location you want to save the model 1a output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 191.* 
+7. Line 190 - specify the location you want to save the model 1a output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 191. And if the descriptives were generated for the 80% split files, change the file name on line 190 to reflect this by adding "_80percent" at the end of the file name.*
 - Output file is "&#42;_INTERVENE_EducationalAttainment_CoxPH_model1a_Coeffs.txt"
 
 ### Model 1a SES effect, with Occupation as the socioeconomic index
@@ -372,7 +372,7 @@ Run [CoxPHmodel1b_EducationalAttainment.R](https://github.com/intervene-EU-H2020
 5. Lines 90, 116, 126, 136, 146, 156 + 166 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
 6. Lines 182 + 188 - if you cannot run the analyses for prostate and breast cancer, rename _"modcoefffs.cox.model1b.sex"_ to _"modcoeffs.cox.model1b"_
 7. Lines 185-186 + 189-190 - if you cannot run the analyses for prostate and breast cancer, out-comment or remove these lines
-8. Line 193 - specify the location you want to save the model 1b output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 194.*  
+8. Line 193 - specify the location you want to save the model 1b output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 194. And if the descriptives were generated for the 80% split files, change the file name on line 193 to reflect this by adding "_80percent" at the end of the file name*  
 - Output file is "&#42;_INTERVENE_EducationalAttainment_CoxPH_model1b_Coeffs.txt"
 
 ### Model 1b PGS effect, without Occupation as the socioeconomic index
@@ -397,7 +397,7 @@ Run [CoxPHmodel2_EducationalAttainment.R](https://github.com/intervene-EU-H2020/
 5. Lines 91, 117, 127, 137, 147, 157 + 167 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
 6. Lines 174 + 180 - if you cannot run the analyses for prostate and breast cancer, rename _"modcoefffs.cox.model2.sex"_ to _"modcoeffs.cox.model2"_
 7. Lines 186-187 + 190-191 - if you cannot run the analyses for prostate and breast cancer, out-comment or remove these lines
-8. Line 194 - specify the location you want to save the model 2 output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 195.*
+8. Line 194 - specify the location you want to save the model 2 output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 195. And if the descriptives were generated for the 80% split files, change the file name on line 195 to reflect this by adding "_80percent" at the end of the file name*
 9. Lines 213-226 - remove traits not included in Biobank
 10. Line 232 - replace number of rows (currently 6) to reflect half of the number of traits analyses in Biobank
 11. Lines 234-289 - only keep the plots for the number of traits analysed in Biobank, e.g., if only 14 traits analysed, remove rows 275-289
@@ -464,7 +464,7 @@ Run [CoxPHmodel4_EducationalAttainment.R](https://github.com/intervene-EU-H2020/
 5. Lines 93, 119, 129, 139, 149, 159 + 169 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
 6. Lines 185 + 191 - if you cannot run the analyses for prostate and breast cancer, rename _"modcoefffs.cox.model4.sex"_ to _"modcoeffs.cox.model4"_
 7. Lines 188-189 + 192-193 - if you cannot run the analyses for prostate and breast cancer, out-comment or remove these lines
-8. Line 196 - specify the location you want to save the model 4 output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 197.*
+8. Line 196 - specify the location you want to save the model 4 output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 197. And if the descriptives were generated for the 80% split files, change the file name on line 197 to reflect this by adding "_80percent" at the end of the file name*
 9. Lines 214-227 - remove traits not included in Biobank
 10. Line 233 - replace number of rows (currently 9) and columns (currently 7) to reflect 3x the number of traits analysed in Biobank
 11. Lines 235-309 - only keep the plots for the number of traits analysed in Biobank, e.g., if only 14 traits analysed, remove rows 290-309
