@@ -837,12 +837,6 @@ Run [eFigure6.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/
 Run [eFigure7.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/eFigure7.R) to create the base for supplemental figure 7 in the manuscript, which contains the education-specific cumulative incidences in FinnGen. 
 - Output file is "&#42;_INTERVENE_EducationalAttainment_eFigure7.png"
 
-Run [eFigure8.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/eFigure8.R) to create the base for supplemental figure 8 in the manuscript, which contains the comparison of model 4 (PGS+education+interaction) using a Cox proportional hazards model vs Fine-Gray competing risk model in FinnGen. 
-- Output file is "&#42;_INTERVENE_EducationalAttainment_eFigure8.png"
-
-Run [eFigure9.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/eFigure9.R) to create supplemental figure 9 for the manuscript, which contains the per-ancestry results for model 1b (PGS) and model 1a (Education) in the UK Biobank. 
-- Output file is "&#42;_INTERVENE_EducationalAttainment_eFigure9.png"
-
 Run [eFigure10.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/eFigure10.R) to create the base for supplemental Figure 10 in the manuscript, which contains 4 panels: A: FinnGen results model 1b (PGS); B: comparison PGS effect model 1b (PGS) vs model 2 (PGS+occupation) in FinnGen; C: FinnGen results model 1a (occupation); and D: comparison occupation effect model 1a (occupation) vs model 2 (PGS+occupation) in FinnGen.
 - Output file is "&#42;_INTERVENE_Occupation_eFigure10.png"
 
@@ -854,6 +848,12 @@ Run [eFigure12.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main
 
 Run [eFigure13.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/eFigure13.R) to create the base for supplemental figure 13 in the manuscript, which contains the occupation-specific cumulative incidences in FinnGen. 
 - Output file is "&#42;_INTERVENE_Occupation_eFigure13.png"
+
+Run [eFigure19.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/eFigure19.R) to create the base for supplemental figure 8 in the manuscript, which contains the comparison of model 4 (PGS+education+interaction) using a Cox proportional hazards model vs Fine-Gray competing risk model in FinnGen. 
+- Output file is "&#42;_INTERVENE_EducationalAttainment_eFigure19.png"
+
+Run [eFigure20.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/eFigure20.R) to create supplemental figure 9 for the manuscript, which contains the per-ancestry results for model 1b (PGS) and model 1a (Education) in the UK Biobank. 
+- Output file is "&#42;_INTERVENE_EducationalAttainment_eFigure20.png"
 
 Run [SupplementaryFigures.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/SupplementaryFigures.R) to create the four supplemental figures for the manuscript.  
 **Please note that this script has been discontinued. Supplementary Figures are now in separate scripts.**
