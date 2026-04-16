@@ -771,7 +771,8 @@ Please note that the manuscript only includes the results for Educational Attain
 ## (Supplemental) Tables: Scripts that create the Main Table 1 and the supplemental tables including the results from this project. 
 Run [MainTable1.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Tables/MainTable1.R) to create the Main Table 1 in the manuscript, which contains the general descriptive statistics across biobank studies.
 - Output file is "&#42;_INTERVENE_EducationalAttainment_MainTable1.txt"
-
+**Please note that this script has been discontinued. This information is still available in Supplementary Table 4.**
+  
 Run [MainTable2.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Tables/MainTable2.R) to create the Main Table 2 in the manuscript, which contains the comparison of the prediction of model 1a vs 2, model 1b vs 2, and model 2 vs 4 as trained with logistic regression models in 80% of the FinnGen study and evaluated in 20% of the FinnGen study and the UK Biobank.
 - Output file is "&#42;_INTERVENE_EducationalAttainment_MainTable2.txt"  
 **Please note that this script has been discontinued. This information is now given in Main Figure 4 (full model results still available in Supplementary Table 19).**  
