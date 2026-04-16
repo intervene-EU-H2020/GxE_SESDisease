@@ -14,8 +14,8 @@ rm(list=ls())
 #
 # Data:  Data: FGR11 (20%) + UKB predictive results (AUC)
 #
-# Last edits: 01/09/2025 (FAH, edits: final checks and minor tweaks prior to
-# upload to GitHub)
+# Last edits: 16/04/2026 (FAH, edits: adjust the fact that prediction is no longer
+# based on logistic regression but on CoxPH models)
 # 
 ################################################################################
 
@@ -141,25 +141,25 @@ theme_comp <- function(base_size = 18,
 #
 ################################################################################
 
-# read in AUCs FinnGen (20%) - glm models: birth year
-FGR11.glm.1a2 <- fread("output/Prediction/FinnGen/2025-06-16_FinnGen_20percent_INTERVENE_EducationalAttainment_AUCcomparison_Model1a-2_by.txt",data.table=FALSE)
-FGR11.glm.1a2$Biobank <- "FinnGen"
+# read in AUCs FinnGen (20%) - cox models: birth year
+FGR11.cox.1a2 <- fread("output/Prediction/FinnGen/2026-03-31_FinnGen_20percent_INTERVENE_EducationalAttainment_AUCcomparisonCox_Model1a-2_by.txt",data.table=FALSE)
+FGR11.cox.1a2$Biobank <- "FinnGen"
 #
-FGR11.glm.1b2 <- fread("output/Prediction/FinnGen/2025-06-13_FinnGen_20percent_INTERVENE_EducationalAttainment_AUCcomparison_Model1b-2_by.txt",data.table=FALSE)
-FGR11.glm.1b2$Biobank <- "FinnGen"
+FGR11.cox.1b2 <- fread("output/Prediction/FinnGen/2026-03-31_FinnGen_20percent_INTERVENE_EducationalAttainment_AUCcomparisonCox_Model1b-2_by.txt",data.table=FALSE)
+FGR11.cox.1b2$Biobank <- "FinnGen"
 #
-FGR11.glm.24 <- fread("output/Prediction/FinnGen/2025-06-13_FinnGen_20percent_INTERVENE_EducationalAttainment_AUCcomparison_Model2-4_by.txt",data.table=FALSE)
-FGR11.glm.24$Biobank <- "FinnGen"
+FGR11.cox.24 <- fread("output/Prediction/FinnGen/2026-03-31_FinnGen_20percent_INTERVENE_EducationalAttainment_AUCcomparisonCox_Model2-4_by.txt",data.table=FALSE)
+FGR11.cox.24$Biobank <- "FinnGen"
 
-# read in AUCs UKB - glm models: birth year
-UKB.glm.1a2 <- fread("output/Prediction/UKB/2025-06-13_UKBiobank_EUR_INTERVENE_EducationalAttainment_AUCcomparison_Model1a-2_by.txt",data.table=FALSE)
-UKB.glm.1a2$Biobank <- "UKBiobank"
+# read in AUCs UKB - cox models: birth year
+UKB.cox.1a2 <- fread("output/Prediction/UKB/2026-04-01_UKBiobank_EUR_INTERVENE_EducationalAttainment_AUCcomparison_Model1a-2_by.txt",data.table=FALSE)
+UKB.cox.1a2$Biobank <- "UKBiobank"
 #
-UKB.glm.1b2 <- fread("output/Prediction/UKB/2025-06-13_UKBiobank_EUR_INTERVENE_EducationalAttainment_AUCcomparison_Model1b-2_by.txt",data.table=FALSE)
-UKB.glm.1b2$Biobank <- "UKBiobank"
+UKB.cox.1b2 <- fread("output/Prediction/UKB/2026-04-01_UKBiobank_EUR_INTERVENE_EducationalAttainment_AUCcomparison_Model1b-2_by.txt",data.table=FALSE)
+UKB.cox.1b2$Biobank <- "UKBiobank"
 #
-UKB.glm.24 <- fread("output/Prediction/UKB/2025-06-13_UKBiobank_EUR_INTERVENE_EducationalAttainment_AUCcomparison_Model2-4_by.txt",data.table=FALSE)
-UKB.glm.24$Biobank <- "UKBiobank"
+UKB.cox.24 <- fread("output/Prediction/UKB/2026-04-01_UKBiobank_EUR_INTERVENE_EducationalAttainment_AUCcomparison_Model2-4_by.txt",data.table=FALSE)
+UKB.cox.24$Biobank <- "UKBiobank"
 
 # download latest version of files to local machine
 if (run_googledrive==TRUE) {
@@ -321,14 +321,14 @@ set_trait_labels <- function(df, trait_col = "trait") {
 }
 
 # adjust labels diseases - FinnGen
-FGR11.glm.1a2 <- set_trait_labels(FGR11.glm.1a2)
-FGR11.glm.1b2 <- set_trait_labels(FGR11.glm.1b2)
-FGR11.glm.24 <- set_trait_labels(FGR11.glm.24)
+FGR11.cox.1a2 <- set_trait_labels(FGR11.cox.1a2)
+FGR11.cox.1b2 <- set_trait_labels(FGR11.cox.1b2)
+FGR11.cox.24 <- set_trait_labels(FGR11.cox.24)
 
 # adjust labels diseases - UK Biobank
-UKB.glm.1a2 <- set_trait_labels(UKB.glm.1a2)
-UKB.glm.1b2 <- set_trait_labels(UKB.glm.1b2)
-UKB.glm.24 <- set_trait_labels(UKB.glm.24)
+UKB.cox.1a2 <- set_trait_labels(UKB.cox.1a2)
+UKB.cox.1b2 <- set_trait_labels(UKB.cox.1b2)
+UKB.cox.24 <- set_trait_labels(UKB.cox.24)
 
 
 ################################################################################
@@ -339,8 +339,8 @@ UKB.glm.24 <- set_trait_labels(UKB.glm.24)
 
 # change column names so function to reorder and combine will work for the model
 # 2 vs 4 comparison also (and not just for the model 1a/b vs 2)
-names(FGR11.glm.24) <- names(FGR11.glm.1a2)
-names(UKB.glm.24) <- names(UKB.glm.1a2)
+names(FGR11.cox.24) <- names(FGR11.cox.1a2)
+names(UKB.cox.24) <- names(UKB.cox.1a2)
 
 
 ################################################################################
@@ -350,35 +350,35 @@ names(UKB.glm.24) <- names(UKB.glm.1a2)
 ################################################################################
 
 # FinnGen 
-FinnGen <- data.frame(trait = c(FGR11.glm.1a2$trait,FGR11.glm.1b2$trait,
-                                rep(FGR11.glm.24$trait,2)),
-                     AUC = c(FGR11.glm.1a2$AUC_model1,FGR11.glm.1b2$AUC_model1,
-                             FGR11.glm.24$AUC_model1,FGR11.glm.24$AUC_model2),
-                     lb = c(FGR11.glm.1a2$CI_model1_lower,FGR11.glm.1b2$CI_model1_lower,
-                            FGR11.glm.24$CI_model1_lower,FGR11.glm.24$CI_model2_lower),
-                     ub = c(FGR11.glm.1a2$CI_model1_upper,FGR11.glm.1b2$CI_model1_upper,
-                            FGR11.glm.24$CI_model1_upper,FGR11.glm.24$CI_model2_upper),
-                     Model = c(rep("Education",nrow(FGR11.glm.1a2)),
-                               rep("PGS",nrow(FGR11.glm.1b2)),
-                               rep("PGS+Education",nrow(FGR11.glm.24)),
-                               rep("PGS+Education+Interaction",nrow(FGR11.glm.24))))
+FinnGen <- data.frame(trait = c(FGR11.cox.1a2$trait,FGR11.cox.1b2$trait,
+                                rep(FGR11.cox.24$trait,2)),
+                     AUC = c(FGR11.cox.1a2$AUC_model1,FGR11.cox.1b2$AUC_model1,
+                             FGR11.cox.24$AUC_model1,FGR11.cox.24$AUC_model2),
+                     lb = c(FGR11.cox.1a2$CI_model1_lower,FGR11.cox.1b2$CI_model1_lower,
+                            FGR11.cox.24$CI_model1_lower,FGR11.cox.24$CI_model2_lower),
+                     ub = c(FGR11.cox.1a2$CI_model1_upper,FGR11.cox.1b2$CI_model1_upper,
+                            FGR11.cox.24$CI_model1_upper,FGR11.cox.24$CI_model2_upper),
+                     Model = c(rep("Education",nrow(FGR11.cox.1a2)),
+                               rep("PGS",nrow(FGR11.cox.1b2)),
+                               rep("PGS+Education",nrow(FGR11.cox.24)),
+                               rep("PGS+Education+Interaction",nrow(FGR11.cox.24))))
 # Model as factor
 FinnGen$Model <- factor(FinnGen$Model, levels = c("PGS","Education","PGS+Education","PGS+Education+Interaction"), 
                           labels = c("PGS","Education","PGS+Education","PGS+Education+Interaction"))
 
 # UKB 
-UKB <- data.frame(trait = c(UKB.glm.1a2$trait,UKB.glm.1b2$trait,
-                                rep(UKB.glm.24$trait,2)),
-                      AUC = c(UKB.glm.1a2$AUC_model1,UKB.glm.1b2$AUC_model1,
-                              UKB.glm.24$AUC_model1,UKB.glm.24$AUC_model2),
-                      lb = c(UKB.glm.1a2$CI_model1_lower,UKB.glm.1b2$CI_model1_lower,
-                             UKB.glm.24$CI_model1_lower,UKB.glm.24$CI_model2_lower),
-                      ub = c(UKB.glm.1a2$CI_model1_upper,UKB.glm.1b2$CI_model1_upper,
-                             UKB.glm.24$CI_model1_upper,UKB.glm.24$CI_model2_upper),
-                      Model = c(rep("Education",nrow(UKB.glm.1a2)),
-                                rep("PGS",nrow(UKB.glm.1b2)),
-                                rep("PGS+Education",nrow(UKB.glm.24)),
-                                rep("PGS+Education+Interaction",nrow(UKB.glm.24))))
+UKB <- data.frame(trait = c(UKB.cox.1a2$trait,UKB.cox.1b2$trait,
+                                rep(UKB.cox.24$trait,2)),
+                      AUC = c(UKB.cox.1a2$AUC_model1,UKB.cox.1b2$AUC_model1,
+                              UKB.cox.24$AUC_model1,UKB.cox.24$AUC_model2),
+                      lb = c(UKB.cox.1a2$CI_model1_lower,UKB.cox.1b2$CI_model1_lower,
+                             UKB.cox.24$CI_model1_lower,UKB.cox.24$CI_model2_lower),
+                      ub = c(UKB.cox.1a2$CI_model1_upper,UKB.cox.1b2$CI_model1_upper,
+                             UKB.cox.24$CI_model1_upper,UKB.cox.24$CI_model2_upper),
+                      Model = c(rep("Education",nrow(UKB.cox.1a2)),
+                                rep("PGS",nrow(UKB.cox.1b2)),
+                                rep("PGS+Education",nrow(UKB.cox.24)),
+                                rep("PGS+Education+Interaction",nrow(UKB.cox.24))))
 # Model as factor
 UKB$Model <- factor(UKB$Model, levels = c("PGS","Education","PGS+Education","PGS+Education+Interaction"), 
                         labels = c("PGS","Education","PGS+Education","PGS+Education+Interaction"))
