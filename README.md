@@ -139,16 +139,16 @@ pheno$ISCED97 <- factor(pheno$ISCED97, levels = c(1,2,3,4,5,6), # remove the ISC
 ```
 pheno <- subset(pheno, ANCESTRY=='EUR')
 ```
-11. Lines 177-162 + 428-446 - Code assumes you have kept the same shorthand names for the phenotypes as within [FinnGen](https://docs.google.com/spreadsheets/d/1DNKd1KzI8WOIfG2klXWskbCSyX6h5gTu/edit#gid=334983519) (column B) and you have kept the same naming structure for the PGS files as when you downloaded them. Please adjust the names of the standard covariates before running this code if the current names do not match the naming convention in your biobank and add additional (technical) covariates as required. Remove any of the traits not applicable in your biobank (i.e., if the biobank was included in GWAS the summary statistics were based on, see Supplementary Data 10 of the [INTERVENE flagship manuscript](https://doi.org/10.1038/s41467-024-48938-2).
-12. Line 277, 282, 294, 302, 312, 403, 408, 450, 455, 467, 475, 485, 525 + 530 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
-13. Lines 316, 321, 489 + 494 - add additional (technical) covariates if required
-14. Lines 340-344 + 512-517 - If none of the PGSs have been flipped (e.g., all associations are positive) then you must out-comment these lines. 
-15. Lines 360-367 - remove birth decades _not_ present in your biobank and _add_ birth decades not included in the code that are included in your biobank. 
+11. Lines 177-162 + 439-457 - Code assumes you have kept the same shorthand names for the phenotypes as within [FinnGen](https://docs.google.com/spreadsheets/d/1DNKd1KzI8WOIfG2klXWskbCSyX6h5gTu/edit#gid=334983519) (column B) and you have kept the same naming structure for the PGS files as when you downloaded them. Please adjust the names of the standard covariates before running this code if the current names do not match the naming convention in your biobank and add additional (technical) covariates as required. Remove any of the traits not applicable in your biobank (i.e., if the biobank was included in GWAS the summary statistics were based on, see Supplementary Data 10 of the [INTERVENE flagship manuscript](https://doi.org/10.1038/s41467-024-48938-2).
+12. Line 277, 282, 305, 313, 323, 414, 419, 461, 466, 481, 489, 499, 539 + 544 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
+13. Lines 327, 332, 503 + 508 - add additional (technical) covariates if required
+14. Lines 350-355 + 527-531 - If none of the PGSs have been flipped (e.g., all associations are positive) then you must out-comment these lines. 
+15. Lines 368-382 - remove birth decades _not_ present in your biobank and _add_ birth decades not included in the code that are included in your biobank. 
 **16. Before writing the output to file, please check whether each subgroup for each trait has >=5 individuals!** Remove traits from the list if <5 individuals in a subgroup, e.g., with the following code: 
 ```
 Listname[c(x,y,z)] <- NULL # where x, y, and z are the shorthand names for the phenotypes as in FinnGen
 ```
-17. Lines 416 + 538 - specify the locations you want to save the .Rdata files.  
+17. Lines 428 + 553 - specify the locations you want to save the .Rdata files.  
 - Output files are "&#42;_INTERVENE_EducationalAttainment_dat_80percent.RData" and "&#42;_INTERVENE_EducationalAttainment_dat_20percent.RData".
 
 ### Step 5d: Educational Attainment - Split polygenic scores into strata
@@ -340,16 +340,42 @@ pheno <- subset(pheno, ANCESTRY=='EUR')
 
 
 # Part 2: Biobank-specific analyses
+## Model 0: Determine the individual effect of basic covariates on disease risk
+These models are only run in the 80% subset of FinnGen for predictive purposes. For instructions to create the 80-20% data split for training and prediction, see [here](https://github.com/intervene-EU-H2020/GxE_SESDisease/tree/main?tab=readme-ov-file#step-5b-educational-attainment---split-data-into-80-training-and-20-test-for-prediction-models).
+### Model 0a sex (if relevant), birth year, and the first 5 genetic PCs
+Run [CoxPHmodel0a_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel0a_EducationalAttainment.R) to run the Cox proportional hazard models with age at disease onset as timescale, and include sex (except for prostate and breast cancer), birth year and the first 5 genetic principal components (PCs) as covariates. Please make the following adjustments: 
+1. Line 50 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
+2. Line 53 - replace with the name of your biobank (don't include spaces in the biobank name)
+3. Line 62 - specify file location + filename
+4. Lines 87, 113, 123, 133, 143, 153 + 163 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
+5. Lines 179 - if you cannot run the analyses for prostate and breast cancer, rename _"modcoefffs.cox.model0a.sex"_ to _"modcoeffs.cox.model0a"_
+6. Lines 181-185 - if you cannot run the analyses for prostate and breast cancer, out-comment or remove these lines
+7. Line 188 - specify the location you want to save the model 0a output.
+- Output file is "&#42;_INTERVENE_EducationalAttainment_CoxPH_model0a_Coeffs_80percent.txt"
+
+### Model 0b  sex (if relevant), birth year, and the first 10 genetic PCs
+Run [CoxPHmodel0b_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel0b_EducationalAttainment.R) to run the Cox proportional hazard models with age at disease onset as timescale, with sex (except for prostate and breast cancer), the first 10 genetic PCs, and birth year as covariates. Please make the following adjustments: 
+1. Line 50 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
+2. Line 53 - replace with the name of your biobank (don't include spaces in the biobank name)
+3. Line 62 - specify file location + filename
+4. Lines 84-85 - add biobank-specific technical covariates if required
+5. Lines 89, 115, 125, 135, 145, 155 + 165 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
+6. Lines 181 - if you cannot run the analyses for prostate and breast cancer, rename _"modcoefffs.cox.model0b.sex"_ to _"modcoeffs.cox.model0b"_
+7. Lines 183-187 - if you cannot run the analyses for prostate and breast cancer, out-comment or remove these lines
+8. Line 190 - specify the location you want to save the model 0b output.   
+- Output file is "&#42;_INTERVENE_EducationalAttainment_CoxPH_model0b_Coeffs_80percent.txt"
+
 ## Model 1: Determine the individual effect of the socioeconomic indices or trait-specific polygenic score (PGS) on disease risk
 ### Model 1a SES effect, with Educational Attainment as the socioeconomic index
 Run [CoxPHmodel1a_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel1a_EducationalAttainment.R) to run the Cox proportional hazard models with age at disease onset as timescale, where EA is dichotomized into low vs high EA (reference = low EA), and include sex (except for prostate and breast cancer), birth decade and the first 5 genetic principal components (PCs) as covariates. Please make the following adjustments: 
 1. Line 51 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
 2. Line 54 - replace with the name of your biobank (don't include spaces in the biobank name)
 3. Line 63 - specify file location + filename
-4. Lines 89, 115, 125, 135, 145,155 + 165 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
-5. Lines 181 - if you cannot run the analyses for prostate and breast cancer, rename _"modcoefffs.cox.model1a.sex"_ to _"modcoeffs.cox.model1a"_
-6. Lines 184-187 - if you cannot run the analyses for prostate and breast cancer, out-comment or remove these lines
-7. Line 190 - specify the location you want to save the model 1a output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 191. And if the descriptives were generated for the 80% split files, change the file name on line 190 to reflect this by adding "_80percent" at the end of the file name.*
+4. Lines 85-86 If you are running this in 80% training data, replace _"birthdecade"_ with _"birth_year"_
+5. Lines 89, 115, 125, 135, 145,155 + 165 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
+6. Lines 181 - if you cannot run the analyses for prostate and breast cancer, rename _"modcoefffs.cox.model1a.sex"_ to _"modcoeffs.cox.model1a"_
+7. Lines 184-187 - if you cannot run the analyses for prostate and breast cancer, out-comment or remove these lines
+8. Line 190 - specify the location you want to save the model 1a output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 191. And if the descriptives were generated for the 80% split files, change the file name on line 190 to reflect this by adding "_80percent" at the end of the file name.*
 - Output file is "&#42;_INTERVENE_EducationalAttainment_CoxPH_model1a_Coeffs.txt"
 
 ### Model 1a SES effect, with Occupation as the socioeconomic index
@@ -368,7 +394,7 @@ Run [CoxPHmodel1b_EducationalAttainment.R](https://github.com/intervene-EU-H2020
 1. Line 51 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
 2. Line 54 - replace with the name of your biobank (don't include spaces in the biobank name)
 3. Line 63 - specify file location + filename
-4. Lines 85-86 - add biobank-specific technical covariates if required
+4. Lines 85-86 - add biobank-specific technical covariates if required. *If you are running this in 80% training data, replace _"birthdecade"_ with _"birth_year"_*
 5. Lines 90, 116, 126, 136, 146, 156 + 166 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
 6. Lines 182 + 188 - if you cannot run the analyses for prostate and breast cancer, rename _"modcoefffs.cox.model1b.sex"_ to _"modcoeffs.cox.model1b"_
 7. Lines 185-186 + 189-190 - if you cannot run the analyses for prostate and breast cancer, out-comment or remove these lines
@@ -393,7 +419,7 @@ Run [CoxPHmodel2_EducationalAttainment.R](https://github.com/intervene-EU-H2020/
 1. Line 51 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
 2. Line 54 - replace with the name of your biobank (don't include spaces in the biobank name)
 3. Line 63 - specify file location + filename
-4. Lines 86-87 - add biobank-specific technical covariates if required
+4. Lines 86-87 - add biobank-specific technical covariates if required. *If you are running this in 80% training data, replace _"birthdecade"_ with _"birth_year"_*
 5. Lines 91, 117, 127, 137, 147, 157 + 167 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
 6. Lines 174 + 180 - if you cannot run the analyses for prostate and breast cancer, rename _"modcoefffs.cox.model2.sex"_ to _"modcoeffs.cox.model2"_
 7. Lines 186-187 + 190-191 - if you cannot run the analyses for prostate and breast cancer, out-comment or remove these lines
@@ -460,7 +486,7 @@ Run [CoxPHmodel4_EducationalAttainment.R](https://github.com/intervene-EU-H2020/
 1. Line 51 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
 2. Line 54 - replace with the name of your biobank (don't include spaces in the biobank name)
 3. Line 63 - specify file location + filename
-4. Lines 88-89 - add biobank-specific technical covariates if required
+4. Lines 88-89 - add biobank-specific technical covariates if required. *If you are running this in 80% training data, replace _"birthdecade"_ with _"birth_year"_*
 5. Lines 93, 119, 129, 139, 149, 159 + 169 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
 6. Lines 185 + 191 - if you cannot run the analyses for prostate and breast cancer, rename _"modcoefffs.cox.model4.sex"_ to _"modcoeffs.cox.model4"_
 7. Lines 188-189 + 192-193 - if you cannot run the analyses for prostate and breast cancer, out-comment or remove these lines
