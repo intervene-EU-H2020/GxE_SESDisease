@@ -838,10 +838,10 @@ Run [eFigure7.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/
 - Output file is "&#42;_INTERVENE_EducationalAttainment_eFigure7.png"
 
 Run [eFigure8.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/eFigure8.R) to create figure 8 in the manuscript, which contains the per-biobank and met-analyzed results for model 1b (PGS) and model 1a (occupation).
-- Output file is "$#42;_INTERVENE_Occupation_eFigure8.png"
+- Output file is "&#42;_INTERVENE_Occupation_eFigure8.png"
 
 Run [eFfigure9.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/eFigure9.R) to create the base for supplemental figure 9 in the manuscript, which contains a comparison of the meta-analyzed model 1b (PGS) vs model 1a (occupation). 
-- Output file is "$#42;_INTERVENE_Occupation_eFigure9.png"
+- Output file is "&#42;_INTERVENE_Occupation_eFigure9.png"
 
 Run [eFigure10.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/Manuscript/Figures/eFigure10.R) to create the base for supplemental Figure 10 in the manuscript, which contains 4 panels: A: comparison of fixed-effect meta-analysed education vs. occupation effect; B: comparison of fixed-effect meta-analysed PGS effect in the model with education vs. occupation; C: comparison of fixed-effect meta-analysed PGS effect in individuals with low education vs. lower-level occupation; D: comparison of fixed-effect meta-analysed PGS effect in individuals with high education vs. upper-level occupation.
 - Output file is "&#42;_INTERVENE_Occupation_eFigure10.png"
