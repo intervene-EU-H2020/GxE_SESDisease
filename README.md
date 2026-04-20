@@ -78,15 +78,16 @@ pheno$ISCED97 <- factor(pheno$ISCED97, levels = c(1,2,3,4,5,6), # remove the ISC
 pheno <- subset(pheno, ANCESTRY=='EUR')
 ```
 11. Lines 167-223 - Code assumes you have kept the same shorthand names for the phenotypes as within [FinnGen](https://docs.google.com/spreadsheets/d/1DNKd1KzI8WOIfG2klXWskbCSyX6h5gTu/edit#gid=334983519) (column B) and you have kept the same naming structure for the PGS files as when you downloaded them. Please adjust the names of the standard covariates before running this code if the current names do not match the naming convention in your biobank and add additional (technical) covariates as required. Remove any of the traits not applicable in your biobank (i.e., if the biobank was included in GWAS the summary statistics were based on, see Supplementary Data 10 of the [INTERVENE flagship manuscript](https://doi.org/10.1038/s41467-024-48938-2).
-12. Line 260, 265, 277, 285, 295, 386 + 391 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
-13. Lines 299 + 304 - add additional (technical) covariates if required
-14. Line 323-327 - If none of the PGSs have been flipped (e.g., all associations are positive) then you must out-comment these lines. 
-15. Lines 343-350 - remove birth decades _not_ present in your biobank and _add_ birth decades not included in the code that are included in your biobank. 
+12. Line 260, 265, 277, 285, 295, 386 + 391 - if running on a single core or a RStudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
+13. Lines 274-278 + 282-284 + 287-289 + 305-307 *uncomment to generate data in FinnGen excluding cases before cohort entry* 
+14. Lines 327 + 332 - add additional (technical) covariates if required
+15. Line 351-355 - If none of the PGSs have been flipped (e.g., all associations are positive) then you must out-comment these lines. 
+16. Lines 371-378 - remove birth decades _not_ present in your biobank and _add_ birth decades not included in the code that are included in your biobank. 
 **16. Before writing the output to file, please check whether each subgroup for each trait has >=5 individuals!** Remove traits from the list if <5 individuals in a subgroup, e.g., with the following code: 
 ```
 Listname[c(x,y,z)] <- NULL # where x, y, and z are the shorthand names for the phenotypes as in FinnGen
 ```
-17. Lines 399 - specify the location you want to save the .Rdata file. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 400.*
+17. Lines 427 - specify the location you want to save the .Rdata file. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 428. And if generating data in FinnGen, excluding cases before cohort entry, append "nocasesbeforeBlood" at the end of the file name.*
 - Output files is "&#42;_INTERVENE_EducationalAttainment_dat.RData".
 
 ### Step 5b: Educational Attainment - Create cohort-specific dichotomization for Educational Attainment (main script split was determined in FinnGen)
@@ -490,7 +491,7 @@ Run [CoxPHmodel4_EducationalAttainment.R](https://github.com/intervene-EU-H2020/
 5. Lines 93, 119, 129, 139, 149, 159 + 169 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
 6. Lines 185 + 191 - if you cannot run the analyses for prostate and breast cancer, rename _"modcoefffs.cox.model4.sex"_ to _"modcoeffs.cox.model4"_
 7. Lines 188-189 + 192-193 - if you cannot run the analyses for prostate and breast cancer, out-comment or remove these lines
-8. Line 196 - specify the location you want to save the model 4 output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 197. And if the descriptives were generated for the 80% split files, change the file name on line 197 to reflect this by adding "_80percent" at the end of the file name*
+8. Line 196 - specify the location you want to save the model 4 output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 197. If the descriptives were generated for the 80% split files, change the file name on line 197 to reflect this by adding "_80percent" at the end of the file name. And if generating data in FinnGen, excluding cases before cohort entry, append "nocasesbeforeBlood" at the end of the file name.*
 9. Lines 214-227 - remove traits not included in Biobank
 10. Line 233 - replace number of rows (currently 9) and columns (currently 7) to reflect 3x the number of traits analysed in Biobank
 11. Lines 235-309 - only keep the plots for the number of traits analysed in Biobank, e.g., if only 14 traits analysed, remove rows 290-309
