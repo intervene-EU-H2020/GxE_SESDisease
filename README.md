@@ -477,7 +477,7 @@ Run [CoxPHmodel2_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDise
 
 ## Model 3: Determine the effect of the trait-specific polygenic score (PGS) stratified by level of the socioeconomic index on disease risk
 ### Educational Attainment
-Run [CoxPHmodel3_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel3_EducationalAttainment.R) to run the Education stratified (where EA is dichotomized into low vs high EA) Cox proportional hazard models with age at disease onset as timescale, and include the trait-specific PGS, sex (except for breast and prostate cancer), bith decade, and the first 10 genetic PCS as covariates. Please make the following adjustments: 
+Run [CoxPHmodel3_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel3_EducationalAttainment.R) to run the Education stratified (where EA is dichotomized into low vs high EA) Cox proportional hazard models with age at disease onset as timescale, and include the trait-specific PGS, sex (except for breast and prostate cancer), birth decade, and the first 10 genetic PCS as covariates. Please make the following adjustments: 
 1. Line 50 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
 2. Line 53 - replace with the name of your biobank (don't include spaces in the biobank name)
 3. Line 62 - specify file location + filename
@@ -486,7 +486,7 @@ Run [CoxPHmodel3_EducationalAttainment.R](https://github.com/intervene-EU-H2020/
 6. Lines 219-223 + lines 231-232 - if you cannot run the analyses for prostate and breast cancer, rename _"modcoefffs.cox.model3.sex.low"_ and _"modcoeffs.cox.model3.sex.high"_ to _"modcoeffs.cox.model3.low"_ and _"modcoeffs,cox.model3.high"_ 
 7. Lines 224-228 + lines 233-234 - if you cannot run the analyses for prostate and breast cancer, out-comment or remove these lines
 8. Line 235 - if you cannot run the analyses for prostate and breast cancer, remove _"modcoeffs.cox.model3.nosex.low"_ and _"modcoeffs.cox.model3.nosex.high"_
-9. Line 241 - specify the location you want to save the model 3 output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 238.*  
+9. Line 241 - specify the location you want to save the model 3 output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 238.*  
 - Output file is "&#42;_INTERVENE_EducationalAttainment_CohortSpecific_CoxPH_model3_Coeffs.txt"
 
 ### Educational Attainment - with cohort-specific threshold for low vs. high education
@@ -524,7 +524,7 @@ Run [CoxPHmodel4_EducationalAttainment.R](https://github.com/intervene-EU-H2020/
 5. Lines 93, 119, 129, 139, 149, 159 + 169 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
 6. Lines 185 + 191 - if you cannot run the analyses for prostate and breast cancer, rename _"modcoefffs.cox.model4.sex"_ to _"modcoeffs.cox.model4"_
 7. Lines 188-189 + 192-193 - if you cannot run the analyses for prostate and breast cancer, out-comment or remove these lines
-8. Line 196 - specify the location you want to save the model 4 output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 197. If the descriptives were generated for the 80% split files, change the file name on line 197 to reflect this by adding "_80percent" at the end of the file name. And if generating data in FinnGen, excluding cases before cohort entry, append "nocasesbeforeBlood" at the end of the file name.*
+8. Line 196 - specify the location you want to save the model 4 output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 197. If the descriptives were generated for the 80% split files, change the file name on line 197 to reflect this by adding "_80percent" at the end of the file name. If generating data in FinnGen, excluding cases before cohort entry, append "nocasesbeforeBlood" at the end of the file name, and when including mutually exclusive cases only, append "NoMutCases" at the end of the file name.*
 9. Lines 214-227 - remove traits not included in Biobank
 10. Line 233 - replace number of rows (currently 9) and columns (currently 7) to reflect 3x the number of traits analysed in Biobank
 11. Lines 235-309 - only keep the plots for the number of traits analysed in Biobank, e.g., if only 14 traits analysed, remove rows 290-309
@@ -570,6 +570,11 @@ Run [CoxPHmodel4_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDise
 Comparisons are done with two-sided Wald tests after Bonferroni correction for multiple testing of 19 phenotypes (p < 2.63x10-03).
 Run [CoxPHmodel4_EducationalAttainment_ComparefullFGvsExclPreEntrysFG.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel4_EducationalAttainment_ComparefullFGvsExclPreEntrysFG.R) to compare the estimates from model 4 in the full FinnGen sample to a subset after excluding cases before cohort entry to determine whether analyzing the interaction between Educational Attainment and the disease-specific PGSs significantly differs in the subset. This script downloads the summary statistics from Google Drive and also uploads the results of the comparison to Google Drive.
 - Output file is "&#42;_INTERVENE_SESDiffDiseases_Differences_FullFinnGenR11vsNocasebeforeBlood_model4.csv"
+
+## Compare the FinnGen results for model 4 for Educational Attainment (unadjusted) with those obtained including only mutually exclussive vases (adjusted). 
+Comparisons are done with two-sided Wald tests after Bonferroni correction for multiple testing of 19 phenotypes (p < 2.63x10-03).
+Run [CoxPHmodel4_EducationalAttainment_ComparefullFGvsMutExCasesFG.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel4_EducationalAttainment_ComparefullFGvsMutExCasesFG.R) to compare the estimates from model 4 in the full FinnGen sample to a subset after only including mutually exclusive cases to determine whether analyzing the interaction between Educational Attainment and the disease-specific PGSs significantly differs in the subset. This script downloads the summary statistics from Google Drive and also uploads the results of the comparison to Google Drive.
+- Output file is "&#42;_INTERVENE_SESDiffDiseases_Differences_FullFinnGenR11vsNoMutcases_model4.csv"
 
 ## Model 5: Determine the effect of the socioeconomic indices on disease risk in each of the three trait-specific polygenic score (PGS) groups
 ### Educational Attainment
