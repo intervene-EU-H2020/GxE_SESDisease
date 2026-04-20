@@ -183,7 +183,40 @@ Listname[c(x,y,z)] <- NULL # where x, y, and z are the shorthand names for the p
 17. Lines 417 - specify the locations you want to save the.Rdata files.  
 - Output file is "&#42;_INTERVENE_EducationalAttainment_dat_PGSstrata.RData".
 
-### Step 5e: Educational Attainment - data preparation for Fine Gray models
+### Step 5e: Educational Attainment - with mutually exclusive cases
+Run [DataPrep_EducationalAttainment_MutualExclusiveCases.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/DataPrep_EducationalAttainment_MutualExclusiveCases.R) to create the EA-specific sample for each trait in your Biobank with mutually exclusive cases. Please make the following adjustments: 
+1. Line 50 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
+2. Line 53 - replace with the name of your biobank (don't include spaces in the biobank name)
+3. Line 63 - specify phenotype file location + filename
+4. Lines 66 + 75 - specify the location of the folder containing PGS weights
+5. Line 80 - please replace the identifier name with that used in your biobank.
+6. Lines 92-93 - if Educational Attainment has not been converted to ISCED 1997 from ISCED 2011, replace _"EDUCATION_11"_ in the code that creates the factor with the naming convention for ISCED 2011 education in your biobank; if Educational Attainment has already been converted to ISCED 1997 instead of ISCED 2011, replace it (if applicable) with code to make the ISCED 1997 variable a factor: 
+```
+pheno$ISCED97 <- factor(pheno$ISCED97, levels = c(1,2,3,4,5,6), # remove the ISCED 1997 levels not available in your biobank
+                    labels = c("ISCED 1","ISCED 2","ISCED 3","ISCED 4","ISCED 5", "ISCED 6)) # remove the ISCED 1997 not available in your biobank
+```
+7. Lines 96-122 - Run if ISCED 2011 has not yet been recoded to ISCED 1997 (otherwise out-comment); remove the ISCED 1997 levels not available in your biobank
+8. Lines 131-133 - remove the ISCED 1997 levels not available in your biobank
+9. Line 149 - please replace the identifier names with those used in your biobank.
+10. Line 154 - if your biobank contains individuals of non-European ancestry/those that have principal components calculated for NON-EUROPEAN ancestry, i.e., within ancestry principal components, not global genetic principal components, please add code to only retain individuals of European ancestry after this line (*In case of multiple ancestries in a Biobank, generate each file separately per ancestry, in which case the following has to be adapted to only retain the ancestry of interest*), for example,:
+```
+pheno <- subset(pheno, ANCESTRY=='EUR')
+```
+11. Lines 167-223 - Code assumes you have kept the same shorthand names for the phenotypes as within [FinnGen](https://docs.google.com/spreadsheets/d/1DNKd1KzI8WOIfG2klXWskbCSyX6h5gTu/edit#gid=334983519) (column B) and you have kept the same naming structure for the PGS files as when you downloaded them. Please adjust the names of the standard covariates before running this code if the current names do not match the naming convention in your biobank, and add additional (technical) covariates as required. Remove any of the traits not applicable in your biobank (i.e., if the biobank was included in GWAS the summary statistics were based on, see Supplementary Data 10 of the [INTERVENE flagship manuscript](https://doi.org/10.1038/s41467-024-48938-2).
+12. Lines 254-256 + 262-263 + 269-273 remove traits not available in your biobank
+13. Lines 284-286 - Remove any of the traits not applicable in your biobank and adjust naming where needed. 
+14. Line 346, 351, 363, 371, 381, 472 + 477 - if running on a single core or a RStudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
+15. Lines 385 + 390 - add additional (technical) covariates if required
+16. Line 409-413 - If none of the PGSs have been flipped (e.g., all associations are positive) then you must out-comment these lines. 
+17. Lines 429-436 - remove birth decades _not_ present in your biobank and _add_ birth decades not included in the code that are included in your biobank. 
+**18. Before writing the output to file, please check whether each subgroup for each trait has >=5 individuals!** Remove traits from the list if <5 individuals in a subgroup, e.g., with the following code: 
+```
+Listname[c(x,y,z)] <- NULL # where x, y, and z are the shorthand names for the phenotypes as in FinnGen
+```
+19. Lines 485 - specify the location you want to save the.Rdata file. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 486.*
+- Output files is "&#42;_INTERVENE_EducationalAttainment_dat_NoMutCases.RData".
+
+### Step 5f: Educational Attainment - data preparation for Fine Gray models
 Run [DataPrep_EducationalAttainment_FineGray.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/DataPrep_EducationalAttainment_FineGray.R) to create the EA-specific samples, including competing risk (all-cause mortality) for each trait in your Biobank. This script assumes you have generated the data input as created with [this script first](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/DataPrep_EducationalAttainment.R). Please make the following adjustments: 
 1. Line 61 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
 2. Line 64 - replace with the name of your biobank (don't include spaces in the biobank name)
@@ -197,7 +230,7 @@ Listname[c(x,y,z)] <- NULL # where x, y, and z are the shorthand names for the p
 7. Lines 123 - specify the locations you want to save the .Rdata files.  
 - Output file is "&#42;_INTERVENE_EducationalAttainment_dat_FineGray.RData".
 
-### Step 5f: Occupation
+### Step 5g: Occupation
 Run [DataPrep_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/DataPrep_Occupation.R) to create the occupation-specific sample for each trait in your Biobank. Please make the following adjustments: 
 1. Line 52 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line 
 2. Line 55 - replace with the name of your biobank (don't include spaces in the biobank name)
@@ -224,7 +257,7 @@ Listname[c(x,y,z)] <- NULL # where x, y, and z are the shorthand names for the p
 16. Line 323 - specify the location you want to save the .Rdata file.  
 - Output file is "&#42;_INTERVENE_Occupation_dat.RData".
 
-### Step 5g: Occupation - Split polygenic scores into strata
+### Step 5h: Occupation - Split polygenic scores into strata
 Run [DataPrep_Occupation_PGSstrata.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/DataPrep_Occupation_PGSstrata.R) to create the Occupation-specific samples with disease-specific polygenic scores (PGSs) split into strata (<20%, 20-40%, 40-60%, 60-95%, >95%) for each trait in your Biobank. Please make the following adjustments: 
 1. Line 50 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line 
 2. Line 53 - replace with the name of your biobank (don't include spaces in the biobank name)
