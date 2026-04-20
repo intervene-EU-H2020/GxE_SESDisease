@@ -83,11 +83,11 @@ pheno <- subset(pheno, ANCESTRY=='EUR')
 14. Lines 327 + 332 - add additional (technical) covariates if required
 15. Line 351-355 - If none of the PGSs have been flipped (e.g., all associations are positive) then you must out-comment these lines. 
 16. Lines 371-378 - remove birth decades _not_ present in your biobank and _add_ birth decades not included in the code that are included in your biobank. 
-**16. Before writing the output to file, please check whether each subgroup for each trait has >=5 individuals!** Remove traits from the list if <5 individuals in a subgroup, e.g., with the following code: 
+**17. Before writing the output to file, please check whether each subgroup for each trait has >=5 individuals!** Remove traits from the list if <5 individuals in a subgroup, e.g., with the following code: 
 ```
 Listname[c(x,y,z)] <- NULL # where x, y, and z are the shorthand names for the phenotypes as in FinnGen
 ```
-17. Lines 427 - specify the location you want to save the .Rdata file. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 428. And if generating data in FinnGen, excluding cases before cohort entry, append "nocasesbeforeBlood" at the end of the file name.*
+18. Lines 427 - specify the location you want to save the .Rdata file. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 428. And if generating data in FinnGen, excluding cases before cohort entry, append "nocasesbeforeBlood" at the end of the file name.*
 - Output files is "&#42;_INTERVENE_EducationalAttainment_dat.RData".
 
 ### Step 5b: Educational Attainment - Create cohort-specific dichotomization for Educational Attainment (main script split was determined in FinnGen)
@@ -216,7 +216,40 @@ Listname[c(x,y,z)] <- NULL # where x, y, and z are the shorthand names for the p
 19. Lines 485 - specify the location you want to save the.Rdata file. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 486.*
 - Output files is "&#42;_INTERVENE_EducationalAttainment_dat_NoMutCases.RData".
 
-### Step 5f: Educational Attainment - data preparation for Fine Gray models
+### Step 5f: Educational Attainment - include PGS for Educational Attainment
+Run [DataPrep_EducationalAttainment_EAPGS.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/DataPrep_EducationalAttainment_EAPGS.R) to create the EA-specific sample for each trait in your Biobank, including the PGS for Educational Attainment. Please make the following adjustments: 
+1. Line 50 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
+2. Line 53 - replace with the name of your biobank (don't include spaces in the biobank name)
+3. Line 63 - specify phenotype file location + filename
+4. Lines 66 + 75 - specify the location of the folder containing PGS weights
+5. Line 80 - please replace the identifier name with that used in your biobank.
+6. Lines 92-93 - if Educational Attainment has not been converted to ISCED 1997 from ISCED 2011, replace _"EDUCATION_11"_ in the code that creates the factor with the naming convention for ISCED 2011 education in your biobank; if Educational Attainment has already been converted to ISCED 1997 instead of ISCED 2011, replace it (if applicable) with code to make the ISCED 1997 variable a factor: 
+```
+pheno$ISCED97 <- factor(pheno$ISCED97, levels = c(1,2,3,4,5,6), # remove the ISCED 1997 levels not available in your biobank
+                    labels = c("ISCED 1","ISCED 2","ISCED 3","ISCED 4","ISCED 5", "ISCED 6)) # remove the ISCED 1997 not available in your biobank
+```
+7. Lines 96-122 - Run if ISCED 2011 has not yet been recoded to ISCED 1997 (otherwise out-comment); remove the ISCED 1997 levels not available in your biobank
+8. Lines 131-133 - remove the ISCED 1997 levels not available in your biobank
+9. Line 149, 153, 156, and 162 - please replace the identifier names with those used in your biobank.
+10. Line 152 - replace with the location and file name of the Educational Attainment PGS for your Biobank
+11. Line 153 - replace with variable name Educational Attainment PGS in your Biobank
+12. Line 169 - if your biobank contains individuals of non-European ancestry/those that have principal components calculated for NON-EUROPEAN ancestry, i.e., within ancestry principal components, not global genetic principal components, please add code to only retain individuals of European ancestry after this line (*In case of multiple ancestries in a Biobank, generate each file separately per ancestry, in which case the following has to be adapted to only retain the ancestry of interest*), for example,:
+```
+pheno <- subset(pheno, ANCESTRY=='EUR')
+```
+11. Lines 183-239 - Code assumes you have kept the same shorthand names for the phenotypes as within [FinnGen](https://docs.google.com/spreadsheets/d/1DNKd1KzI8WOIfG2klXWskbCSyX6h5gTu/edit#gid=334983519) (column B) and you have kept the same naming structure for the PGS files as when you downloaded them. Please adjust the names of the standard covariates before running this code if the current names do not match the naming convention in your biobank and add additional (technical) covariates as required. Remove any of the traits not applicable in your biobank (i.e., if the biobank was included in GWAS the summary statistics were based on, see Supplementary Data 10 of the [INTERVENE flagship manuscript](https://doi.org/10.1038/s41467-024-48938-2).
+12. Line 276, 281, 293, 301, 311, 351, 438 + 443 - if running on a single core or a RStudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
+13. Lines 315, 320 + 354 - add additional (technical) covariates if required
+14. Line 339-343 + 373-376 - If none of the PGSs have been flipped (e.g., all associations are positive) then you must out-comment these lines. 
+15. Lines 395-402 - remove birth decades _not_ present in your biobank and _add_ birth decades not included in the code that are included in your biobank. 
+**16. Before writing the output to file, please check whether each subgroup for each trait has >=5 individuals!** Remove traits from the list if <5 individuals in a subgroup, e.g., with the following code: 
+```
+Listname[c(x,y,z)] <- NULL # where x, y, and z are the shorthand names for the phenotypes as in FinnGen
+```
+17. Lines 451 - specify the location you want to save the .Rdata file. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 452.*
+- Output files is "&#42;_INTERVENE_EducationalAttainment_dat_EAPGS.RData".
+
+### Step 5g: Educational Attainment - data preparation for Fine Gray models
 Run [DataPrep_EducationalAttainment_FineGray.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/DataPrep_EducationalAttainment_FineGray.R) to create the EA-specific samples, including competing risk (all-cause mortality) for each trait in your Biobank. This script assumes you have generated the data input as created with [this script first](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/DataPrep_EducationalAttainment.R). Please make the following adjustments: 
 1. Line 61 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line
 2. Line 64 - replace with the name of your biobank (don't include spaces in the biobank name)
@@ -230,7 +263,7 @@ Listname[c(x,y,z)] <- NULL # where x, y, and z are the shorthand names for the p
 7. Lines 123 - specify the locations you want to save the .Rdata files.  
 - Output file is "&#42;_INTERVENE_EducationalAttainment_dat_FineGray.RData".
 
-### Step 5g: Occupation
+### Step 5h: Occupation
 Run [DataPrep_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/DataPrep/DataPrep_Occupation.R) to create the occupation-specific sample for each trait in your Biobank. Please make the following adjustments: 
 1. Line 52 - if you're running this on a single core or a Rstudio session with automatic multi-threading, you can choose to out-command this line 
 2. Line 55 - replace with the name of your biobank (don't include spaces in the biobank name)
@@ -293,7 +326,7 @@ Run [Descriptives_EducationalAttainment.R](https://github.com/intervene-EU-H2020
 4. Line 143 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
 5. Lines 152-157  - if your Biobank was included in the prostate cancer GWASs or the number of individuals in any subgroup was <5, and you cannot investigate this trait, out-comment or remove these lines
 6. Lines 159-164 - if your Biobank was included in the breast cancer GWASs or the number of individuals in any subgroup was <5, and you cannot investigate this trait, out-comment or remove these lines
-7. Line 164 - specify the location you want to save the descriptive file. *If the descriptives were generated for the 80-20% split files, change the file name on line 168 to reflect this by adding "_80percent" or "_20percent" at the end of the file name, respectively. If generating data in FinnGen, excluding cases before cohort entry, append "nocasesbeforeBlood" at the end of the file name; and with mutual exclussive cases, append "NoMutCases" at the end of the  file*
+7. Line 164 - specify the location you want to save the descriptive file. *If the descriptives were generated for the 80-20% split files, change the file name on line 168 to reflect this by adding "_80percent" or "_20percent" at the end of the file name, respectively. If generating data in FinnGen, excluding cases before cohort entry, append "nocasesbeforeBlood" at the end of the file name; with mutual exclussive cases, append "NoMutCases" at the end of the  file; and including the PGS for Educational Attainment, append "EAPGS" at the end of the file.*
 - Output files is  "&#42;_INTERVENE_EducationalAttainment_SampleDescriptives.txt"
 
 ### Step 6b: Educational Attainment - Cohort-specific dichotomization
@@ -524,7 +557,7 @@ Run [CoxPHmodel4_EducationalAttainment.R](https://github.com/intervene-EU-H2020/
 5. Lines 93, 119, 129, 139, 149, 159 + 169 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
 6. Lines 185 + 191 - if you cannot run the analyses for prostate and breast cancer, rename _"modcoefffs.cox.model4.sex"_ to _"modcoeffs.cox.model4"_
 7. Lines 188-189 + 192-193 - if you cannot run the analyses for prostate and breast cancer, out-comment or remove these lines
-8. Line 196 - specify the location you want to save the model 4 output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 197. If the descriptives were generated for the 80% split files, change the file name on line 197 to reflect this by adding "_80percent" at the end of the file name. If generating data in FinnGen, excluding cases before cohort entry, append "nocasesbeforeBlood" at the end of the file name, and when including mutually exclusive cases only, append "NoMutCases" at the end of the file name.*
+8. Line 196 - specify the location you want to save the model 4 output. *In case of multiple ancestries in a Biobank, generate each file separately per ancestry, and add the abbreviation of the ancestry between the name of the biobank and "INTERVENE" on line 197. If the descriptives were generated for the 80% split files, change the file name on line 197 to reflect this by adding "_80percent" at the end of the file name. If generating data in FinnGen, excluding cases before cohort entry, append "nocasesbeforeBlood" at the end of the file name, when including mutually exclusive cases only, append "NoMutCases" at the end of the file name.*
 9. Lines 214-227 - remove traits not included in Biobank
 10. Line 233 - replace number of rows (currently 9) and columns (currently 7) to reflect 3x the number of traits analysed in Biobank
 11. Lines 235-309 - only keep the plots for the number of traits analysed in Biobank, e.g., if only 14 traits analysed, remove rows 290-309
