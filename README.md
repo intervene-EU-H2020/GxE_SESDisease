@@ -533,6 +533,11 @@ Run [CoxPHmodel4_Occupation.R](https://github.com/intervene-EU-H2020/GxE_SESDise
 8. Line 197 - specify the location you want to save the model 4 output.  
 - Output file is "&#42;_INTERVENE_Occupation_CoxPH_model4_Coeffs.txt"
 
+## Compare the FinnGen results for model 4 for Educational Attainment (unadjusted) with those obtained after excluding FinnGen cases before cohort entry (adjusted). 
+Comparisons are done with two-sided Wald tests after Bonferroni correction for multiple testing of 19 phenotypes (p < 2.63x10-03).
+Run [CoxPHmodel4_EducationalAttainment_ComparefullFGvsExclPreEntrysFG.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel4_EducationalAttainment_ComparefullFGvsExclPreEntrysFG.R) to compare the estimates from model 4 in the full FinnGen sample to a subset after excluding cases before cohort entry to determine whether analyzing the interaction between Educational Attainment and the disease-specific PGSs significantly differs in the subset. This script downloads the summary statistics from Google Drive and also uploads the results of the comparison to Google Drive.
+- Output file is "&#42;_INTERVENE_SESDiffDiseases_Differences_FullFinnGenR11vsNocasebeforeBlood_model4.csv"
+
 ## Model 5: Determine the effect of the socioeconomic indices on disease risk in each of the three trait-specific polygenic score (PGS) groups
 ### Educational Attainment
 Run [CoxPHmodel5_EducationalAttainment.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel5_EducationalAttainment.R) to run the Cox proportional hazard models with age at disease onset as timescale, where EA is dichotomized into low vs high EA (reference = low EA), and include sex (except for prostate and breast cancer), birth decade, and the first 5 genetic PCs as covariates in each of the groups stratified by PGS ("<25%", "25-75%", and ">75%").  
