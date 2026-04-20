@@ -616,10 +616,15 @@ Comparisons are done with two-sided Wald tests after Bonferroni correction for m
 Run [CoxPHmodel4_EducationalAttainment_ComparefullFGvsExclPreEntrysFG.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel4_EducationalAttainment_ComparefullFGvsExclPreEntrysFG.R) to compare the estimates from model 4 in the full FinnGen sample to a subset after excluding cases before cohort entry to determine whether analyzing the interaction between Educational Attainment and the disease-specific PGSs significantly differs in the subset. This script downloads the summary statistics from Google Drive and also uploads the results of the comparison to Google Drive.
 - Output file is "&#42;_INTERVENE_SESDiffDiseases_Differences_FullFinnGenR11vsNocasebeforeBlood_model4.csv"
 
-## Compare the FinnGen results for model 4 for Educational Attainment (unadjusted) with those obtained including only mutually exclussive vases (adjusted). 
+## Compare the FinnGen results for model 4 for Educational Attainment (unadjusted) with those obtained by including only mutually exclusive cases (adjusted). 
 Comparisons are done with two-sided Wald tests after Bonferroni correction for multiple testing of 19 phenotypes (p < 2.63x10-03).
 Run [CoxPHmodel4_EducationalAttainment_ComparefullFGvsMutExCasesFG.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel4_EducationalAttainment_ComparefullFGvsMutExCasesFG.R) to compare the estimates from model 4 in the full FinnGen sample to a subset after only including mutually exclusive cases to determine whether analyzing the interaction between Educational Attainment and the disease-specific PGSs significantly differs in the subset. This script downloads the summary statistics from Google Drive and also uploads the results of the comparison to Google Drive.
 - Output file is "&#42;_INTERVENE_SESDiffDiseases_Differences_FullFinnGenR11vsNoMutcases_model4.csv"
+
+## Compare the FinnGen results for model 4 for Educational Attainment (unadjusted) with those obtained including the PGS for Educational Attainment and its interaction with the disease-specific PGS (adjusted). 
+Comparisons are done with two-sided Wald tests after Bonferroni correction for multiple testing of 19 phenotypes (p < 2.63x10-03).
+Run [CoxPHmodel4_EducationalAttainment_CompareFGWithvsWithoutGxG.R](https://github.com/intervene-EU-H2020/GxE_SESDisease/blob/main/CoxModels/CoxPHmodel4_EducationalAttainment_CompareFGWithvsWithoutGxG.R) to compare the estimates from model 4 in FinnGen with and without including the PGS for Educational Attainment and its interaction with the disease-specific PGS to determine whether analyzing the interaction between Educational Attainment and the disease-specific PGSs significantly differs after accounting for the EA PGS and "GxG". This script downloads the summary statistics from Google Drive and also uploads the results of the comparison to Google Drive.
+- Output file is "&#42;_INTERVENE_SESDiffDiseases_Differences_NoGxGvsGxG_model4.csv"
 
 ## Model 5: Determine the effect of the socioeconomic indices on disease risk in each of the three trait-specific polygenic score (PGS) groups
 ### Educational Attainment
