@@ -260,7 +260,7 @@ Run [Descriptives_EducationalAttainment.R](https://github.com/intervene-EU-H2020
 4. Line 143 - if running on a single core or a Rstudio session with automatic multi-threading, replace _%dopar%_ with _%do%_
 5. Lines 152-157  - if your Biobank was included in the prostate cancer GWASs or the number of individuals in any subgroup was <5, and you cannot investigate this trait, out-comment or remove these lines
 6. Lines 159-164 - if your Biobank was included in the breast cancer GWASs or the number of individuals in any subgroup was <5, and you cannot investigate this trait, out-comment or remove these lines
-7. Line 164 - specify the location you want to save the descriptive file. *If the descriptives were generated for the 80-20% split files, change the file name on line 168 to reflect this by adding "_80percent" or "_20percent" at the end of the file name, respectively.*
+7. Line 164 - specify the location you want to save the descriptive file. *If the descriptives were generated for the 80-20% split files, change the file name on line 168 to reflect this by adding "_80percent" or "_20percent" at the end of the file name, respectively. If generating data in FinnGen, excluding cases before cohort entry, append "nocasesbeforeBlood" at the end of the file name; and with mutual exclussive cases, append "NoMutCases" at the end of the  file*
 - Output files is  "&#42;_INTERVENE_EducationalAttainment_SampleDescriptives.txt"
 
 ### Step 6b: Educational Attainment - Cohort-specific dichotomization
