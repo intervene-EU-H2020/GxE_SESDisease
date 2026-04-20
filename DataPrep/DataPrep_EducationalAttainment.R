@@ -266,6 +266,28 @@ INTERVENE.list <- foreach(i=1:length(INTERVENE.list)) %dopar% {
   cbind(INTERVENE.list[[i]],AGE=INTERVENE.AGE[[i]])
 }
 
+# function to calculate age at cohort entry (i.e., in FinnGen year blood sample 
+# minus birthday. 
+# %..% calculates the interval between two dates, and by dividing the interval in
+# years age is expressed in years (lubridate package). First pretend year of
+# blood draw was done on January 1
+# calc.age.FG <- function(filelist) {
+#   entry_date <- ymd(paste0(filelist$BL_YEAR,"-01-01"))
+#   age <- (filelist$DATE_OF_BIRTH %--% entry_date) / years(1)
+#   return(age)
+# }
+  
+#run function to calculate age at study entry in a parallel
+#foreach loop for each of the 19 traits.
+# INTERVENE.AGE.FG <- foreach(i=1:length(INTERVENE.list)) %dopar% {
+#   calc.age.FG(filelist = INTERVENE.list[[i]])
+# }
+
+# append the new age vector to the data frames of each trait
+# INTERVENE.list <- foreach(i=1:length(INTERVENE.list)) %dopar% {
+#   cbind(INTERVENE.list[[i]],ENTRY_AGE=INTERVENE.AGE.FG[[i]])
+# }
+  
 # according to the INTERVENE flagship follow-up of participants started at birth
 # and ended with (1) age of first record of disease diagnosis, (2) age at death
 # for non-disease cause, (3) age at last available EHR, or (4) age 80. Under the
@@ -278,6 +300,12 @@ INTERVENE.list <- foreach(i=1:length(INTERVENE.list)) %dopar% {
   INTERVENE.list[[i]][which(INTERVENE.list[[i]]$AGE>34.8 & INTERVENE.list[[i]]$AGE<80),] 
 }
 
+# In each data set remove rows if end of follow-up occurs before cohort entry
+# (BL_AGE)
+# INTERVENE.list <- foreach(i=1:length(INTERVENE.list)) %dopar% {
+#   INTERVENE.list[[i]][which(INTERVENE.list[[i]]$END_OF_FOLLOWUP >= INTERVENE.list[[i]]$BL_YEAR),] 
+# }
+  
 # in each data set remove rows without case/control information, education
 # information, age, and PGS. The 15th column always contains the
 # trait information, the 19th column the education information, the 20th column
